@@ -1,5 +1,5 @@
 window.addEventListener('DOMContentLoaded', function() {
-    KAIDI_VERSION = "0.1.0"
+    KAIDI_VERSION = "0.1.0.1"
     var settingsLoaded = null;
     toastr.options = {
         "closeButton": false,
@@ -32,12 +32,13 @@ window.addEventListener('DOMContentLoaded', function() {
                           Network/Services' if you have not yet.");
             settingsLoaded = {"kodiIP": localStorage.getItem("settingsKey_kodiIP"),
                               "kodiPort": localStorage.getItem("settingsKey_kodiPort")};
+            getToKodi(settingsLoaded, "JSONRPC.ping");
         }
     } else {
         settingsLoaded = {"kodiIP": localStorage.getItem("settingsKey_kodiIP"),
                           "kodiPort": localStorage.getItem("settingsKey_kodiPort")};
+        getToKodi(settingsLoaded, "JSONRPC.ping");
     }
-    getToKodi(settingsLoaded, "JSONRPC.ping");
     window.addEventListener('keydown', function(e) {
         switch(e.key) {
             case 'ArrowLeft':
