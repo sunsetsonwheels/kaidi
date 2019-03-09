@@ -1,0 +1,49 @@
+{
+    "version": "0.1.0",
+    "name": "Kaidi Remote",
+    "description": "A Kodi remote app for KaiOS.",
+    "launch_path": "/html/index.html",
+    "orientation": "default",
+    "ime_default_softkey_bar": true,
+    "theme_color": "#1BC1C4",
+    "origin": "app://kaidi.jkelol111.me",
+    "icons": {
+      "16": "/icons/icon16x16.png",
+      "48": "/icons/icon48x48.png",
+      "60": "/icons/icon60x60.png"
+    },
+    "chrome": {
+      "statusbar": "overlap"
+    },
+    "developer": {
+      "name": "Nguyen Thanh Nam (jkelol111)",
+      "url": "http://github.com/jkelol111"
+    },
+    "type": "privileged",
+    "permissions": {
+	    "systemXHR": {
+	      "description": "Required to POST to Kodi."
+	    }
+    },
+    "activities": {
+      "me.jkelol111.kaidi.settings": {
+        "href": "/html/settings.html",
+        "disposition": "inline",
+        "returnValue": true
+      },
+      "me.jkelol111.kaidi.morecontrols": {
+        "href": "/html/morecontrols/morecontrols.html",
+        "disposition": "inline",
+        "returnValue": true
+      },
+      "me.jkelol111.kaidi.morecontrols.input": {
+        "href": "/html/morecontrols/morecontrols.html",
+        "disposition": "inline",
+        "returnValue": true
+      }
+    },
+    "installs_allowed_from": [
+      "*"
+    ],
+    "default_locale": "en"
+}
