@@ -1,7 +1,6 @@
 window.addEventListener('DOMContentLoaded', function() {
     var activityHandler = null;
     var selectedElement = 0;
-    var cancelEnabled = false;
     navigator.mozSetMessageHandler('activity', function(activityRequest) {
         let option = activityRequest.source
         if(option.name == "me.jkelol111.kaidi.settings") {
@@ -26,7 +25,6 @@ window.addEventListener('DOMContentLoaded', function() {
             document.getElementById("container0").style.backgroundColor = '#1BC1C4';
             document.getElementById("label0").style.color = '#ffffff';
             document.getElementById("kodiIPInput").focus();
-            cancelEnabled = true;
         } else if (selectedElement == 1) {
             document.getElementById("container0").style.backgroundColor = '#ffffff';
             document.getElementById("label0").style.color = '#323232';
@@ -34,31 +32,23 @@ window.addEventListener('DOMContentLoaded', function() {
             document.getElementById("container1").style.backgroundColor = '#1BC1C4';
             document.getElementById("label1").style.color = '#ffffff';
             document.getElementById("kodiPortInput").focus();
-            cancelEnabled = true;
         } else if (selectedElement > 1) {
-            selectedElement = 1;
-            document.getElementById("container1").style.backgroundColor = '#1BC1C4';
-            document.getElementById("label1").style.color = '#ffffff';
-            document.getElementById("kodiPortInput").focus();
-            cancelEnabled = true;
-        } else if (selectedElement < 0) {
             selectedElement = 0;
+            document.getElementById("container1").style.backgroundColor = '#ffffff';
+            document.getElementById("label1").style.color = '#323232';
+            document.getElementById("kodiPortInput").blur();
             document.getElementById("container0").style.backgroundColor = '#1BC1C4';
             document.getElementById("label0").style.color = '#ffffff';
             document.getElementById("kodiIPInput").focus();
-            cancelEnabled = true;
+        } else if (selectedElement < 0) {
+            selectedElement = 1;
+            document.getElementById("container0").style.backgroundColor = '#ffffff';
+            document.getElementById("label0").style.color = '#323232';
+            document.getElementById("kodiIPInput").blur();
+            document.getElementById("container1").style.backgroundColor = '#1BC1C4';
+            document.getElementById("label1").style.color = '#ffffff';
+            document.getElementById("kodiPortInput").focus();
         }
-        updateSoftKey({
-            left: {
-                label: 'Cancel',
-            },
-            center: {
-                label: '',
-            },
-            right: {
-                label: 'Save',
-            }
-        });
     }
     function saveSettings() {
         localStorage.setItem("settingsKey_kodiIP", document.getElementById("kodiIPInput").value);
@@ -84,14 +74,10 @@ window.addEventListener('DOMContentLoaded', function() {
                 handleUpDownKeys();
                 break;
             case 'SoftLeft':
-                if (cancelEnabled) {
-                    if (window.confirm("Revert your changes?")) {
-                        localStorage.setItem("settingsKey_kodiIP", currentSettings.kodiIP);
-                        localStorage.setItem("settingsKey_kodiPort", currentSettings.kodiPort);
-                        activityHandler.postResult({});
-                    } else {
-                        //Do nothing
-                    }
+                if (window.confirm("Revert your changes?")) {
+                    localStorage.setItem("settingsKey_kodiIP", currentSettings.kodiIP);
+                    localStorage.setItem("settingsKey_kodiPort", currentSettings.kodiPort);
+                    activityHandler.postResult({});
                 } else {
                     //Do nothing
                 }

@@ -40,7 +40,7 @@ var getToKodi = function(settingsLoaded, kodiMethod, inParams={}) {
                     }
                 }
                 console.log("[getToKodi] Finished parse of response.")
-            } else if (request.readyState == 4 && request.status == 404 || request.status == 403 || request.status == 401) {
+            } else if (request.readyState == XMLHttpRequest.DONE && request.status == 404 || request.status == 403 || request.status == 401) {
                 console.log("[getToKodi] Server not found/forbidden ("+request.status+").");
                 toastr["error"]("Unable to connect to Kodi server.", "Request failed!");
             } else if (request.readyState == XMLHttpRequest.DONE && request.status == 0) {
