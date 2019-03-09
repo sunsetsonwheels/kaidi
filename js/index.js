@@ -1,5 +1,5 @@
 window.addEventListener('DOMContentLoaded', function() {
-    KAIDI_VERSION = "0.1.1"
+    KAIDI_VERSION = "0.1.1.1"
     var settingsLoaded = null;
     toastr.options = {
         "closeButton": false,
