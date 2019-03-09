@@ -7,16 +7,6 @@ window.addEventListener('DOMContentLoaded', function() {
             activityHandler = activityRequest;
         }
     });
-    function updateSoftKey(props) {
-        const keys = Object.keys(props);
-        keys.forEach(function(key) {
-            const button = document.getElementById('softkey-' + key);
-            button.innerHTML = props[key].label;
-            if (document.getElementById("softkey-"+key) == "Cancel"){
-                cancelEnabled = true;
-            }   
-        });
-    }
     function handleUpDownKeys() {
         if (selectedElement == 0) {
             document.getElementById("container1").style.backgroundColor = '#ffffff';
@@ -100,4 +90,4 @@ window.addEventListener('DOMContentLoaded', function() {
                 activityHandler.postResult({});
                 break;
     }});
- }, false);
+}, false);

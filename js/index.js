@@ -1,5 +1,5 @@
 window.addEventListener('DOMContentLoaded', function() {
-    KAIDI_VERSION = "0.1.2"
+    KAIDI_VERSION = "0.1.3"
     var settingsLoaded = null;
     toastr.options = {
         "closeButton": false,
@@ -39,6 +39,7 @@ window.addEventListener('DOMContentLoaded', function() {
                           "kodiPort": localStorage.getItem("settingsKey_kodiPort")};
         getToKodi(settingsLoaded, "JSONRPC.ping");
     }
+    getToKodi(settingsLoaded, "GUI.ShowNotification", {"title": "Connected to Kaidi", "message": "Kaidi remote is now connected to your Kodi device. Start controlling now!"});
     window.addEventListener('keydown', function(e) {
         switch(e.key) {
             case 'ArrowLeft':

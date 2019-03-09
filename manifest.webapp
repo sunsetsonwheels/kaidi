@@ -32,12 +32,7 @@
         "returnValue": true
       },
       "me.jkelol111.kaidi.morecontrols": {
-        "href": "/html/morecontrols/morecontrols.html",
-        "disposition": "inline",
-        "returnValue": true
-      },
-      "me.jkelol111.kaidi.morecontrols.input": {
-        "href": "/html/morecontrols/morecontrols.html",
+        "href": "/html/morecontrols.html",
         "disposition": "inline",
         "returnValue": true
       }

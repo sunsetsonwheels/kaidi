@@ -1,6 +1,7 @@
 var getToKodi = function(settingsLoaded, kodiMethod, inParams={}) {
     var returnMessage = null;
     if (settingsLoaded === null) {
+        console.log("[getToKodi] Configuration not available. Not doing anything.")
         return returnMessage;
     } else {
         var constructRequest = {"jsonrpc": "2.0", 
@@ -34,6 +35,8 @@ var getToKodi = function(settingsLoaded, kodiMethod, inParams={}) {
                             } else {
                                 //Do nothing.
                             }
+                        } else {
+                            returnMessage = responseParsed.result;
                         }
                     } else {
                         console.log("[getToKodi] No 'result' in response!")
