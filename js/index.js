@@ -1,5 +1,5 @@
 window.addEventListener('DOMContentLoaded', function() {
-    KAIDI_VERSION = "0.1.3"
+    KAIDI_VERSION = "0.2.2"
     var settingsLoaded = null;
     toastr.options = {
         "closeButton": false,
@@ -19,6 +19,10 @@ window.addEventListener('DOMContentLoaded', function() {
         "hideMethod": "slideUp"
     }
     document.getElementById("kaidiVersionDiv").innerHTML = "Kaidi version "+KAIDI_VERSION;
+    function testConnection() {
+        getToKodi(settingsLoaded, "JSONRPC.ping");
+        getToKodi(settingsLoaded, "GUI.ShowNotification", {"title": "Connected to Kaidi", "message": "Kaidi remote is now connected to your Kodi device. Start controlling now!"});
+    }
     if (localStorage.getItem("settingsKey_kodiIP") == null || localStorage.getItem("settingsKey_kodiPort") == null) {
         window.alert("Welcome to Kaidi, the remote app for Kodi on KaiOS. Let's start by configuring our IP and Port.");
         var settingsWindow = new MozActivity({
@@ -32,14 +36,13 @@ window.addEventListener('DOMContentLoaded', function() {
                           Network/Services' if you have not yet.");
             settingsLoaded = {"kodiIP": localStorage.getItem("settingsKey_kodiIP"),
                               "kodiPort": localStorage.getItem("settingsKey_kodiPort")};
-            getToKodi(settingsLoaded, "JSONRPC.ping");
+            testConnection();
         }
     } else {
         settingsLoaded = {"kodiIP": localStorage.getItem("settingsKey_kodiIP"),
                           "kodiPort": localStorage.getItem("settingsKey_kodiPort")};
-        getToKodi(settingsLoaded, "JSONRPC.ping");
+        testConnection();
     }
-    getToKodi(settingsLoaded, "GUI.ShowNotification", {"title": "Connected to Kaidi", "message": "Kaidi remote is now connected to your Kodi device. Start controlling now!"});
     window.addEventListener('keydown', function(e) {
         switch(e.key) {
             case 'ArrowLeft':
@@ -60,9 +63,26 @@ window.addEventListener('DOMContentLoaded', function() {
             case 'Call':
                 getToKodi(settingsLoaded, "Input.Back");
                 break;
+            case '1':
+                getToKodi(settingsLoaded, "Input.Home");
+                break;
+            case '2':
+                getToKodi(settingsLoaded, "Input.ContextMenu");
+                break;
+            case '3':
+                getToKodi(settingsLoaded, "Input.Info")
+                break;
+            case '4':
+                var textToSend = window.prompt("Please input the text to send to Kodi:");
+                if (textToSend == null) {
+                    toastr["warning"]("User inputted nothing. Not sending!", "No input!");
+                } else {
+                    getToKodi(settingsLoaded, "Input.SendText", {"text": textToSend, "done": true});
+                }
+                break;
             case 'SoftLeft':
-                var moreControlsWindow = new MozActivity({
-                    name: "me.jkelol111.kaidi.morecontrols",
+                var playerWindow = new MozActivity({
+                    name: "me.jkelol111.kaidi.player",
                     data: {}
                 });
                 break;
@@ -74,14 +94,15 @@ window.addEventListener('DOMContentLoaded', function() {
                 settingsWindow.onsuccess = function() {
                     settingsLoaded = {"kodiIP": localStorage.getItem("settingsKey_kodiIP"),
                                       "kodiPort": localStorage.getItem("settingsKey_kodiPort")};
-                    getToKodi(settingsLoaded, "JSONRPC.ping");
+                    testConnection();
                 }
                 break;
             case 'Backspace':
-                if (window.confirm("Close Kaidi Remote?")) {
+                e.preventDefault();
+                if (confirm("Exit Kaidi Remote?")) {
                     window.close();
                 } else {
-                    //Do nothing...
+                    //Do nothing.
                 }
                 break;
     }});

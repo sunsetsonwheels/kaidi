@@ -31,8 +31,13 @@
         "disposition": "inline",
         "returnValue": true
       },
-      "me.jkelol111.kaidi.morecontrols": {
-        "href": "/html/morecontrols.html",
+      "me.jkelol111.kaidi.player": {
+        "href": "/html/player.html",
+        "disposition": "inline",
+        "returnValue": true
+      },
+      "me.jkelol111.kaidi.categories": {
+        "href": "/html/categories.html",
         "disposition": "inline",
         "returnValue": true
       }
