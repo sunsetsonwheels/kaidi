@@ -26,13 +26,13 @@ var getToKodi = function(settingsLoaded, kodiMethod, inParams={}) {
                             if (responseParsed.result == "pong") {
                                 toastr["success"]("Connected to Kodi at "+settingsLoaded.kodiIP+":"+settingsLoaded.kodiPort, "Request OK!");
                             } else {
-                                toastr["warning"]("Connected but invalid response from method '"+kodiMethod+"'.", "Request OK-ish!");
+                                toastr["warning"]("Connected but non-standard response from method '"+kodiMethod+"'.", "Request OK-ish!");
                             }
                         } else if (kodiMethod == "Input.Up" || kodiMethod == "Input.Down" || kodiMethod == "Input.Left" || kodiMethod == "Input.Right" || kodiMethod == "Input.Select" || kodiMethod == "Input.Back") {
-                            if (responseParsed.result == "OK") {
-                                toastr["success"]("Input method requested successfully.", "Request OK!");
-                            } else {
+                            if (responseParsed.result != "OK") {
                                 toastr["warning"]("Connected but invalid response from method '"+kodiMethod+"'.", "Request OK-ish!");
+                            } else {
+                                //Do nothing.
                             }
                         }
                     } else {
