@@ -6,8 +6,6 @@
         <meta name="viewport" content="width=device-width,user-scalable=no">
         <link rel="stylesheet" href="/css/kaidi.css">
         <link rel="stylesheet" href="/css/toastr.css">
-        <script src="/js/lib/jquery-3.3.1.min.js"></script>
-        <script src="/js/lib/toastr.min.js"></script>
         <script src="/js/settings.js" defer></script>
     </head>
     <body>
@@ -18,11 +16,15 @@
         </div>
         <div class="settingsInputContainer" id="container0">
             <div class="settingsInputLabel" id="label0">IP Address of Kodi</div>
-            <input type="text" class="settingsInput" id="kodiIPInput"></input>
+            <div class="settingsInputInternalContainer">
+                <input type="text" class="settingsInput" id="kodiIPInput"></input>
+            </div>
         </div>
         <div class="settingsInputContainer" id="container1">
             <div class="settingsInputLabel" id="label1">Port of Kodi</div>
-            <input class="settingsInput" id="kodiPortInput"></input>
+            <div class="settingsInputInternalContainer">
+                <input class="settingsInput" id="kodiPortInput"></input>
+            </div>
         </div>
         <div id="softkeys">
             <div id="softkey-left">Cancel</div>

@@ -35,11 +35,6 @@
         "href": "/html/player.html",
         "disposition": "inline",
         "returnValue": true
-      },
-      "me.jkelol111.kaidi.categories": {
-        "href": "/html/categories.html",
-        "disposition": "inline",
-        "returnValue": true
       }
     },
     "installs_allowed_from": [
