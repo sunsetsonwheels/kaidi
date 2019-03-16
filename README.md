@@ -1,5 +1,5 @@
 # kaidi
-Kodi remote for KaiOS.
+### Kodi remote for KaiOS.
 
 *Control your Kodi from a banana, because why not?*
 
