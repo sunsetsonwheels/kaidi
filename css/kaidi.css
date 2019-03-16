@@ -30,12 +30,26 @@
   padding: 3px 5px;
 }
 
+#softkeys-black {
+  position: fixed; bottom: 0; left: 0; width: 100%; height: 30px;
+  background: #000000;
+  padding: 3px 5px;
+}
+
 #softkeys > * {
   display: inline-block;
   font-family: "Open Sans";
   width: 72px;
   padding: 0 5px;
   color: #323232;
+}
+
+#softkeys-black > * {
+  display: inline-block;
+  font-family: "Open Sans";
+  width: 72px;
+  padding: 0 5px;
+  color: #ffffff;
 }
 
 #softkey-left {
@@ -78,7 +92,7 @@
 }
 
 .settingsInput {
-  width: 220px;
+  width: calc(100% - 20px);
   height: 36px;
   border-radius: 2px;
   font-size: 16px;
@@ -86,10 +100,55 @@
   border: 1px solid #aaaaaa;
 }
 
-#instructionsContainer {
+.settingsButton {
+  -moz-appearance: none;
+  width: calc(100% - 20px);
+  height: 36px;
+  color: #323232;
+  font-family: "Open Sans";
+  font-weight: 600;
+  font-size: 15px;
+  border-radius: 2px;
+  background-color: #ffffff;
+  border: none;
+  text-align: left;
+}
+
+.instructionsContainer {
   width: 100%;
   background-color: #ffffff;
   display: inline-block;
+}
+
+#greyOutBox {
+  width:100%;
+  height:100%;
+  position: absolute;
+  left:0; 
+  top:0;     
+  z-index:10;
+  background: rgba(184,184,184,0.7);
+  visibility: hidden;
+}
+
+#volumeBarContainer {
+  width: calc(100% - 20px);
+  position: relative;
+  left: 10px;
+  right: 10px;
+  top: 50%;
+}
+
+meter::-moz-meter-bar {
+  -moz-appearance: none;
+  background: none;
+  border-radius: 3px;
+  background-color: #1BC1C4;
+}
+
+#volumeBar {
+  width: 100%;
+  height: 5px;
 }
 
 .label {
@@ -98,9 +157,34 @@
   text-align: left;
 }
 
+.labelCentered {
+  font-family: "Open Sans";
+  color: #323232;
+  font-weight: 600;
+  font-size: 16px;
+  text-align: center;
+  position: relative;
+}
+
+.labelWhite {
+  font-family: "Open Sans";
+  color: #dadada;
+  text-align: left;
+}
+
+.labelWhiteBold {
+  font-family: "Open Sans";
+  font-weight: 800;
+  color: #dadada;
+  text-align: left;
+}
+
 .labelBlurred {
   font-family: "Open Sans";
   color: #A9A9A9;
-  font-weight: 400;
   text-align: left;
+}
+
+.playerBody {
+  background-color: #323232; 
 }

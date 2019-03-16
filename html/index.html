@@ -5,7 +5,7 @@
         <title>Kaidi Remote</title>
         <meta name="viewport" content="width=device-width,user-scalable=no">
         <link rel="stylesheet" href="/css/kaidi.css">
-        <link rel="stylesheet" href="/css/toastr.css">
+        <link rel="stylesheet" href="/css/toastr.min.css">
         <script src="/js/lib/jquery-3.3.1.min.js"></script>
         <script src="/js/lib/toastr.min.js"></script>
         <script src="/js/index.js" defer></script>
@@ -16,7 +16,13 @@
                 <h1 class="headertext">Kaidi Remote</h1>
             </div>
         </div>
-        <div id=instructionsContainer>
+        <div id="greyOutBox">
+            <div id="volumeBarContainer">
+                <div class="labelCentered">Volume</div>
+                <meter min='0' max='100' id="volumeBar">hello</meter>
+            </div>
+        </div>
+        <div class="instructionsContainer">
             <div class="label">▲ ▼ ◀ ▶: Arrow keys</label>
             <div class="label">Answer call key: Back</label>
             <div class="label">1: Home</label>
