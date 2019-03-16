@@ -28,9 +28,6 @@
       },
       "desktop-notification": {
         "description": "Required for to send notifications/toasts."
-      },
-      "serviceworker": {
-        "description": "Required for Kodi notifications."
       }
     },
     "activities": {

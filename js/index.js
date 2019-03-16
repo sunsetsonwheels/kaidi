@@ -1,5 +1,5 @@
 window.addEventListener('DOMContentLoaded', function() {
-    KAIDI_VERSION = "0.4.3"
+    KAIDI_VERSION = "0.4.4"
     var settingsLoaded = null;
     var changeVolumeOpt = null;
     console.log("[init] Setting toastr options.")
@@ -94,13 +94,13 @@ window.addEventListener('DOMContentLoaded', function() {
                 currentVolume = data.volume + 5;
             }
         } else if (changeVolumeOpt == "Down") {
-            if (currentVolume < 0) {
-                currentVolume = 0;
+            if (currentVolume = 0) {
+                //Do nothing
             } else {
                 currentVolume = data.volume - 5;
             }
         } else {
-            console.log("[changeVolume] Invalid input. Not doing anything.");
+            //Do nothing
         }
         getToKodi("Application.SetVolume", {"volume": currentVolume});
         changeVolumeOpt = null;

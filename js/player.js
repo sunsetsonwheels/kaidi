@@ -1,5 +1,6 @@
 window.addEventListener('DOMContentLoaded', function() {
     var activityHandler = null;
+    var changeVolumeOpt = null;
     navigator.mozSetMessageHandler('activity', function(activityRequest) {
         let option = activityRequest.source;
         if(option.name == "me.jkelol111.kaidi.player") {
@@ -23,7 +24,6 @@ window.addEventListener('DOMContentLoaded', function() {
         "showMethod": "slideDown",
         "hideMethod": "slideUp"
     }
-    try {
     var playing = false;
     var dirtytemp = null;
     settingsLoaded = {"kodiIP": localStorage.getItem("settingsKey_kodiIP"),
@@ -124,6 +124,31 @@ window.addEventListener('DOMContentLoaded', function() {
     function setRepeatEvent(data) {
         getToKodi2("Player.SetRepeat", {"playerid": data[0].playerid, "repeat": "cycle"});
     }
+    function changeVolume(data) {
+        var currentVolume = data.volume;
+        if (changeVolumeOpt == "Up") {
+            if (currentVolume = 100) {
+                //Do nothing
+            } else {
+                currentVolume = data.volume + 5;
+            }
+        } else if (changeVolumeOpt == "Down") {
+            if (currentVolume = 0) {
+                //Do nothing
+            } else {
+                currentVolume = data.volume - 5;
+            }
+        } else {
+            //Do nothing
+        }
+        getToKodi2("Application.SetVolume", {"volume": currentVolume});
+        changeVolumeOpt = null;
+        document.getElementById("volumeBar").value = currentVolume;
+        document.getElementById("greyOutBox").style.visibility = "visible";
+        window.setTimeout(function(e) {
+            document.getElementById("greyOutBox").style.visibility = "hidden";
+        }, 1000);
+    }
     var ws = new WebSocket('ws://'+settingsLoaded.kodiIP+':9090'+'/jsonrpc');
     ws.onmessage = function(e) {
         var j = JSON.parse(e.data);
@@ -160,7 +185,8 @@ window.addEventListener('DOMContentLoaded', function() {
                 document.getElementById("currentPlayingTime").innerHTML = "This page helps you control Kodi's player.";
                 break;
             default:
-                toastr["info"](j.method);
+                //toastr["info"]("Method: "+j.method+"\nData:\n"+e.data);
+                break;
         }
     }
     ws.onerror = function(e) {
@@ -185,28 +211,26 @@ window.addEventListener('DOMContentLoaded', function() {
                     getToKodi2("Player.GetActivePlayers", {}, setRepeatEvent);
                 } else {}
                 break;
+            case 'ArrowUp':
+                changeVolumeOpt = "Up";
+                getToKodi2("Application.GetProperties", {"properties": ["volume", "muted"]}, changeVolume);
+                break;
+            case 'ArrowDown':
+                changeVolumeOpt = "Down";
+                getToKodi2("Application.GetProperties", {"properties": ["volume", "muted"]}, changeVolume);
+                break;
             case 'ArrowLeft':
-                if (playing) {
-                    getToKodi2("Player.GetActivePlayers", {}, previousEvent);
-                } else {}
+                getToKodi2("Player.GetActivePlayers", {}, previousEvent);
                 break;
             case 'ArrowRight':
-                if (playing) {
-                    getToKodi2("Player.GetActivePlayers", {}, nextEvent);
-                }
+                getToKodi2("Player.GetActivePlayers", {}, nextEvent);
                 break;
             case 'Enter':
-                if (playing) {
-                    getToKodi2("Player.GetActivePlayers", {}, playPauseEvent);
-                } else {}
+                getToKodi2("Player.GetActivePlayers", {}, playPauseEvent);
                 break;
             case 'Backspace':
                 e.preventDefault();
                 ws.close();
                 break;
     }});
-    } catch (err) {
-        toastr["error"]("Error:"+err);
-    }
-    
 }, false);
