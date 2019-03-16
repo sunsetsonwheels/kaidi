@@ -127,13 +127,13 @@ window.addEventListener('DOMContentLoaded', function() {
     function changeVolume(data) {
         var currentVolume = data.volume;
         if (changeVolumeOpt == "Up") {
-            if (currentVolume = 100) {
+            if (currentVolume == 100) {
                 //Do nothing
             } else {
                 currentVolume = data.volume + 5;
             }
         } else if (changeVolumeOpt == "Down") {
-            if (currentVolume = 0) {
+            if (currentVolume == 0) {
                 //Do nothing
             } else {
                 currentVolume = data.volume - 5;
@@ -213,11 +213,11 @@ window.addEventListener('DOMContentLoaded', function() {
                 break;
             case 'ArrowUp':
                 changeVolumeOpt = "Up";
-                getToKodi2("Application.GetProperties", {"properties": ["volume", "muted"]}, changeVolume);
+                getToKodi2("Application.GetProperties", {"properties": ["volume"]}, changeVolume);
                 break;
             case 'ArrowDown':
                 changeVolumeOpt = "Down";
-                getToKodi2("Application.GetProperties", {"properties": ["volume", "muted"]}, changeVolume);
+                getToKodi2("Application.GetProperties", {"properties": ["volume"]}, changeVolume);
                 break;
             case 'ArrowLeft':
                 getToKodi2("Player.GetActivePlayers", {}, previousEvent);
