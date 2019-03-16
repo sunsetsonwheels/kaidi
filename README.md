@@ -1,7 +1,7 @@
 # kaidi
 ### Kodi remote for KaiOS.
 <p align="center">
-  <img src="https://anonfile.com/A3J2kbxeb3/Screenshot_2019-03-16_at_8.37.14_PM_png">
+  <img src="https://cdn-02.anonfile.com/A3J2kbxeb3/0e289c10-1552740624/Screenshot+2019-03-16+at+8.37.14+PM.png">
   <i>Control your Kodi from a banana, because why not?</i><br>
   <a href="https://www.google.com/url?q=https%3A%2F%2Fsites.google.com%2Fview%2Fbananahackers%2Fhome&sa=D&sntz=1&usg=AFQjCNEtvVwlme7uKDuqfJaXLKBnLWNHTg">BananaHackers</a> |
   <a href="https://github.com/jkelol111/kaidi/issues">Issue tracker</a> |
