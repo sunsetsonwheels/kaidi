@@ -1,7 +1,7 @@
 # kaidi
 Kodi remote for KaiOS.
 
-`Control your Kodi from a banana, because why not?`
+*Control your Kodi from a banana, because why not?*
 
 **PROJECT STATE: Alpha (version 0.4.2)**
 
