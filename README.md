@@ -2,13 +2,13 @@
   <img align="center" src="https://cdn-02.anonfile.com/A3J2kbxeb3/0e289c10-1552740624/Screenshot+2019-03-16+at+8.37.14+PM.png">
   <br>
   <h1 align="center">Kaidi</h1>
-  <br>
   <h3 align="center">The Kodi remote app for KaiOS</h3>
   <br>
-  <i>Control your Kodi from a banana, because why not?</i><br>
-  <a href="https://www.google.com/url?q=https%3A%2F%2Fsites.google.com%2Fview%2Fbananahackers%2Fhome&sa=D&sntz=1&usg=AFQjCNEtvVwlme7uKDuqfJaXLKBnLWNHTg">BananaHackers page</a> |
-  <a href="https://github.com/jkelol111/kaidi/issues">Issue tracker</a> |
-  <a href="https://github.com/jkelol111/kaidi/releases">Download now</a>
+  <i align="center">Control your Kodi from a banana, because why not?</i>
+  <br>
+  <a align="center" href="https://www.google.com/url?q=https%3A%2F%2Fsites.google.com%2Fview%2Fbananahackers%2Fhome&sa=D&sntz=1&usg=AFQjCNEtvVwlme7uKDuqfJaXLKBnLWNHTg">BananaHackers page</a> |
+  <a align="center" href="https://github.com/jkelol111/kaidi/issues">Issue tracker</a> |
+  <a align="center" href="https://github.com/jkelol111/kaidi/releases">Download now</a>
   <br><br>
 </p>
 
