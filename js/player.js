@@ -54,7 +54,11 @@ window.addEventListener('DOMContentLoaded', function() {
                                      data: JSON.stringify({jsonrpc: "2.0", method: "Player.GetItem", params: {properties: ["title", "artist", "duration"], playerid: response.data.result[0].playerid}, id: 1}),
                                      headers: {"Content-Type": "application/json"}})
                     .then(function(response) {
-                            document.getElementById("currentPlayingTitle").innerHTML = response.data.result.item.title;
+                            if (response.data.result.item.title == "") {
+                                document.getElementById("currentPlayingTitle").innerHTML = response.data.result.item.label;
+                            } else {
+                                document.getElementById("currentPlayingTitle").innerHTML = response.data.result.item.title;
+                            }
                             if (response.data.result.item.artist == "") {
                                 document.getElementById("currentPlayingArtist").innerHTML = "by artist info unavailable!";
                             } else {
@@ -106,6 +110,24 @@ window.addEventListener('DOMContentLoaded', function() {
                                             data: JSON.stringify({jsonrpc: "2.0", method: "Player.SetRepeat", params: {repeat: "cycle", playerid: response.data.result[0].playerid}, id: 1}),
                                             headers: {"Content-Type": "application/json"}})
                             .catch(error => toastr["error"]("Unable to connect to Kodi ("+error.status+": "+error.statusText+")", "Connect failed!"));
+                            break;
+                        case "SeekForward":
+                            atomic(kodiURL, {method: "POST",
+                                             data: JSON.stringify({jsonrpc: "2.0", method: "Player.Seek", params: {value: "smallforward", playerid: response.data.result[0].playerid}, id: 1}),
+                                             headers: {"Content-Type": "application/json"}})
+                            .then(function(response) {
+                                updateLabels();
+                            })
+                            .catch(error => toastr["error"]("Unable to connect to Kodi ("+error.status+": "+error.statusText+")", "Connect failed!"))
+                            break;
+                        case "SeekBackward":
+                            atomic(kodiURL, {method: "POST",
+                                             data: JSON.stringify({jsonrpc: "2.0", method: "Player.Seek", params: {value: "smallbackward", playerid: response.data.result[0].playerid}, id: 1}),
+                                             headers: {"Content-Type": "application/json"}})
+                            .then(function(response) {
+                                updateLabels();
+                            })
+                            .catch(error => toastr["error"]("Unable to connect to Kodi ("+error.status+": "+error.statusText+")", "Connect failed!"))
                             break;
                         case "ShuffleCycle":
                             break;
@@ -185,12 +207,48 @@ window.addEventListener('DOMContentLoaded', function() {
         activityHandler.postResult({});
     }
     updateLabels();
+    var beginKeydown = 0;
+    var showBackWarn = localStorage.getItem("settingsKey_showPlayerWarn");
+    if (!showBackWarn) {
+        localStorage.setItem("settingsKey_showPlayerWarn", true);
+    } else {}
+    if (localStorage.getItem("settingsKey_showPlayerWarn")) {
+        showBackWarn = true;
+    } else {
+        showBackWarn = false;
+    }
+    window.addEventListener('keyup', function(e) {
+        if (playing) {
+            if (e.key == "ArrowLeft" || e.key == "ArrowRight") {
+                if ((new Date()).getTime() - beginKeydown >= 500) {
+                    beginKeydown = 0; 
+                    if (showBackWarn) {
+                        localStorage.setItem("settingsKey_showBackWarn", false);
+                        window.alert("This is the last time you will see this message, I promise. To seek backwards/forwards, hold on the left/right button.");
+                    } else {}
+                    if (e.key == "ArrowLeft") {
+                        playerControlHandler("SeekBackward");
+                    } else if (e.key == "ArrowRight") {
+                        playerControlHandler("SeekForward");
+                    }
+                } else {
+                    if (e.key == "ArrowLeft") {
+                        playerControlHandler("Previous");
+                    } else if (e.key == "ArrowRight") {
+                        playerControlHandler("Next");
+                    }
+                }
+            }
+        } else {}
+    })
     window.addEventListener('keydown', function(e) {
         switch(e.key) {
             case 'SoftLeft':
                 break;
             case 'SoftRight':
-                playerControlHandler("RepeatCycle");
+                if (playing) {
+                    playerControlHandler("RepeatCycle");
+                }
                 break;
             case 'ArrowUp':
                 changeVolume("Up");
@@ -199,10 +257,10 @@ window.addEventListener('DOMContentLoaded', function() {
                 changeVolume("Down");
                 break;
             case 'ArrowLeft':
-                playerControlHandler("Previous");
+                beginKeydown = (new Date()).getTime();
                 break;
             case 'ArrowRight':
-                playerControlHandler("Next");
+                beginKeydown = (new Date()).getTime();
                 break;
             case 'Enter':
                 playerControlHandler("PlayPause");

@@ -1,5 +1,5 @@
 window.addEventListener('DOMContentLoaded', function() {
-    KAIDI_VERSION = "0.4.6"
+    KAIDI_VERSION = "0.4.7"
     var settingsLoaded;
     var kodiURL;
     toastr.options = {

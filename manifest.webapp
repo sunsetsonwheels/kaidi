@@ -1,5 +1,5 @@
 {
-    "version": "0.4.6",
+    "version": "0.4.7",
     "name": "Kaidi Remote",
     "description": "A Kodi remote app for KaiOS.",
     "launch_path": "/html/index.html",
