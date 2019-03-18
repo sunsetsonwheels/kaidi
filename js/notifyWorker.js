@@ -6,7 +6,7 @@ function spawnNotification(title, body) {
     var n = new Notification(title, options);
     n.onclick = function(e) {
         e.preventDefault();
-        n.close();
+        n.close.bind(n);
         var playerWindow = new MozActivity({name: "me.jkelol111.kaidi.player",
                                             data: {}});
     }

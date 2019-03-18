@@ -1,6 +1,5 @@
 window.addEventListener('DOMContentLoaded', function() {
-    var activityHandler = null;
-    var changeVolumeOpt = null;
+    var activityHandler;
     navigator.mozSetMessageHandler('activity', function(activityRequest) {
         let option = activityRequest.source;
         if(option.name == "me.jkelol111.kaidi.player") {
@@ -25,153 +24,145 @@ window.addEventListener('DOMContentLoaded', function() {
         "hideMethod": "slideUp"
     }
     var playing = false;
-    var dirtytemp = null;
     settingsLoaded = {"kodiIP": localStorage.getItem("settingsKey_kodiIP"),
                       "kodiPort": localStorage.getItem("settingsKey_kodiPort")};
-    var request = new XMLHttpRequest({mozSystem: true});
-    function getToKodi2(kodiMethod, inParams, callback) {
-        if (settingsLoaded === null) {
-            //Do nothing.
-        } else {
-            var returnMessage = null;
-            var constructRequest = {"jsonrpc": "2.0", 
-                                    "method": kodiMethod, 
-                                    "id": 1};
-            if (typeof inParams == "object" && inParams != {}) {
-                constructRequest.params = inParams;
-            }
-            request.open("POST", "http://"+settingsLoaded.kodiIP+":"+settingsLoaded.kodiPort+"/jsonrpc", true);
-            request.setRequestHeader("Content-Type", "application/json");
-            request.onload =  function() {
-                var responseParsed = JSON.parse(request.responseText);
-                if (responseParsed.error) {
-                    toastr["error"]("Error: "+responseParsed.error.message+"("+responseParsed.error.code+").", "Request failed!");
-                } else {
-                    if (responseParsed.result) {
-                        if (kodiMethod == "JSONRPC.ping") {
-                            if (responseParsed.result == "pong") {
-                                toastr["success"]("Connected to Kodi at "+settingsLoaded.kodiIP+":"+settingsLoaded.kodiPort, "Request OK!");
+    var kodiURL = "http://"+settingsLoaded.kodiIP+":"+settingsLoaded.kodiPort+"/jsonrpc";
+    function updateLabels() {
+        atomic(kodiURL, {method: "POST",
+                         data: JSON.stringify({jsonrpc: "2.0", method: "Player.GetActivePlayers", id: 1}),
+                         headers: {"Content-Type": "application/json"}})
+        .then(function(response) {
+                if (response.data.result[0]) {
+                    atomic(kodiURL, {method: "POST",
+                                     data: JSON.stringify({jsonrpc: "2.0", method: "Player.GetProperties", params: {properties: ["speed"], playerid: response.data.result[0].playerid}, id: 1}),
+                                     headers: {"Content-Type": "application/json"}})
+                    .then(function(response) {
+                            if (response.data.result.speed !== 0) {
+                                playing = true;
+                                document.getElementById("softkey-center").innerHTML = "PAUSE";
+                                document.getElementById("softkey-left").innerHTML = "Shuffle";
+                                document.getElementById("softkey-right").innerHTML = "Repeat";
                             } else {
-                                toastr["warning"]("Connected but non-standard response from method '"+kodiMethod+"'.", "Request OK-ish!");
+                                playing = false;
+                                document.getElementById("softkey-center").innerHTML = "PLAY";
+                                document.getElementById("softkey-left").innerHTML = "";
+                                document.getElementById("softkey-right").innerHTML = "";
+                    })
+                    .catch(error => toastr["error"]("Unable to connect to Kodi ("+error.status+": "+error.statusText+")", "Connect failed!"));
+                    atomic(kodiURL, {method: "POST",
+                                     data: JSON.stringify({jsonrpc: "2.0", method: "Player.GetItem", params: {properties: ["title", "artist", "duration"], playerid: response.data.result[0].playerid}, id: 1}),
+                                     headers: {"Content-Type": "application/json"}})
+                    .then(function(response) {
+                            document.getElementById("currentPlayingTitle").innerHTML = response.data.result.item.label;
+                            if (response.data.result.item.artist == "") {
+                                document.getElementById("currentPlayingArtist").innerHTML = "by artist info unavailable!";
+                            } else {
+                                document.getElementById("currentPlayingArtist").innerHTML = "by "+response.data.result.item.artist;
                             }
-                        } else {
-                            returnMessage = responseParsed.result;
-                        }
-                    } else {}
+                    })
+                    .catch(error => toastr["error"]("Unable to connect to Kodi ("+error.status+": "+error.statusText+")", "Connect failed!"));
+                } else {
+                    toastr["warning"]("Cannot perform action because player is not active", "Cannot run method!");
                 }
-                if (returnMessage != null) {
-                    if (typeof callback == "function") {
-                        callback(returnMessage);
-                    } else {}
-                } else {}
-            }
-            request.onerror = function () {
-                if (request.status == 404 || request.status == 403 || request.status == 401) {
-                    toastr["error"]("Unable to connect to Kodi server.", "Request failed!");
-                } else if (request.status == 0) {
-                    toastr["error"]("Unable to connect to Kodi server.", "Request failed!");
+        })
+        .catch(error => toastr["error"]("Unable to connect to Kodi ("+error.status+": "+error.statusText+")", "Connect failed!"));
+    }
+    function playerControlHandler(control) {
+        atomic(kodiURL, {method: "POST",
+                         data: JSON.stringify({jsonrpc: "2.0", method: "Player.GetActivePlayers", id: 1}),
+                         headers: {"Content-Type": "application/json"}})
+        .then(function(response) {
+                if (response.data.result[0]) {
+                    switch(control) {
+                        case "PlayPause":
+                            atomic(kodiURL, {method: "POST",
+                                             data: JSON.stringify({jsonrpc: "2.0", method: "Player.PlayPause", params: {playerid: response.data.result[0].playerid}, id: 1}),
+                                             headers: {"Content-Type": "application/json"}})
+                            .then(function(response) {
+                                updateLabels();
+                            })
+                            .catch(error => toastr["error"]("Unable to connect to Kodi ("+error.status+": "+error.statusText+")", "Connect failed!"));
+                            break;
+                        case "Next":
+                            atomic(kodiURL, {method: "POST",
+                                             data: JSON.stringify({jsonrpc: "2.0", method: "Player.GoTo", params: {to: "next", playerid: response.data.result[0].playerid}, id: 1}),
+                                             headers: {"Content-Type": "application/json"}})
+                            .then(function(response) {
+                                updateLabels();
+                            })
+                            .catch(error => toastr["error"]("Unable to connect to Kodi ("+error.status+": "+error.statusText+")", "Connect failed!"));
+                        case "Previous":
+                            atomic(kodiURL, {method: "POST",
+                                             data: JSON.stringify({jsonrpc: "2.0", method: "Player.GoTo", params: {to: "previous", playerid: response.data.result[0].playerid}, id: 1}),
+                                             headers: {"Content-Type": "application/json"}})
+                            .then(function(response) {
+                                updateLabels();
+                            })
+                            .catch(error => toastr["error"]("Unable to connect to Kodi ("+error.status+": "+error.statusText+")", "Connect failed!"));
+                            break;
+                        case "RepeatCycle":
+                            atomic(kodiURL, {method: "POST",
+                                            data: JSON.stringify({jsonrpc: "2.0", method: "Player.SetRepeat", params: {repeat: "cycle", playerid: response.data.result[0].playerid}, id: 1}),
+                                            headers: {"Content-Type": "application/json"}})
+                            .catch(error => toastr["error"]("Unable to connect to Kodi ("+error.status+": "+error.statusText+")", "Connect failed!"));
+                            break;
+                        case "ShuffleCycle":
+                            break;
+                        default:
+                            toastr["error"]("Supplied argument to playerControlHandler incorrect", "Argument error!");
+                            break;
+                    }
+                } else {
+                    toastr["warning"]("Cannot perform action because player is not active", "Cannot run method!");
                 }
-            }
-            request.send(JSON.stringify(constructRequest));
-        }
+        })
+        .catch(error => toastr["error"]("Unable to connect to Kodi ("+error.status+": "+error.statusText+")", "Connect failed!"));
     }
-    function updateLabelsEvent(data) {
-        if (playing) {
-            document.getElementById("softkey-center").innerHTML = "PAUSE";
-            document.getElementById("softkey-left").innerHTML = "Shuffle";
-            document.getElementById("softkey-right").innerHTML = "Repeat";
-        } else {
-            document.getElementById("softkey-center").innerHTML = "PLAY";
-            document.getElementById("softkey-left").innerHTML = "";
-            document.getElementById("softkey-right").innerHTML = "";
-        }
-        document.getElementById("currentPlayingTitle").innerHTML = data.item.label;
-        if (data.item.artist == "") {
-            document.getElementById("currentPlayingArtist").innerHTML = "by artist info unavailable!";
-        } else {
-            document.getElementById("currentPlayingArtist").innerHTML = "by "+data.item.artist;
-        }
-    }
-    function updateLabelsEventShim(data) {
-        if (data[0]) {
-            dirtytemp = data[0].type;
-            if (dirtytemp == "audio") {
-                getToKodi2("Player.GetItem", {"properties": ["title", "album", "artist", "duration", "thumbnail", "file", "fanart", "streamdetails"], "playerid": data[0].playerid}, updateLabelsEvent);
-            } else if (dirtytemp == "video") {
-                getToKodi2("Player.GetItem", {"properties": ["title", "album", "artist", "season", "episode", "duration", "showtitle", "tvshowid", "thumbnail", "file", "fanart", "streamdetails"], "playerid": data[0].playerid}, updateLabelsEvent);
-            } else {
-                //Invalid
-            }    
-        } else {}
-    }
-    function updatePlayingStatusEvent(data) {
-        if (data[0].playerid == 0 || data[0].playerid == 1) {
-            playing = true;
-        } else {
-            playing = false;
-        }
-    }
-
-    function playPauseEvent(data) {
-        getToKodi2("Player.PlayPause", {"playerid": data[0].playerid});
-    }
-    function previousEvent(data) {
-        getToKodi2("Player.GoTo", {"playerid": data[0].playerid, "to": "previous"});
-    }
-    function nextEvent(data) {
-        getToKodi2("Player.GoTo", {"playerid": data[0].playerid, "to": "previous"});
-    }
-    function setRepeatEvent(data) {
-        getToKodi2("Player.SetRepeat", {"playerid": data[0].playerid, "repeat": "cycle"});
-    }
-    function changeVolume(data) {
-        var currentVolume = data.volume;
-        if (changeVolumeOpt == "Up") {
-            if (currentVolume == 100) {
-                //Do nothing
-            } else {
-                currentVolume = data.volume + 5;
-            }
-        } else if (changeVolumeOpt == "Down") {
-            if (currentVolume == 0) {
-                //Do nothing
-            } else {
-                currentVolume = data.volume - 5;
-            }
-        } else {
-            //Do nothing
-        }
-        getToKodi2("Application.SetVolume", {"volume": currentVolume});
-        changeVolumeOpt = null;
-        document.getElementById("volumeBar").value = currentVolume;
-        document.getElementById("greyOutBox").style.visibility = "visible";
-        window.setTimeout(function(e) {
-            document.getElementById("greyOutBox").style.visibility = "hidden";
-        }, 1000);
+    function changeVolume(opt) {
+        atomic(kodiURL, {method: "POST",
+                         data: JSON.stringify({jsonrpc: "2.0", method: "Application.GetProperties", params: {properties: ["volume"]} , id: 1}),
+                         headers: {"Content-Type": "application/json"}})
+        .then(function(response) {
+                var currentVolume = response.data.result.volume;
+                switch(opt) {
+                    case "Up":
+                        if (currentVolume !== 100) {
+                            currentVolume += 5;
+                        } else {}
+                        break;
+                    case "Down":
+                        if (currentVolume !== 0) {
+                            currentVolume -= 5;
+                        } else {}
+                        break;
+                    default:
+                        return;
+                        break;
+                }
+                atomic(kodiURL, {method: "POST",
+                                 data: JSON.stringify({"jsonrpc": "2.0", "method": "Application.SetVolume", "params": {"volume": currentVolume}, "id": 1}),
+                                 headers: {"Content-Type": "application/json"}})
+                .then(function(response) {
+                        document.getElementById("volumeBar").value = currentVolume;
+                        document.getElementById("greyOutBox").style.visibility = "visible";
+                        window.setTimeout(function(e) {
+                            document.getElementById("greyOutBox").style.visibility = "hidden";
+                        }, 1000);
+                })
+                .catch(error => toastr["error"]("Unable to connect to Kodi ("+error.status+": "+error.statusText+")", "Connect failed!"));
+        })
+        .catch(error => toastr["error"]("Unable to connect to Kodi ("+error.status+": "+error.statusText+")", "Connect failed!"));
     }
     var ws = new WebSocket('ws://'+settingsLoaded.kodiIP+':9090'+'/jsonrpc');
     ws.onmessage = function(e) {
         var j = JSON.parse(e.data);
         switch(j.method) {
             case "Player.OnAVStart":
-                playing = true;
-                getToKodi2("Player.GetActivePlayers", {}, updateLabelsEventShim);
-                break;
             case "Player.OnAVChange":
-                playing = true;
-                getToKodi2("Player.GetActivePlayers", {}, updateLabelsEventShim);
-                break;
             case "Player.OnPlay":
-                playing = true;
-                getToKodi2("Player.GetActivePlayers", {}, updateLabelsEventShim);
-                break;
             case "Player.OnPause":
-                playing = false;
-                getToKodi2("Player.GetActivePlayers", {}, updateLabelsEventShim);
-                break;
             case "Player.OnResume":
-                playing = true;
-                getToKodi2("Player.GetActivePlayers", {}, updateLabelsEventShim);
+                updateLabels();
                 break;
             case "Player.OnSpeedChanged":
                 break;
@@ -189,44 +180,31 @@ window.addEventListener('DOMContentLoaded', function() {
                 break;
         }
     }
-    ws.onerror = function(e) {
-        toastr["error"]("Unable to connect to Kodi server via WebSocket.", "Request failed!");
-    }
     ws.onclose = function(e) {
         activityHandler.postResult({});
     }
-    getToKodi2("Player.GetActivePlayers", {}, updatePlayingStatusEvent);
-    window.setTimeout(function() {
-        getToKodi2("Player.GetActivePlayers", {}, updateLabelsEventShim);
-    }, 500);
+    updateLabels();
     window.addEventListener('keydown', function(e) {
         switch(e.key) {
             case 'SoftLeft':
-                if (playing) {
-                    getToKodi2("Player.GetActivePlayers", {}, setShuffleEvent);
-                } else {}
                 break;
             case 'SoftRight':
-                if (playing) {
-                    getToKodi2("Player.GetActivePlayers", {}, setRepeatEvent);
-                } else {}
+                playerControlHandler("RepeatCycle");
                 break;
             case 'ArrowUp':
-                changeVolumeOpt = "Up";
-                getToKodi2("Application.GetProperties", {"properties": ["volume"]}, changeVolume);
+                changeVolume("Up");
                 break;
             case 'ArrowDown':
-                changeVolumeOpt = "Down";
-                getToKodi2("Application.GetProperties", {"properties": ["volume"]}, changeVolume);
+                changeVolume("Down");
                 break;
             case 'ArrowLeft':
-                getToKodi2("Player.GetActivePlayers", {}, previousEvent);
+                playerControlHandler("Previous");
                 break;
             case 'ArrowRight':
-                getToKodi2("Player.GetActivePlayers", {}, nextEvent);
+                playerControlHandler("Next");
                 break;
             case 'Enter':
-                getToKodi2("Player.GetActivePlayers", {}, playPauseEvent);
+                playerControlHandler("PlayPause");
                 break;
             case 'Backspace':
                 e.preventDefault();

@@ -1,5 +1,5 @@
 {
-    "version": "0.1.0",
+    "version": "0.4.6",
     "name": "Kaidi Remote",
     "description": "A Kodi remote app for KaiOS.",
     "launch_path": "/html/index.html",
@@ -23,9 +23,6 @@
 	    "systemXHR": {
 	      "description": "Required to POST to Kodi."
 	    },
-      "tcp-socket": {
-        "description": "Required to use WebSockets with Kodi."
-      },
       "desktop-notification": {
         "description": "Required for to send notifications/toasts."
       }

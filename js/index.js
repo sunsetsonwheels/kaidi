@@ -1,8 +1,6 @@
 window.addEventListener('DOMContentLoaded', function() {
-    KAIDI_VERSION = "0.4.5"
-    var settingsLoaded = null;
-    var changeVolumeOpt = null;
-    console.log("[init] Setting toastr options.")
+    KAIDI_VERSION = "0.4.6"
+    var settingsLoaded;
     toastr.options = {
         "closeButton": false,
         "debug": false,
@@ -20,110 +18,101 @@ window.addEventListener('DOMContentLoaded', function() {
         "showMethod": "slideDown",
         "hideMethod": "slideUp"
     }
-    console.log("[init] Setting version in index.html.");
     document.getElementById("kaidiVersionDiv").innerHTML = "Kaidi version "+KAIDI_VERSION;
-    console.log("[init] Create new XMLHttpRequest object.");
-    var request = new XMLHttpRequest({mozSystem: true});
-    function getToKodi(kodiMethod, inParams, callback) {
-        if (settingsLoaded === null) {
-            console.log("[getToKodi] Configuration not available. Not doing anything.");
-        } else {
-            var returnMessage = null;
-            var constructRequest = {"jsonrpc": "2.0", 
-                                    "method": kodiMethod, 
-                                    "id": 1};
-            if (typeof inParams == "object" && inParams != {}) {
-                constructRequest.params = inParams;
-            }
-            console.log("[getToKodi] Sending POST to: 'http://"+settingsLoaded.kodiIP+":"+settingsLoaded.kodiPort+"/jsonrpc' with content '"+JSON.stringify(constructRequest)+"'.");
-            request.open("POST", "http://"+settingsLoaded.kodiIP+":"+settingsLoaded.kodiPort+"/jsonrpc", true);
-            request.setRequestHeader("Content-Type", "application/json");
-            request.onload =  function() {
-                var responseParsed = JSON.parse(request.responseText);
-                console.log("[getToKodi] Recieved response: "+request.responseText);
-                console.log("[getToKodi] Parsing response: '"+request.responseText+"' from method '"+kodiMethod+"'.");
-                if (responseParsed.error) {
-                    console.log("[getToKodi] Error found in response ("+responseParsed.error.code+").");
-                    toastr["error"]("Error: "+responseParsed.error.message+"("+responseParsed.error.code+").", "Request failed!");
-                } else {
-                    console.log("[getToKodi] No error found in response, continuing parse.");
-                    if (responseParsed.result) {
-                        if (kodiMethod == "JSONRPC.ping") {
-                            if (responseParsed.result == "pong") {
-                                toastr["success"]("Connected to Kodi at "+settingsLoaded.kodiIP+":"+settingsLoaded.kodiPort, "Request OK!");
-                            } else {
-                                toastr["warning"]("Connected but non-standard response from method '"+kodiMethod+"'.", "Request OK-ish!");
-                            }
-                        } else {
-                            returnMessage = responseParsed.result;
-                        }
-                    } else {
-                        console.log("[getToKodi] No 'result' in response!");
-                    }
+    function changeVolume(opt) {
+        atomic(kodiURL, {method: "POST",
+                         data: JSON.stringify({jsonrpc: "2.0", method: "Application.GetProperties", params: {properties: ["volume"]} , id: 1}),
+                         headers: {"Content-Type": "application/json"}})
+        .then(function(response) {
+                var currentVolume = response.data.result.volume;
+                switch(opt) {
+                    case "Up":
+                        if (currentVolume !== 100) {
+                            currentVolume += 5;
+                        } else {}
+                        break;
+                    case "Down":
+                        if (currentVolume !== 0) {
+                            currentVolume -= 5;
+                        } else {}
+                        break;
+                    default:
+                        return;
+                        break;
                 }
-                console.log("[getToKodi] Finished parse of response.");
-                if (returnMessage != null) {
-                    if (typeof callback == "function") {
-                        console.log("[getToKodi] Callback is set properly. Calling now.")
-                        callback(returnMessage);
-                    } else {
-                        console.log("[getToKodi] Callback set but not a function. Not calling.")
-                    }
-                } else {
-                   console.log("[getToKodi] Nothing to return, so not running callback.")
-                }
-            }
-            request.onerror = function () {
-                if (request.status == 404 || request.status == 403 || request.status == 401) {
-                    console.log("[getToKodi] Server not found/forbidden ("+request.status+").");
-                    toastr["error"]("Unable to connect to Kodi server.", "Request failed!");
-                } else if (request.status == 0) {
-                    console.log("[getToKodi] Server offline.")
-                    toastr["error"]("Unable to connect to Kodi server.", "Request failed!");
-                }
-            }
-            request.send(JSON.stringify(constructRequest));
-        }
+                atomic(kodiURL, {method: "POST",
+                                 data: JSON.stringify({"jsonrpc": "2.0", "method": "Application.SetVolume", "params": {"volume": currentVolume}, "id": 1}),
+                                 headers: {"Content-Type": "application/json"}})
+                .then(function(response) {
+                        document.getElementById("volumeBar").value = currentVolume;
+                        document.getElementById("greyOutBox").style.visibility = "visible";
+                        window.setTimeout(function(e) {
+                            document.getElementById("greyOutBox").style.visibility = "hidden";
+                        }, 1000);
+                })
+                .catch(error => toastr["error"]("Unable to connect to Kodi ("+error.status+": "+error.statusText+")", "Connect failed!"));
+        })
+        .catch(error => toastr["error"]("Unable to connect to Kodi ("+error.status+": "+error.statusText+")", "Connect failed!"));
     }
-    function changeVolume(data) {
-        var currentVolume = data.volume;
-        if (changeVolumeOpt == "Up") {
-            if (currentVolume == 100) {
-                //Do nothing
-            } else {
-                currentVolume = data.volume + 5;
-            }
-        } else if (changeVolumeOpt == "Down") {
-            if (currentVolume == 0) {
-                //Do nothing
-            } else {
-                currentVolume = data.volume - 5;
-            }
-        } else {
-            //Do nothing
-        }
-        getToKodi("Application.SetVolume", {"volume": currentVolume});
-        changeVolumeOpt = null;
-        document.getElementById("volumeBar").value = currentVolume;
-        document.getElementById("greyOutBox").style.visibility = "visible";
-        window.setTimeout(function(e) {
-            document.getElementById("greyOutBox").style.visibility = "hidden";
-        }, 1000);
-    }
-    function setMute(data) {
-        if (data.muted) {
-            getToKodi("Application.SetMute", {"mute": false});
-        } else {
-            getToKodi("Application.SetMute", {"mute": true});
-        }
+    function toggleMute() {
+        atomic(kodiURL, {method: "POST",
+                         data: JSON.stringify({jsonrpc: "2.0", method: "Application.GetProperties", params: {properties: ["muted"]} , id: 1}),
+                         headers: {"Content-Type": "application/json"}})
+        .then(function(response) {
+                if (response.data.result.muted) {
+                    atomic(kodiURL, {method: "POST",
+                                     data: JSON.stringify({jsonrpc: "2.0", method: "Application.SetMute", params: {mute: false} , id: 1}),
+                                     headers: {"Content-Type": "application/json"}})
+                    .catch(error => toastr["error"]("Unable to connect to Kodi ("+error.status+": "+error.statusText+")", "Connect failed!"));
+                } else {
+                    atomic(kodiURL, {method: "POST",
+                                     data: JSON.stringify({jsonrpc: "2.0", method: "Application.SetMute", params: {mute: true} , id: 1}),
+                                     headers: {"Content-Type": "application/json"}})
+                    .catch(error => toastr["error"]("Unable to connect to Kodi ("+error.status+": "+error.statusText+")", "Connect failed!"));
+                }
+        })
+        .catch(error => toastr["error"]("Unable to connect to Kodi ("+error.status+": "+error.statusText+")", "Connect failed!"));
     } 
-    function testConnection() {
-        getToKodi("JSONRPC.ping");
-        getToKodi("GUI.ShowNotification", {"title": "Connected to Kaidi", "message": "Kaidi remote is now connected to your Kodi device. Start controlling now!"});
+    function kodiInputHandler(button) {
+        atomic(kodiURL, {method: "POST",
+                         data: JSON.stringify({jsonrpc: "2.0", method: "Input."+button, id: 1}),
+                         headers: {"Content-Type": "application/json"}})
+        .catch(error => toastr["error"]("Unable to connect to Kodi ("+error.status+": "+error.statusText+")", "Connect failed!"));
     }
-    console.log("[init] Checking if configuration exists.");
+    function textToKodi(textToSend) {
+        if (textToSend !== null) {
+            atomic(kodiURL, {method: "POST",
+                             data: JSON.stringify({jsonrpc: "2.0", method: "Input.SendText", params: {text: textToSend, done: true}, id: 1}),
+                             headers: {"Content-Type": "application/json"}})
+            .catch(error => toastr["error"]("Unable to connect to Kodi ("+error.status+": "+error.statusText+")", "Connect failed!"))
+        } else {}
+    }
+    function testConnection() {
+        atomic(kodiURL, {method: "POST",
+                         data: JSON.stringify({jsonrpc: "2.0", method: "JSONRPC.ping", id: 1}),
+                         headers: {"Content-Type": "application/json"}})
+        .then(function(response) {
+                if (response.data.result == "pong") {
+                    toastr["success"]("Connected to Kodi at "+settingsLoaded.kodiIP+":"+settingsLoaded.kodiPort, "Connect success!");
+                } else {
+                    toastr["success"]("Connected to Kodi at "+settingsLoaded.kodiIP+":"+settingsLoaded.kodiPort, "Connect success!");
+                }
+                atomic(kodiURL, {method: "POST",
+                                 data: JSON.stringify({jsonrpc: "2.0", method: "GUI.ShowNotification", params: {title: "Connected to Kaidi", message: "Kaidi is connected to this Kodi device."}, id: 1}),
+                                 headers: {"Content-Type": "application/json"}})
+                .then(function(response) {
+                            if (response.data.result == "OK") {
+                                toastr["success"]("Connected to Kodi at "+settingsLoaded.kodiIP+":"+settingsLoaded.kodiPort, "Connect success!");
+                            } else {
+                                toastr["success"]("Connected to Kodi at "+settingsLoaded.kodiIP+":"+settingsLoaded.kodiPort, "Connect success!");
+                            }
+                });
+        })
+        .catch(function (error) {
+                toastr["error"]("Unable to connect to Kodi ("+error.status+": "+error.statusText+")", "Connect failed!");
+        });
+    }
     if (localStorage.getItem("settingsKey_kodiIP") == null || localStorage.getItem("settingsKey_kodiPort") == null || localStorage.getItem("settingsKey_kodiNotificationsEnabled") == null) {
-        console.log("[init] Configuration doesn't exist, prompting create.");
         window.alert("Welcome to Kaidi, the remote app for Kodi on KaiOS. Let's start by configuring our IP and Port.");
         var settingsWindow = new MozActivity({
             name: "me.jkelol111.kaidi.settings",
@@ -137,73 +126,65 @@ window.addEventListener('DOMContentLoaded', function() {
             settingsLoaded = {"kodiIP": localStorage.getItem("settingsKey_kodiIP"),
                               "kodiPort": localStorage.getItem("settingsKey_kodiPort"),
                               "kodiNotificationsEnabled": localStorage.getItem("settingsKey_kodiNotificationsEnabled")};
+            var kodiURL = "http://"+settingsLoaded.kodiIP+":"+settingsLoaded.kodiPort+"/jsonrpc";
             testConnection();
         }
     } else {
-        console.log("[init] Configuration exists, trying it out.");
         settingsLoaded = {"kodiIP": localStorage.getItem("settingsKey_kodiIP"),
                           "kodiPort": localStorage.getItem("settingsKey_kodiPort"),
                           "kodiNotificationsEnabled": localStorage.getItem("settingsKey_kodiNotificationsEnabled")};
+        var kodiURL = "http://"+settingsLoaded.kodiIP+":"+settingsLoaded.kodiPort+"/jsonrpc";
         testConnection();
     }
-    console.log("[init] Registering web worker.")
-    var notifyWorker = null;
+    var notifyWorker;
     function registerNotifyWorker() {
         if (settingsLoaded.kodiNotificationsEnabled == "Turned on") {
             notifyWorker = new Worker('/js/notifyWorker.js');
             notifyWorker.postMessage(JSON.stringify(settingsLoaded));
-        } else {
-            console.log("[registerNotifyWorker] Notify worker option is off in settings. Not starting web worker.")
-        }
+        } else {}
     }
     registerNotifyWorker();
     window.addEventListener('keydown', function(e) {
         switch(e.key) {
             case 'ArrowLeft':
-                getToKodi("Input.Left");
+                kodiInputHandler("Left");
                 break;
             case 'ArrowRight': 
-                getToKodi("Input.Right");
+                kodiInputHandler("Right");
                 break;
             case 'ArrowUp':
-                getToKodi("Input.Up");
+                kodiInputHandler("Up");
                 break;
             case 'ArrowDown':
-                getToKodi("Input.Down");
+                kodiInputHandler("Down");
                 break;
             case 'Enter':
-                getToKodi("Input.Select");
+                kodiInputHandler("Select");
                 break;
             case 'Call':
-                getToKodi("Input.Back");
+                kodiInputHandler("Back");
                 break;
             case '1':
-                getToKodi("Input.Home");
+                kodiInputHandler("Home");
                 break;
             case '2':
-                getToKodi("Input.ContextMenu");
+                kodiInputHandler("ContextMenu");
                 break;
             case '3':
-                getToKodi("Input.Info")
+                kodiInputHandler("Info");
                 break;
             case '4':
                 var textToSend = window.prompt("Please input the text to send to Kodi:");
-                if (textToSend == null) {
-                    //Do nothing.
-                } else {
-                    getToKodi("Input.SendText", {"text": textToSend, "done": true});
-                }
+                textToKodi(textToSend);
                 break;
             case '5':
-                changeVolumeOpt = "Up";
-                getToKodi("Application.GetProperties", {"properties": ["volume", "muted"]}, changeVolume);
+                changeVolume("Up");
                 break;
             case '8':
-                changeVolumeOpt = "Down";
-                getToKodi("Application.GetProperties", {"properties": ["volume", "muted"]}, changeVolume);
+                changeVolume("Down");
                 break;
             case '6':
-                getToKodi("Application.GetProperties", {"properties": ["volume", "muted"]}, setMute);
+                toggleMute();
                 break;
             case 'SoftLeft':
                 var playerWindow = new MozActivity({
@@ -223,7 +204,11 @@ window.addEventListener('DOMContentLoaded', function() {
                     testConnection();
                     if (settingsLoaded.kodiNotificationsEnabled == "Turned on") {
                         console.log("[SoftRight] Registering notify worker.")
-                        registerNotifyWorker();
+                        if (typeof notifyWorker == "undefined") {
+                            registerNotifyWorker();
+                        } else {
+                            console.log("[SoftRight] notifyWorker already running. Not starting a new one.")
+                        }
                     } else {
                         notifyWorker.terminate();
                         console.log("[SoftRight] Disabling any active notify workers.");
@@ -239,5 +224,4 @@ window.addEventListener('DOMContentLoaded', function() {
                 }
                 break;
     }});
-    console.log("[init] Application fully initialized successfully.");
 }, false);
