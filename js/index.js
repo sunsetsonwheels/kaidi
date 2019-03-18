@@ -1,6 +1,7 @@
 window.addEventListener('DOMContentLoaded', function() {
     KAIDI_VERSION = "0.4.6"
     var settingsLoaded;
+    var kodiURL;
     toastr.options = {
         "closeButton": false,
         "debug": false,
@@ -126,16 +127,14 @@ window.addEventListener('DOMContentLoaded', function() {
             settingsLoaded = {"kodiIP": localStorage.getItem("settingsKey_kodiIP"),
                               "kodiPort": localStorage.getItem("settingsKey_kodiPort"),
                               "kodiNotificationsEnabled": localStorage.getItem("settingsKey_kodiNotificationsEnabled")};
-            var kodiURL = "http://"+settingsLoaded.kodiIP+":"+settingsLoaded.kodiPort+"/jsonrpc";
-            testConnection();
         }
     } else {
         settingsLoaded = {"kodiIP": localStorage.getItem("settingsKey_kodiIP"),
                           "kodiPort": localStorage.getItem("settingsKey_kodiPort"),
                           "kodiNotificationsEnabled": localStorage.getItem("settingsKey_kodiNotificationsEnabled")};
-        var kodiURL = "http://"+settingsLoaded.kodiIP+":"+settingsLoaded.kodiPort+"/jsonrpc";
-        testConnection();
     }
+    kodiURL = "http://"+settingsLoaded.kodiIP+":"+settingsLoaded.kodiPort+"/jsonrpc";
+    testConnection();
     var notifyWorker;
     function registerNotifyWorker() {
         if (settingsLoaded.kodiNotificationsEnabled == "Turned on") {
@@ -211,6 +210,7 @@ window.addEventListener('DOMContentLoaded', function() {
                         }
                     } else {
                         notifyWorker.terminate();
+                        delete notifyWorker;
                         console.log("[SoftRight] Disabling any active notify workers.");
                     }
                 }

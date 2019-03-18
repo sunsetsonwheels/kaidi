@@ -47,13 +47,14 @@ window.addEventListener('DOMContentLoaded', function() {
                                 document.getElementById("softkey-center").innerHTML = "PLAY";
                                 document.getElementById("softkey-left").innerHTML = "";
                                 document.getElementById("softkey-right").innerHTML = "";
+                            }
                     })
                     .catch(error => toastr["error"]("Unable to connect to Kodi ("+error.status+": "+error.statusText+")", "Connect failed!"));
                     atomic(kodiURL, {method: "POST",
                                      data: JSON.stringify({jsonrpc: "2.0", method: "Player.GetItem", params: {properties: ["title", "artist", "duration"], playerid: response.data.result[0].playerid}, id: 1}),
                                      headers: {"Content-Type": "application/json"}})
                     .then(function(response) {
-                            document.getElementById("currentPlayingTitle").innerHTML = response.data.result.item.label;
+                            document.getElementById("currentPlayingTitle").innerHTML = response.data.result.item.title;
                             if (response.data.result.item.artist == "") {
                                 document.getElementById("currentPlayingArtist").innerHTML = "by artist info unavailable!";
                             } else {
@@ -136,7 +137,7 @@ window.addEventListener('DOMContentLoaded', function() {
                         } else {}
                         break;
                     default:
-                        return;
+                        toastr["error"]("Argument error.");
                         break;
                 }
                 atomic(kodiURL, {method: "POST",
