@@ -1,5 +1,4 @@
 window.addEventListener('DOMContentLoaded', function() {
-    KAIDI_VERSION = "0.4.7"
     var settingsLoaded;
     var kodiURL;
     toastr.options = {
@@ -19,7 +18,10 @@ window.addEventListener('DOMContentLoaded', function() {
         "showMethod": "slideDown",
         "hideMethod": "slideUp"
     }
-    document.getElementById("kaidiVersionDiv").innerHTML = "Kaidi version "+KAIDI_VERSION;
+    fetch('/manifest.webapp')
+    .then(responseRaw => responseRaw.text())
+    .then(responseText => JSON.parse(responseText).version)
+    .then(version => document.getElementById("kaidiVersionDiv").innerHTML = "Kaidi version "+version);
     function changeVolume(opt) {
         atomic(kodiURL, {method: "POST",
                          data: JSON.stringify({jsonrpc: "2.0", method: "Application.GetProperties", params: {properties: ["volume"]} , id: 1}),

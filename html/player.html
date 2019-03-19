@@ -26,6 +26,14 @@
         <div class="labelWhiteBold">Now playing:</div>
         <div class="labelWhite" id="currentPlayingTitle">Not playing anything.</div>
         <div class="labelWhite" id="currentPlayingArtist">To play something, go back and navigate to what you want to play.</div>
+        <div id="playerStatusContainer">
+            <img src="/icons/shuffle-grey24x24.png" class="playerStatusIndicator" id="playerShuffleIndicator">
+            <img src="/icons/repeat-grey24x24.png" class="playerStatusIndicator" id="playerRepeatIndicator">
+            <div id="labelPlayerIndicatorWhite">0:00/7:98</div>
+            <div id="playerBarContainer">
+                <meter min='0' max='100' class="kaidiMeterBar" id="playerMeterBar">player</meter>
+            </div>
+        </div>
         <div id="softkeys-black">
             <div id="softkey-left"></div>
             <div id="softkey-center"></div>

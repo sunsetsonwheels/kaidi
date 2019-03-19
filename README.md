@@ -17,9 +17,17 @@
 
 - Basic Up/Down/Left/Right/Volume Up/Volume Down/Context Menu control/Info control
 
-- A Kodi player control (Play/Pause/Set shuffle/Set repeat/Next/Previous)
+- A Kodi player control (Play/Pause/Set shuffle/Set repeat/Next/Previous/Wind forward/Wind backward)
 
 - Notifications of now playing track (available when app is running/screen off)
+
+**FAQ:**
+
+**Q.** I found X bug in the app! How do I report it? -> **A.** Please use the links in this README to report the bug.
+
+**Q.** The player view is not displaying the title/artist! What should I do? -> **A.** Please kill all players by restarting Kodi. Then use Kaidi to start the player again.
+
+**Q.** The app is so slow on my device! What- -> **A.** Sorry to cut you off, but this is **ALPHA** software. Use with caution!
 
 **You found a bug?**
 

@@ -27,6 +27,10 @@ window.addEventListener('DOMContentLoaded', function() {
     settingsLoaded = {"kodiIP": localStorage.getItem("settingsKey_kodiIP"),
                       "kodiPort": localStorage.getItem("settingsKey_kodiPort")};
     var kodiURL = "http://"+settingsLoaded.kodiIP+":"+settingsLoaded.kodiPort+"/jsonrpc";
+    var currentPlayingTime
+    function updateTime() {
+
+    }
     function updateLabels() {
         atomic(kodiURL, {method: "POST",
                          data: JSON.stringify({jsonrpc: "2.0", method: "Player.GetActivePlayers", id: 1}),
@@ -34,20 +38,33 @@ window.addEventListener('DOMContentLoaded', function() {
         .then(function(response) {
                 if (response.data.result[0]) {
                     atomic(kodiURL, {method: "POST",
-                                     data: JSON.stringify({jsonrpc: "2.0", method: "Player.GetProperties", params: {properties: ["speed"], playerid: response.data.result[0].playerid}, id: 1}),
+                                     data: JSON.stringify({jsonrpc: "2.0", method: "Player.GetProperties", params: {properties: ["speed", "repeat", "shuffled"], playerid: response.data.result[0].playerid}, id: 1}),
                                      headers: {"Content-Type": "application/json"}})
                     .then(function(response) {
                             if (response.data.result.speed !== 0) {
                                 playing = true;
+                                if (response.data.result.shuffled) {
+                                    document.getElementById("playerRepeatIndicator").src = "/icons/shuffle24x24.png";
+                                    document.getElementById("softkey-left").innerHTML = "Shuffle-";
+                                } else {
+                                    document.getElementById("playerRepeatIndicator").src = "/icons/shuffle-grey24x24.png";
+                                    document.getElementById("softkey-left").innerHTML = "Shuffle";
+                                }
                                 document.getElementById("softkey-center").innerHTML = "PAUSE";
-                                document.getElementById("softkey-left").innerHTML = "Shuffle";
-                                document.getElementById("softkey-right").innerHTML = "Repeat";
+                                if (response.data.result.repeat == "all" || response.data.result.repeat == "one") {
+                                    document.getElementById("playerRepeatIndicator").src = "/icons/repeat24x24.png";
+                                    document.getElementById("softkey-right").innerHTML = "Repeat-";
+                                } else {
+                                    document.getElementById("playerRepeatIndicator").src = "/icons/repeat-grey24x24.png";
+                                    document.getElementById("softkey-right").innerHTML = "Repeat";
+                                }
                             } else {
                                 playing = false;
-                                document.getElementById("softkey-center").innerHTML = "PLAY";
                                 document.getElementById("softkey-left").innerHTML = "";
+                                document.getElementById("softkey-center").innerHTML = "PLAY";
                                 document.getElementById("softkey-right").innerHTML = "";
                             }
+                            updateTime();
                     })
                     .catch(error => toastr["error"]("Unable to connect to Kodi ("+error.status+": "+error.statusText+")", "Connect failed!"));
                     atomic(kodiURL, {method: "POST",
@@ -105,10 +122,15 @@ window.addEventListener('DOMContentLoaded', function() {
                             })
                             .catch(error => toastr["error"]("Unable to connect to Kodi ("+error.status+": "+error.statusText+")", "Connect failed!"));
                             break;
+                        case "ShuffleCycle":
+                            break;
                         case "RepeatCycle":
                             atomic(kodiURL, {method: "POST",
                                             data: JSON.stringify({jsonrpc: "2.0", method: "Player.SetRepeat", params: {repeat: "cycle", playerid: response.data.result[0].playerid}, id: 1}),
                                             headers: {"Content-Type": "application/json"}})
+                            .then(function(response) {
+                                updateLabels();
+                            })
                             .catch(error => toastr["error"]("Unable to connect to Kodi ("+error.status+": "+error.statusText+")", "Connect failed!"));
                             break;
                         case "SeekForward":
@@ -128,8 +150,6 @@ window.addEventListener('DOMContentLoaded', function() {
                                 updateLabels();
                             })
                             .catch(error => toastr["error"]("Unable to connect to Kodi ("+error.status+": "+error.statusText+")", "Connect failed!"))
-                            break;
-                        case "ShuffleCycle":
                             break;
                         default:
                             toastr["error"]("Supplied argument to playerControlHandler incorrect", "Argument error!");
@@ -196,6 +216,8 @@ window.addEventListener('DOMContentLoaded', function() {
                 document.getElementById("softkey-right").innerHTML = "";
                 document.getElementById("currentPlayingTitle").innerHTML = "Not playing anything.";
                 document.getElementById("currentPlayingArtist").innerHTML = "To play something, go back and navigate to what you want to play.";
+                document.getElementById("playerShuffleIndicator").src = "";
+                document.getElementById("playerRepeatIndicator").src= "";
                 document.getElementById("currentPlayingTime").innerHTML = "This page helps you control Kodi's player.";
                 break;
             default:
