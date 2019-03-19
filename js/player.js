@@ -27,9 +27,13 @@ window.addEventListener('DOMContentLoaded', function() {
     settingsLoaded = {"kodiIP": localStorage.getItem("settingsKey_kodiIP"),
                       "kodiPort": localStorage.getItem("settingsKey_kodiPort")};
     var kodiURL = "http://"+settingsLoaded.kodiIP+":"+settingsLoaded.kodiPort+"/jsonrpc";
-    var currentPlayingTime
     function updateTime() {
-
+        atomic(kodiURL, {method: "POST",
+                         data: JSON.stringify({jsonrpc: "2.0", method: "Player.GetActivePlayers", id: 1}),
+                         headers: {"Content-Type": "application/json"}})
+        .then(function(response) {})
+        .catch(error => toastr["error"]("Unable to connect to Kodi ("+error.status+": "+error.statusText+")", "Connect failed!"));
+        var timeAtPlaying = new Date().get;
     }
     function updateLabels() {
         atomic(kodiURL, {method: "POST",
@@ -44,10 +48,10 @@ window.addEventListener('DOMContentLoaded', function() {
                             if (response.data.result.speed !== 0) {
                                 playing = true;
                                 if (response.data.result.shuffled) {
-                                    document.getElementById("playerRepeatIndicator").src = "/icons/shuffle24x24.png";
+                                    document.getElementById("playerShuffleIndicator").src = "/icons/shuffle24x24.png";
                                     document.getElementById("softkey-left").innerHTML = "Shuffle-";
                                 } else {
-                                    document.getElementById("playerRepeatIndicator").src = "/icons/shuffle-grey24x24.png";
+                                    document.getElementById("playerShuffleIndicator").src = "/icons/shuffle-grey24x24.png";
                                     document.getElementById("softkey-left").innerHTML = "Shuffle";
                                 }
                                 document.getElementById("softkey-center").innerHTML = "PAUSE";
@@ -63,6 +67,11 @@ window.addEventListener('DOMContentLoaded', function() {
                                 document.getElementById("softkey-left").innerHTML = "";
                                 document.getElementById("softkey-center").innerHTML = "PLAY";
                                 document.getElementById("softkey-right").innerHTML = "";
+                            }
+                            if (playing) {
+                                document.getElementById("playerStatusContainer").style.visibility = "visible";
+                            } else {
+                                document.getElementById("playerStatusContainer").style.visibility = "hidden";
                             }
                             updateTime();
                     })
@@ -123,6 +132,30 @@ window.addEventListener('DOMContentLoaded', function() {
                             .catch(error => toastr["error"]("Unable to connect to Kodi ("+error.status+": "+error.statusText+")", "Connect failed!"));
                             break;
                         case "ShuffleCycle":
+                            var toShuffled;
+                            atomic(kodiURL, {method: "POST",
+                                             data: JSON.stringify({jsonrpc: "2.0", method: "Player.GetProperties", params: {properties: ["shuffled"], playerid: response.data.result[0].playerid}, id: 1}),
+                                             headers: {"Content-Type": "application/json"}})
+                            .then(function(response2) {
+                                if (response2.data.result.shuffled) {
+                                    atomic(kodiURL, {method: "POST",
+                                             data: JSON.stringify({jsonrpc: "2.0", method: "Player.SetShuffle", params: {shuffle: false, playerid: response.data.result[0].playerid}, id: 1}),
+                                             headers: {"Content-Type": "application/json"}})
+                                    .then(function(response) {
+                                        updateLabels();
+                                    })
+                                    .catch(error => toastr["error"]("[g] Unable to connect to Kodi ("+error.status+": "+error.statusText+")", "Connect failed!"));
+                                } else {
+                                    atomic(kodiURL, {method: "POST",
+                                             data: JSON.stringify({jsonrpc: "2.0", method: "Player.SetShuffle", params: {shuffle: true, playerid: response.data.result[0].playerid}, id: 1}),
+                                             headers: {"Content-Type": "application/json"}})
+                                    .then(function(response) {
+                                        updateLabels();
+                                    })
+                                    .catch(error => toastr["error"]("[g] Unable to connect to Kodi ("+error.status+": "+error.statusText+")", "Connect failed!"));
+                                }
+                            })
+                            .catch(error => toastr["error"]("[b] Unable to connect to Kodi ("+error.status+": "+error.statusText+")", "Connect failed!"));
                             break;
                         case "RepeatCycle":
                             atomic(kodiURL, {method: "POST",
@@ -218,7 +251,7 @@ window.addEventListener('DOMContentLoaded', function() {
                 document.getElementById("currentPlayingArtist").innerHTML = "To play something, go back and navigate to what you want to play.";
                 document.getElementById("playerShuffleIndicator").src = "";
                 document.getElementById("playerRepeatIndicator").src= "";
-                document.getElementById("currentPlayingTime").innerHTML = "This page helps you control Kodi's player.";
+                document.getElementById("playerStatusContainer").style.visibility = "hidden";
                 break;
             default:
                 //toastr["info"]("Method: "+j.method+"\nData:\n"+e.data);
@@ -266,6 +299,9 @@ window.addEventListener('DOMContentLoaded', function() {
     window.addEventListener('keydown', function(e) {
         switch(e.key) {
             case 'SoftLeft':
+                if (playing) {
+                    playerControlHandler("ShuffleCycle");
+                }
                 break;
             case 'SoftRight':
                 if (playing) {

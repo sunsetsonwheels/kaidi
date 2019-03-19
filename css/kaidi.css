@@ -131,6 +131,7 @@
   position: absolute;
   top: calc(100% - 75px);
   background: rgba(184,184,184,0.7);
+  visibility: hidden;
 }
 
 #playerBarContainer {
