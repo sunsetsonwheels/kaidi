@@ -1,4 +1,4 @@
-window.addEventListener('DOMContentLoaded', function() {
+try{window.addEventListener('DOMContentLoaded', function() {
     var activityHandler;
     navigator.mozSetMessageHandler('activity', function(activityRequest) {
         let option = activityRequest.source;
@@ -27,13 +27,40 @@ window.addEventListener('DOMContentLoaded', function() {
     settingsLoaded = {"kodiIP": localStorage.getItem("settingsKey_kodiIP"),
                       "kodiPort": localStorage.getItem("settingsKey_kodiPort")};
     var kodiURL = "http://"+settingsLoaded.kodiIP+":"+settingsLoaded.kodiPort+"/jsonrpc";
+    var timeIn;
+    var timeOut;
     function updateTime() {
         atomic(kodiURL, {method: "POST",
                          data: JSON.stringify({jsonrpc: "2.0", method: "Player.GetActivePlayers", id: 1}),
                          headers: {"Content-Type": "application/json"}})
-        .then(function(response) {})
+        .then(response => {
+            try{
+            if (response.data.result[0]) {
+                atomic(kodiURL, {method: "POST",
+                                 data: JSON.stringify({jsonrpc: "2.0", method: "Player.GetProperties", params: {properties: ["percentage", "time", "totaltime"], playerid: response.data.result[0].playerid}, id: 1}),
+                                 headers: {"Content-Type": "application/json"}})
+                .then(response2 => {
+                    timeIn = response2.data.result.time;
+                    timeOut = response2.data.result.totaltime;
+                    if (timeIn == timeOut) {
+                    } else {
+                        document.getElementById("labelPlayerIndicatorWhite").innerHTML = timeIn.minutes+":"+('0' + timeIn.seconds).slice(-2)+"/"+timeOut.minutes+":"+timeOut.seconds;
+                        //toastr["info"]("Value: "+);
+                        document.getElementById("playerMeterBar").value = response2.data.result.percentage;  
+                    }
+                })
+                .catch(error => toastr["error"]("Unable to connect to Kodi ("+error.status+": "+error.statusText+")", "Connect failed!")); 
+            }
+            else {
+                document.getElementById("playerMeterBar").value = 0;
+                document.getElementById("labelPlayerIndicatorWhite").innerHTML = "0:00/0:00";
+                toastr["warning"]("Cannot perform action because player is not active", "Cannot run method!");
+            }}catch(err) {toastr["error"](err.message)}
+        })
         .catch(error => toastr["error"]("Unable to connect to Kodi ("+error.status+": "+error.statusText+")", "Connect failed!"));
-        var timeAtPlaying = new Date().get;
+        if (playing) {
+            window.setTimeout(updateTime, 1000);
+        } else {}
     }
     function updateLabels() {
         atomic(kodiURL, {method: "POST",
@@ -251,6 +278,8 @@ window.addEventListener('DOMContentLoaded', function() {
                 document.getElementById("currentPlayingArtist").innerHTML = "To play something, go back and navigate to what you want to play.";
                 document.getElementById("playerShuffleIndicator").src = "";
                 document.getElementById("playerRepeatIndicator").src= "";
+                document.getElementById("playerMeterBar").value = 0;
+                document.getElementById("labelPlayerIndicatorWhite").innerHTML = "0:00/0:00";
                 document.getElementById("playerStatusContainer").style.visibility = "hidden";
                 break;
             default:
@@ -328,4 +357,4 @@ window.addEventListener('DOMContentLoaded', function() {
                 ws.close();
                 break;
     }});
-}, false);
+}, false);}catch(err){toastr["error"](err.message)}

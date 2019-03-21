@@ -7,8 +7,7 @@ function spawnNotification(title, body) {
     n.onclick = function(e) {
         e.preventDefault();
         n.close.bind(n);
-        var playerWindow = new MozActivity({name: "me.jkelol111.kaidi.player",
-                                            data: {}});
+        window.open('app://kaidi.jkelol111.me/html/player.html');
     }
 }
 self.onmessage = function(e) {
@@ -22,10 +21,15 @@ self.onmessage = function(e) {
         var j = JSON.parse(e.data);
         switch(j.method) {
             case "Player.OnPlay":
-                spawnNotification("Playback started", j.params.data.item.title+" ("+j.params.data.item.type+")");
+                if (typeof j.params.data.item.title == 'undefined') {
+                    spawnNotification("Playback started", j.params.data.item.label+" ("+j.params.data.item.type+")");
+                } else {
+                    spawnNotification("Playback started", j.params.data.item.title+" ("+j.params.data.item.type+")");
+                }
                 break;
             default:
                 console.log("[notifyWorker] Recieved unprogrammed response "+j.method+" with response: "+e.data);
+                break;
         }
     }
     ws.onerror = function(e) {
