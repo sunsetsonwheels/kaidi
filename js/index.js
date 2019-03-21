@@ -26,7 +26,7 @@ window.addEventListener('DOMContentLoaded', function() {
         atomic(kodiURL, {method: "POST",
                          data: JSON.stringify({jsonrpc: "2.0", method: "Application.GetProperties", params: {properties: ["volume"]} , id: 1}),
                          headers: {"Content-Type": "application/json"}})
-        .then(function(response) {
+        .then(response => {
                 var currentVolume = response.data.result.volume;
                 switch(opt) {
                     case "Up":
@@ -46,7 +46,7 @@ window.addEventListener('DOMContentLoaded', function() {
                 atomic(kodiURL, {method: "POST",
                                  data: JSON.stringify({"jsonrpc": "2.0", "method": "Application.SetVolume", "params": {"volume": currentVolume}, "id": 1}),
                                  headers: {"Content-Type": "application/json"}})
-                .then(function(response) {
+                .then(() => {
                         document.getElementById("volumeBar").value = currentVolume;
                         document.getElementById("greyOutBox").style.visibility = "visible";
                         window.setTimeout(function(e) {
@@ -61,7 +61,7 @@ window.addEventListener('DOMContentLoaded', function() {
         atomic(kodiURL, {method: "POST",
                          data: JSON.stringify({jsonrpc: "2.0", method: "Application.GetProperties", params: {properties: ["muted"]} , id: 1}),
                          headers: {"Content-Type": "application/json"}})
-        .then(function(response) {
+        .then(response => {
                 if (response.data.result.muted) {
                     atomic(kodiURL, {method: "POST",
                                      data: JSON.stringify({jsonrpc: "2.0", method: "Application.SetMute", params: {mute: false} , id: 1}),
@@ -94,7 +94,7 @@ window.addEventListener('DOMContentLoaded', function() {
         atomic(kodiURL, {method: "POST",
                          data: JSON.stringify({jsonrpc: "2.0", method: "JSONRPC.ping", id: 1}),
                          headers: {"Content-Type": "application/json"}})
-        .then(function(response) {
+        .then(response => {
                 if (response.data.result == "pong") {
                     toastr["success"]("Connected to Kodi at "+settingsLoaded.kodiIP+":"+settingsLoaded.kodiPort, "Connect success!");
                 } else {
@@ -103,7 +103,7 @@ window.addEventListener('DOMContentLoaded', function() {
                 atomic(kodiURL, {method: "POST",
                                  data: JSON.stringify({jsonrpc: "2.0", method: "GUI.ShowNotification", params: {title: "Connected to Kaidi", message: "Kaidi is connected to this Kodi device."}, id: 1}),
                                  headers: {"Content-Type": "application/json"}})
-                .then(function(response) {
+                .then(response => {
                             if (response.data.result == "OK") {
                                 toastr["success"]("Connected to Kodi at "+settingsLoaded.kodiIP+":"+settingsLoaded.kodiPort, "Connect success!");
                             } else {
@@ -111,9 +111,7 @@ window.addEventListener('DOMContentLoaded', function() {
                             }
                 });
         })
-        .catch(function (error) {
-                toastr["error"]("Unable to connect to Kodi ("+error.status+": "+error.statusText+")", "Connect failed!");
-        });
+        .catch(error => toastr["error"]("Unable to connect to Kodi ("+error.status+": "+error.statusText+")", "Connect failed!"));
     }
     if (localStorage.getItem("settingsKey_kodiIP") == null || localStorage.getItem("settingsKey_kodiPort") == null || localStorage.getItem("settingsKey_kodiNotificationsEnabled") == null) {
         window.alert("Welcome to Kaidi, the remote app for Kodi on KaiOS. Let's start by configuring our IP and Port.");

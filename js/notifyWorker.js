@@ -1,13 +1,17 @@
 var settingsLoaded = null;
 function spawnNotification(title, body) {
-    var options = {body: body,
-                   icon: "/icons/icon48x48.png",
-                   tag: 'kaidi-notify'};
-    var n = new Notification(title, options);
-    n.onclick = function(e) {
-        e.preventDefault();
-        n.close.bind(n);
-        window.open('app://kaidi.jkelol111.me/html/player.html');
+    if (Notification.permission == "granted") {
+        var options = {body: body,
+                    icon: "/icons/icon48x48.png",
+                    tag: 'kaidi-notify'};
+        var n = new Notification(title, options);
+        n.onclick = function(e) {
+            n.close.bind(n);
+            window.open('app://kaidi.jkelol111.me');
+        }
+    } else {
+        console.log("[notifyWorker] Notififcation permission not granted. Shutting down worker.");
+        self.close();
     }
 }
 self.onmessage = function(e) {

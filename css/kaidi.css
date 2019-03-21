@@ -194,14 +194,14 @@ meter::-moz-meter-bar {
 
 .labelWhite {
   font-family: "Open Sans";
-  color: #dadada;
+  color: #ffffff;
   text-align: left;
 }
 
 .labelWhiteBold {
   font-family: "Open Sans";
   font-weight: 800;
-  color: #dadada;
+  color: #ffffff;
   text-align: left;
 }
 
@@ -209,6 +209,10 @@ meter::-moz-meter-bar {
   font-family: "Open Sans";
   color: #A9A9A9;
   text-align: left;
+}
+
+.playerBody, .defaultBody {
+  overflow: hidden;
 }
 
 .playerBody {

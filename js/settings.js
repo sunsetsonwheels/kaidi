@@ -7,6 +7,17 @@ window.addEventListener('DOMContentLoaded', function() {
             activityHandler = activityRequest;
         }
     });
+    //Taken from David Walsh's blog. Thanks a lot :)
+    function moveCursorToEnd(el) {
+        if (typeof el.selectionStart == "number") {
+            el.selectionStart = el.selectionEnd = el.value.length;
+        } else if (typeof el.createTextRange != "undefined") {
+            el.focus();
+            var range = el.createTextRange();
+            range.collapse(false);
+            range.select();
+        }
+    }
     function handleUpDownKeys() {
         if (selectedElement == 0) {
             document.getElementById("container2").style.backgroundColor = '#ffffff';
@@ -20,6 +31,7 @@ window.addEventListener('DOMContentLoaded', function() {
             document.getElementById("container0").style.backgroundColor = '#1BC1C4';
             document.getElementById("label0").style.color = '#ffffff';
             document.getElementById("kodiIPInput").focus();
+            moveCursorToEnd(document.getElementById('kodiIPInput'));
             document.getElementById("softkey-center").innerHTML = "";
         } else if (selectedElement == 1) {
             document.getElementById("container2").style.backgroundColor = '#ffffff';
@@ -33,6 +45,7 @@ window.addEventListener('DOMContentLoaded', function() {
             document.getElementById("container1").style.backgroundColor = '#1BC1C4';
             document.getElementById("label1").style.color = '#ffffff';
             document.getElementById("kodiPortInput").focus();
+            moveCursorToEnd(document.getElementById('kodiPortInput'));
             document.getElementById("softkey-center").innerHTML = "";
         } else if (selectedElement == 2) {
             document.getElementById("container2").style.backgroundColor = '#1BC1C4';

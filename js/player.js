@@ -29,33 +29,37 @@ window.addEventListener('DOMContentLoaded', function() {
     var kodiURL = "http://"+settingsLoaded.kodiIP+":"+settingsLoaded.kodiPort+"/jsonrpc";
     var timeIn;
     var timeOut;
+    //Thanks to speedUpLoop for the idea, https://stackoverflow.com/users/10198411/wali-waqar on SO for the solution.
     function updateTime() {
-        atomic(kodiURL, {method: "POST",
-                         data: JSON.stringify({jsonrpc: "2.0", method: "Player.GetActivePlayers", id: 1}),
-                         headers: {"Content-Type": "application/json"}})
-        .then(response => {
-            if (response.data.result[0]) {
-                atomic(kodiURL, {method: "POST",
-                                 data: JSON.stringify({jsonrpc: "2.0", method: "Player.GetProperties", params: {properties: ["percentage", "time", "totaltime"], playerid: response.data.result[0].playerid}, id: 1}),
-                                 headers: {"Content-Type": "application/json"}})
-                .then(response2 => {
-                    timeIn = response2.data.result.time;
-                    timeOut = response2.data.result.totaltime;
-                    if (timeIn == timeOut) {
-                    } else {
-                        document.getElementById("labelPlayerIndicatorWhite").innerHTML = timeIn.minutes+":"+('0' + timeIn.seconds).slice(-2)+"/"+timeOut.minutes+":"+('0' + timeOut.seconds).slice(-2);
-                        document.getElementById("playerMeterBar").value = response2.data.result.percentage;  
-                    }
-                })
-                .catch(error => toastr["error"]("Unable to connect to Kodi ("+error.status+": "+error.statusText+")", "Connect failed!")); 
-            }
-            else {
-                document.getElementById("playerMeterBar").value = 0;
-                document.getElementById("labelPlayerIndicatorWhite").innerHTML = "0:00/0:00";
-                toastr["warning"]("Cannot perform action because player is not active", "Cannot run method!");
-            }
-        })
-        .catch(error => toastr["error"]("Unable to connect to Kodi ("+error.status+": "+error.statusText+")", "Connect failed!"));
+        if(document.visiblityState == 'hidden') {}
+        else if(document.visibilityState == 'visible') {
+            atomic(kodiURL, {method: "POST",
+                                data: JSON.stringify({jsonrpc: "2.0", method: "Player.GetActivePlayers", id: 1}),
+                                headers: {"Content-Type": "application/json"}})
+            .then(response => {
+                if (response.data.result[0]) {
+                    atomic(kodiURL, {method: "POST",
+                                        data: JSON.stringify({jsonrpc: "2.0", method: "Player.GetProperties", params: {properties: ["percentage", "time", "totaltime"], playerid: response.data.result[0].playerid}, id: 1}),
+                                        headers: {"Content-Type": "application/json"}})
+                    .then(response2 => {
+                        timeIn = response2.data.result.time;
+                        timeOut = response2.data.result.totaltime;
+                        if (timeIn == timeOut) {
+                        } else {
+                            document.getElementById("labelPlayerIndicatorWhite").innerHTML = timeIn.minutes+":"+('0' + timeIn.seconds).slice(-2)+"/"+timeOut.minutes+":"+('0' + timeOut.seconds).slice(-2);
+                            document.getElementById("playerMeterBar").value = response2.data.result.percentage;  
+                        }
+                    })
+                    .catch(error => toastr["error"]("Unable to connect to Kodi ("+error.status+": "+error.statusText+")", "Connect failed!")); 
+                }
+                else {
+                    document.getElementById("playerMeterBar").value = 0;
+                    document.getElementById("labelPlayerIndicatorWhite").innerHTML = "0:00/0:00";
+                    toastr["warning"]("Cannot perform action because player is not active", "Cannot run method!");
+                }
+            })
+            .catch(error => toastr["error"]("Unable to connect to Kodi ("+error.status+": "+error.statusText+")", "Connect failed!"));
+        }
         if (playing) {
             window.setTimeout(updateTime, 1000);
         } else {}
