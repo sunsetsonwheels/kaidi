@@ -1,4 +1,4 @@
-try{window.addEventListener('DOMContentLoaded', function() {
+window.addEventListener('DOMContentLoaded', function() {
     var activityHandler;
     navigator.mozSetMessageHandler('activity', function(activityRequest) {
         let option = activityRequest.source;
@@ -34,7 +34,6 @@ try{window.addEventListener('DOMContentLoaded', function() {
                          data: JSON.stringify({jsonrpc: "2.0", method: "Player.GetActivePlayers", id: 1}),
                          headers: {"Content-Type": "application/json"}})
         .then(response => {
-            try{
             if (response.data.result[0]) {
                 atomic(kodiURL, {method: "POST",
                                  data: JSON.stringify({jsonrpc: "2.0", method: "Player.GetProperties", params: {properties: ["percentage", "time", "totaltime"], playerid: response.data.result[0].playerid}, id: 1}),
@@ -44,8 +43,7 @@ try{window.addEventListener('DOMContentLoaded', function() {
                     timeOut = response2.data.result.totaltime;
                     if (timeIn == timeOut) {
                     } else {
-                        document.getElementById("labelPlayerIndicatorWhite").innerHTML = timeIn.minutes+":"+('0' + timeIn.seconds).slice(-2)+"/"+timeOut.minutes+":"+timeOut.seconds;
-                        //toastr["info"]("Value: "+);
+                        document.getElementById("labelPlayerIndicatorWhite").innerHTML = timeIn.minutes+":"+('0' + timeIn.seconds).slice(-2)+"/"+timeOut.minutes+":"+('0' + timeOut.seconds).slice(-2);
                         document.getElementById("playerMeterBar").value = response2.data.result.percentage;  
                     }
                 })
@@ -55,7 +53,7 @@ try{window.addEventListener('DOMContentLoaded', function() {
                 document.getElementById("playerMeterBar").value = 0;
                 document.getElementById("labelPlayerIndicatorWhite").innerHTML = "0:00/0:00";
                 toastr["warning"]("Cannot perform action because player is not active", "Cannot run method!");
-            }}catch(err) {toastr["error"](err.message)}
+            }
         })
         .catch(error => toastr["error"]("Unable to connect to Kodi ("+error.status+": "+error.statusText+")", "Connect failed!"));
         if (playing) {
@@ -66,12 +64,12 @@ try{window.addEventListener('DOMContentLoaded', function() {
         atomic(kodiURL, {method: "POST",
                          data: JSON.stringify({jsonrpc: "2.0", method: "Player.GetActivePlayers", id: 1}),
                          headers: {"Content-Type": "application/json"}})
-        .then(function(response) {
+        .then(response => {
                 if (response.data.result[0]) {
                     atomic(kodiURL, {method: "POST",
                                      data: JSON.stringify({jsonrpc: "2.0", method: "Player.GetProperties", params: {properties: ["speed", "repeat", "shuffled"], playerid: response.data.result[0].playerid}, id: 1}),
                                      headers: {"Content-Type": "application/json"}})
-                    .then(function(response) {
+                    .then(response => {
                             if (response.data.result.speed !== 0) {
                                 playing = true;
                                 if (response.data.result.shuffled) {
@@ -106,7 +104,7 @@ try{window.addEventListener('DOMContentLoaded', function() {
                     atomic(kodiURL, {method: "POST",
                                      data: JSON.stringify({jsonrpc: "2.0", method: "Player.GetItem", params: {properties: ["title", "artist", "duration"], playerid: response.data.result[0].playerid}, id: 1}),
                                      headers: {"Content-Type": "application/json"}})
-                    .then(function(response) {
+                    .then(response => {
                             if (response.data.result.item.title == "") {
                                 document.getElementById("currentPlayingTitle").innerHTML = response.data.result.item.label;
                             } else {
@@ -129,7 +127,7 @@ try{window.addEventListener('DOMContentLoaded', function() {
         atomic(kodiURL, {method: "POST",
                          data: JSON.stringify({jsonrpc: "2.0", method: "Player.GetActivePlayers", id: 1}),
                          headers: {"Content-Type": "application/json"}})
-        .then(function(response) {
+        .then(response => {
                 if (response.data.result[0]) {
                     switch(control) {
                         case "PlayPause":
@@ -225,7 +223,7 @@ try{window.addEventListener('DOMContentLoaded', function() {
         atomic(kodiURL, {method: "POST",
                          data: JSON.stringify({jsonrpc: "2.0", method: "Application.GetProperties", params: {properties: ["volume"]} , id: 1}),
                          headers: {"Content-Type": "application/json"}})
-        .then(function(response) {
+        .then(response => {
                 var currentVolume = response.data.result.volume;
                 switch(opt) {
                     case "Up":
@@ -357,4 +355,4 @@ try{window.addEventListener('DOMContentLoaded', function() {
                 ws.close();
                 break;
     }});
-}, false);}catch(err){toastr["error"](err.message)}
+}, false);

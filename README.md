@@ -1,5 +1,6 @@
 <p align="center">
   <img align="center" src="https://i.imgur.com/c01KzM4.png">
+  <img align="center" src="https://i.imgur.com/jiQ1FTX.png">
   <br>
   <h1 align="center">Kaidi</h1>
   <h3 align="center">The Kodi remote app for KaiOS</h3>
