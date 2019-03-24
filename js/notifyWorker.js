@@ -1,4 +1,8 @@
 var settingsLoaded = null;
+function workersWill() {
+    self.postMessage("CLOSED");
+    self.close();
+}
 function spawnNotification(title, body) {
     if (Notification.permission == "granted") {
         var options = {body: body,
@@ -11,7 +15,7 @@ function spawnNotification(title, body) {
         }
     } else {
         console.log("[notifyWorker] Notififcation permission not granted. Shutting down worker.");
-        self.close();
+        workersWill();
     }
 }
 self.onmessage = function(e) {
@@ -25,7 +29,7 @@ self.onmessage = function(e) {
         var j = JSON.parse(e.data);
         switch(j.method) {
             case "Player.OnPlay":
-                if (typeof j.params.data.item.title == 'undefined') {
+                if (j.params.data.item.title == undefined) {
                     spawnNotification("Playback started", j.params.data.item.label+" ("+j.params.data.item.type+")");
                 } else {
                     spawnNotification("Playback started", j.params.data.item.title+" ("+j.params.data.item.type+")");
@@ -42,6 +46,6 @@ self.onmessage = function(e) {
     ws.onclose = function(e) {
         console.log("[notifyWorker] WebSocket connection with Kodi closed!");
         console.log("[notifyWorker] Closing worker because WebSocket closed.")
-        self.close();
+        workersWill();
     }
 }

@@ -1,23 +1,6 @@
 window.addEventListener('DOMContentLoaded', function() {
     var settingsLoaded;
     var kodiURL;
-    toastr.options = {
-        "closeButton": false,
-        "debug": false,
-        "newestOnTop": false,
-        "progressBar": true,
-        "positionClass": "toast-bottom-full-width",
-        "preventDuplicates": true,
-        "onclick": null,
-        "showDuration": "300",
-        "hideDuration": "1000",
-        "timeOut": "5000",
-        "extendedTimeOut": "1000",
-        "showEasing": "swing",
-        "hideEasing": "linear",
-        "showMethod": "slideDown",
-        "hideMethod": "slideUp"
-    }
     fetch('/manifest.webapp')
     .then(responseRaw => responseRaw.text())
     .then(responseText => JSON.parse(responseText).version)
@@ -139,6 +122,12 @@ window.addEventListener('DOMContentLoaded', function() {
     function registerNotifyWorker() {
         if (settingsLoaded.kodiNotificationsEnabled == "Turned on") {
             notifyWorker = new Worker('/js/notifyWorker.js');
+            notifyWorker.onmessage = e => {
+                if (e.data == "CLOSED") {
+                    console.log("[index] Got response CLOSED from notifyWorker. Clearing worker references.")
+                    notifyWorker = undefined;
+                } else {}
+            }
             notifyWorker.postMessage(JSON.stringify(settingsLoaded));
         } else {}
     }
@@ -203,7 +192,7 @@ window.addEventListener('DOMContentLoaded', function() {
                     testConnection();
                     if (settingsLoaded.kodiNotificationsEnabled == "Turned on") {
                         console.log("[SoftRight] Registering notify worker.")
-                        if (typeof notifyWorker == "undefined") {
+                        if (notifyWorker == undefined) {
                             registerNotifyWorker();
                         } else {
                             console.log("[SoftRight] notifyWorker already running. Not starting a new one.")

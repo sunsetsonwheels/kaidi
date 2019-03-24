@@ -6,23 +6,6 @@ window.addEventListener('DOMContentLoaded', function() {
             activityHandler = activityRequest;
         }
     });
-    toastr.options = {
-        "closeButton": false,
-        "debug": false,
-        "newestOnTop": false,
-        "progressBar": true,
-        "positionClass": "toast-bottom-full-width",
-        "preventDuplicates": true,
-        "onclick": null,
-        "showDuration": "300",
-        "hideDuration": "1000",
-        "timeOut": "5000",
-        "extendedTimeOut": "1000",
-        "showEasing": "swing",
-        "hideEasing": "linear",
-        "showMethod": "slideDown",
-        "hideMethod": "slideUp"
-    }
     var playing = false;
     settingsLoaded = {"kodiIP": localStorage.getItem("settingsKey_kodiIP"),
                       "kodiPort": localStorage.getItem("settingsKey_kodiPort")};
