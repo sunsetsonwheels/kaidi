@@ -1,11 +1,11 @@
 {
-    "version": "0.4.7.1",
-    "name": "Kaidi Remote",
+    "version": "0.4.7.2",
+    "name": "Kaidi Remote (Alpha)",
     "description": "A Kodi remote app for KaiOS.",
     "launch_path": "/html/index.html",
     "orientation": "default",
     "theme_color": "#1BC1C4",
-    "origin": "app://kaidi.jkelol111.me",
+    "origin": "app://alpha.kaidi.jkelol111.me",
     "icons": {
       "16": "/icons/icon16x16.png",
       "48": "/icons/icon48x48.png",
@@ -28,12 +28,12 @@
       }
     },
     "activities": {
-      "me.jkelol111.kaidi.settings": {
+      "me.jkelol111.kaidi.alpha.settings": {
         "href": "/html/settings.html",
         "disposition": "inline",
         "returnValue": true
       },
-      "me.jkelol111.kaidi.player": {
+      "me.jkelol111.kaidi.alpha.player": {
         "href": "/html/player.html",
         "disposition": "inline",
         "returnValue": true

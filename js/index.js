@@ -176,13 +176,13 @@ window.addEventListener('DOMContentLoaded', function() {
                 break;
             case 'SoftLeft':
                 var playerWindow = new MozActivity({
-                    name: "me.jkelol111.kaidi.player",
+                    name: "me.jkelol111.kaidi.alpha.player",
                     data: {}
                 });
                 break;
             case 'SoftRight':
                 var settingsWindow = new MozActivity({
-                    name: "me.jkelol111.kaidi.settings",
+                    name: "me.jkelol111.kaidi.alpha.settings",
                     data: {}
                 });
                 settingsWindow.onsuccess = function() {

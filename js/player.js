@@ -2,7 +2,7 @@ window.addEventListener('DOMContentLoaded', function() {
     var activityHandler;
     navigator.mozSetMessageHandler('activity', function(activityRequest) {
         let option = activityRequest.source;
-        if(option.name == "me.jkelol111.kaidi.player") {
+        if(option.name == "me.jkelol111.kaidi.alpha.player") {
             activityHandler = activityRequest;
         }
     });

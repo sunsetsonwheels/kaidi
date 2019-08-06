@@ -3,7 +3,7 @@ window.addEventListener('DOMContentLoaded', function() {
     var selectedElement = 0;
     navigator.mozSetMessageHandler('activity', function(activityRequest) {
         let option = activityRequest.source
-        if(option.name == "me.jkelol111.kaidi.settings") {
+        if(option.name == "me.jkelol111.kaidi.alpha.settings") {
             activityHandler = activityRequest;
         }
     });
