@@ -99,7 +99,7 @@ window.addEventListener('DOMContentLoaded', function() {
     if (localStorage.getItem("settingsKey_kodiIP") == null || localStorage.getItem("settingsKey_kodiPort") == null || localStorage.getItem("settingsKey_kodiNotificationsEnabled") == null) {
         window.alert("Welcome to Kaidi, the remote app for Kodi on KaiOS. Let's start by configuring our IP and Port.");
         var settingsWindow = new MozActivity({
-            name: "me.jkelol111.kaidi.settings",
+            name: "me.jkelol111.kaidi.alpha.settings",
             data: {}
         });
         settingsWindow.onsuccess = function() {
@@ -116,7 +116,11 @@ window.addEventListener('DOMContentLoaded', function() {
                           "kodiPort": localStorage.getItem("settingsKey_kodiPort"),
                           "kodiNotificationsEnabled": localStorage.getItem("settingsKey_kodiNotificationsEnabled")};
     }
-    kodiURL = "http://"+settingsLoaded.kodiIP+":"+settingsLoaded.kodiPort+"/jsonrpc";
+    if (settingsLoaded.kodiIP && settingsLoaded.kodiPort) {
+        kodiURL = "http://"+settingsLoaded.kodiIP+":"+settingsLoaded.kodiPort+"/jsonrpc";
+    } else {
+        kodiURL = null;
+    }
     testConnection();
     var notifyWorker;
     function registerNotifyWorker() {
@@ -198,9 +202,11 @@ window.addEventListener('DOMContentLoaded', function() {
                             console.log("[SoftRight] notifyWorker already running. Not starting a new one.")
                         }
                     } else {
-                        notifyWorker.terminate();
-                        delete notifyWorker;
-                        console.log("[SoftRight] Disabling any active notify workers.");
+                        if (notifyWorker) {
+                            notifyWorker.terminate();
+                            delete notifyWorker;
+                            console.log("[SoftRight] Disabling any active notify workers.");
+                        }
                     }
                 }
                 break;
