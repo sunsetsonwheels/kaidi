@@ -9,6 +9,12 @@
   font-family: "Open Sans";
 }
 
+meter::-moz-meter-bar {
+  -moz-appearance: none;
+  background: none;
+  background-color: var(--theme-color);
+}
+
 .header-bar {
   position: fixed;
   top: 27px;
