@@ -1,0 +1,60 @@
+:root {
+  --theme-color: #1BC1C4;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: "Open Sans";
+}
+
+.header-bar {
+  position: fixed;
+  top: 27px;
+  width: 100%;
+  height: 27px;
+  background-color: var(--theme-color);
+}
+
+.header-bar #header-title {
+  font-size: 17px;
+  font-weight: 300;
+  text-align: center;
+  color: #ffffff;
+}
+
+.softkeys-bar {
+  position: fixed;
+  width: 100%;
+  height: 30px;
+  bottom: 0px; 
+  display: flex;
+  align-items: center;
+  padding: 0 5px;
+  background-color: #dadada;
+  color: #363636;
+}
+
+.softkeys-bar * {
+  width: 33.3333333333%;
+}
+
+.softkey-left, .softkey-right {
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.softkey-left {
+  text-align: left;
+}
+
+.softkey-center {
+  text-align: center;
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.softkey-right {
+  text-align: right;
+}

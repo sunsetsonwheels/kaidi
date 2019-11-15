@@ -1,12 +1,12 @@
 var settingsLoaded = null;
-function workersWill() {
+function endWorker() {
     self.postMessage("CLOSED");
     self.close();
 }
 function spawnNotification(title, body) {
     if (Notification.permission == "granted") {
         var options = {body: body,
-                    icon: "/icons/icon48x48.png",
+                    icon: "/app/icons/kaidi_56.png",
                     tag: 'kaidi-notify'};
         var n = new Notification(title, options);
         n.onclick = function(e) {
@@ -15,7 +15,7 @@ function spawnNotification(title, body) {
         }
     } else {
         console.log("[notifyWorker] Notififcation permission not granted. Shutting down worker.");
-        workersWill();
+        endWorker();
     }
 }
 self.onmessage = function(e) {
@@ -46,6 +46,6 @@ self.onmessage = function(e) {
     ws.onclose = function(e) {
         console.log("[notifyWorker] WebSocket connection with Kodi closed!");
         console.log("[notifyWorker] Closing worker because WebSocket closed.")
-        workersWill();
+        endWorker();
     }
 }
