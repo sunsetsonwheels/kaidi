@@ -2,39 +2,43 @@
 <html>
   <head>
     <meta charset="utf-8">
-    <title>Kaidi Remote (Alpha)</title>
+    <title>Kaidi Remote (Beta)</title>
     <meta name="viewport" content="width=device-width,user-scalable=no">
+    <link rel="manifest" href="/manifest.webapp">
+    <link rel="localization" href="/app/locales/{locale}/home.properties">
     <link rel="stylesheet" href="/app/css/global/window.css">
     <link rel="stylesheet" href="/app/css/global/native-toast.css">
     <link rel="stylesheet" href="/app/css/home.css">
   </head>
   <body>
-    <header class="header-bar">
-      <h1 id="header-title" data-l10n-id="header-title"></h1>
-    </header>
-    <section class="greyout" id="volume-greyout">
-      <div id="volumeBarContainer">
-        <div class="volume-bar-label">Volume</div>
-        <meter min='0' max='100' class="meter-bar" id="volume-bar"></meter>
-      </div>
+    <header class="status-bar"></header>
+    <section class="volume-hud volume-hud-hidden">
+      <meter min='0' max='100' class="meter-bar" id="volume-bar"></meter>
     </section>
-    <div class="instructionsContainer">
-        <div class="label">▲ ▼ ◀ ▶: Arrow keys</label>
-        <div class="label">Answer call key: Back</label>
-        <div class="label">1: Home</label>
-        <div class="label">2: Context Menu</div>
-        <div class="label">3. Info</div>
-        <div class="label">4. Input text</div>
-        <div class="label">5. Volume up</div>
-        <div class="label">8. Volume down</div>
-        <div class="label">6. Set mute</div>
-        <div class="labelBlurred" id="kaidiVersionDiv"></div>
-    </div>
-    <div class="softkeys-bar softkeys-light">
-      <div id="softkey-left">Player</div>
-      <div id="softkey-center">SELECT</div>
-      <div id="softkey-right">Settings</div>
-    </div>
-    <script src="/js/index.js" defer></script>
+    <section class="content">
+      <header class="header-bar">
+        <h1 id="header-title" data-l10n-id="header-title">Kaidi Remote (Beta)</h1>
+      </header>
+      <h3 class="home-label" data-l10n-id="info-arrows">▲ ▼ ◀ ▶: Arrow keys</h3>
+      <h3 class="home-label" data-l10n-id="info-ans">Answer call key: Back</h3>
+      <h3 class="home-label" data-l10n-id="info-1">1. Home</h3>
+      <h3 class="home-label" data-l10n-id="info-2">2. Options</h3>
+      <h3 class="home-label" data-l10n-id="info-3">3. Info</h3>
+      <h3 class="home-label" data-l10n-id="info-4">4. Input text</h3>
+      <h3 class="home-label" data-l10n-id="info-5">5. Volume up</h3>
+      <h3 class="home-label" data-l10n-id="info-8">8. Volume down</h3>
+      <h3 class="home-label" data-l10n-id="info-6">6. Set mute</h3>
+      <div class="home-label-blurred" id="kaidi-version-label"></div>
+    </section>
+    <footer class="softkeys-bar">
+      <div id="softkey-left" data-l10n-id="sk-player">Player</div>
+      <div id="softkey-center" data-l10n-id="sk-select">SELECT</div>
+      <div id="softkey-right" data-l10n-id="sk-settings">Settings</div>
+    </footer>
+    <script src="/app/js/lib/l10n.js" charset="utf-8" defer></script>
+    <script src="/app/js/lib/kodirpc.js" defer></script>
+    <script src="/app/js/lib/swtheme.js" defer></script>
+    <script src="/app/js/lib/native-toast.js" defer></script>
+    <script src="/app/js/home.js" defer></script>
   </body>
 </html>

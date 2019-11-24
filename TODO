@@ -1,6 +1,3 @@
 - Split the CSS so it is less confusing
-- Fix the fucking softkey bar to work on multiple devices
 - Translate app
-- Add dark theme
-- Now playing widget
-- Add ads
+- Add ads and enable the option to toggle them off.

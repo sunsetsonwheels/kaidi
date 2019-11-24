@@ -1,0 +1,9 @@
+.home-label, .home-label-blurred {
+  font-size: 17px;
+  font-weight: 400;
+  text-align: left;
+}
+
+.home-label-blurred {
+  color: #A9A9A9;
+}

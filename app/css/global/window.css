@@ -15,9 +15,15 @@ meter::-moz-meter-bar {
   background-color: var(--theme-color);
 }
 
-.header-bar {
+.status-bar {
   position: fixed;
-  top: 27px;
+  top: 0px;
+  width: 100%;
+  height: 27px;
+  background-color: var(--theme-color);
+}
+
+.header-bar {
   width: 100%;
   height: 27px;
   background-color: var(--theme-color);
@@ -30,6 +36,34 @@ meter::-moz-meter-bar {
   color: #ffffff;
 }
 
+.theme-content-light {
+  background-color: #ffffff;
+  color: #000000;
+}
+
+.theme-content-dark {
+  background-color: #363636;
+  color: #ffffff;
+}
+
+.content {
+  position: fixed;
+  top: 27px;
+  bottom: 30px;
+  width: 100%;
+  height: calc(100% - 57px)
+}
+
+.theme-softkeys-dark {
+  background-color: #000000;
+  color: #ffffff;
+}
+
+.theme-softkeys-light {
+  background-color: #dadada;
+  color: #000000;
+}
+
 .softkeys-bar {
   position: fixed;
   width: 100%;
@@ -38,29 +72,28 @@ meter::-moz-meter-bar {
   display: flex;
   align-items: center;
   padding: 0 5px;
-  background-color: #dadada;
-  color: #363636;
 }
+
 
 .softkeys-bar * {
   width: 33.3333333333%;
 }
 
-.softkey-left, .softkey-right {
+#softkey-left, #softkey-right {
   font-weight: 600;
   font-size: 14px;
 }
 
-.softkey-left {
+#softkey-left {
   text-align: left;
 }
 
-.softkey-center {
+#softkey-center {
   text-align: center;
   font-size: 16px;
   font-weight: 700;
 }
 
-.softkey-right {
+#softkey-right {
   text-align: right;
 }

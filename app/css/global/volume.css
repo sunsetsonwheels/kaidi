@@ -14,10 +14,22 @@
   height: 5px;
 }
 
-.volume-bar-container {
-  width: calc(100% - 20px);
+.volume-hud-hidden {
+  top: -6px;
+  transition-property: top;
+  transition-duration: 1s;
+}
+
+.volume-hud-visible {
+  top: 31px;
+  transition-property: top;
+  transition-duration: 1s;
+}
+
+.volume-hud {
+  width: calc(100% - 40px);
   position: relative;
-  left: 10px;
-  right: 10px;
-  top: 50%;
+  left: 20px;
+  right: 20px;
+  background: none;
 }
