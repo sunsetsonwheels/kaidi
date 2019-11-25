@@ -1,40 +1,69 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <meta charset="utf-8">
-        <title>Kaidi Settings (Alpha)</title>
-        <meta name="viewport" content="width=device-width,user-scalable=no">
-        <link rel="stylesheet" href="/app/css/kaidi.css">
-        <script src="/js/settings.js" defer></script>
-    </head>
-    <body class="defaultBody">
-        <div class="header">
-            <div class="headertextbox">
-                <h1 class="headertext">Kaidi Settings (Alpha)</h1>
-            </div>
-        </div>
-        <div class="settingsInputContainer" id="container0">
-            <div class="settingsInputLabel" id="label0">IP Address of Kodi</div>
-            <div class="settingsInputInternalContainer">
-                <input type="text" class="settingsInput" id="kodiIPInput"></input>
-            </div>
-        </div>
-        <div class="settingsInputContainer" id="container1">
-            <div class="settingsInputLabel" id="label1">Port of Kodi</div>
-            <div class="settingsInputInternalContainer">
-                <input class="settingsInput" id="kodiPortInput"></input>
-            </div>
-        </div>
-        <div class="settingsInputContainer" id="container2">
-            <div class="settingsInputLabel" id="label2">Receive Kodi notifications</div>
-            <div class="settingsInputInternalContainer">
-                <input type="button" class="settingsButton" id="kodiNotificationButton"></button>
-            </div>
-        </div>
-        <div id="softkeys">
-            <div id="softkey-left">Cancel</div>
-            <div id="softkey-center"></div>
-            <div id="softkey-right">Save</div>
-        </div>
-    </body>
+  <head>
+    <meta charset="utf-8">
+    <title>Kaidi Settings</title>
+    <meta name="viewport" content="width=device-width,user-scalable=no">
+    <link rel="manifest" href="/manifest.webapp">
+    <link rel="localization" href="/app/locales/{locale}/settings.properties">
+    <link rel="stylesheet" href="/app/css/global/window.css">
+    <link rel="stylesheet" href="/app/css/global/native-toast.css">
+    <link rel="stylesheet" href="/app/css/global/pagenav.css">
+    <link rel="stylesheet" href="/app/css/settings.css">
+  </head>
+  <body class="blur-in">
+    <header class="status-bar"></header>
+    <section class="content" id="settings-content">
+      <header class="header-bar">
+        <h1 id="header-title" data-l10n-id="header-title">Settings</h1>
+      </header>
+      <div class="separator" data-l10n-id="separator-kodi">Kodi information</div>
+      <section class="settings-entry navigable">
+        <h2 class="settings-entry-label" data-l10n-id="setting-ip-title">Kodi IP address</h2>
+        <button>x.x.x.x</button>
+      </section>
+      <section class="settings-entry navigable">
+        <h2 class="settings-entry-label" data-l10n-id="setting-port-title">Kodi port</h2>
+        <button>x.x.x.x</button>
+      </section>
+      <div class="separator" data-l10n-id="separator-appearance">Kodi information</div>
+      <section class="settings-entry navigable">
+        <h2 class="settings-entry-label" data-l10n-id="setting-theme-title">App theme</h2>
+        <select>
+          <option data-l10n-id="setting-theme-light">Light</option>
+          <option data-l10n-id="setting-theme-dark">Dark</option>
+        </select>
+      </section>
+      <section class="settings-entry navigable">
+        <h2 class="settings-entry-label" data-l10n-id="setting-ad-title">KaiAds</h2>
+        <select>
+          <option data-l10n-id="setting-ad-on">Support the developer with ads</option>
+          <option data-l10n-id="setting-ad-off">Ad free experience. Please donate to paypal.me/jkelol111</option>
+        </select>
+      </section>
+      <div class="separator" data-l10n-id="separator-functionality"></div>
+      <section class="settings-entry navigable">
+        <h2 class="settings-entry-label" data-l10n-id="setting-playernotify">Kodi player notifications</h2>
+        <select>
+          <option data-l10n-id="setting-playernotify-on">On</option>
+          <option data-l10n-id="setting-playernotify-off">Off</option>
+        </select>
+      </section>
+    </section>
+    <footer class="softkeys-bar">
+      <div id="softkey-left" data-l10n-id="sk-back">Back</div>
+      <div id="softkey-center" data-l10n-id="sk-select">SELECT</div>
+      <div id="softkey-right" data-l10n-id="sk-reset">Reset</div>
+    </footer>
+    <script src="/app/js/extlibs/l10n.js" charset="utf-8"></script>
+    <script src="/app/js/backbone/globvars.js"></script>
+    <script src="/app/js/backbone/logging.js"></script>
+    <script src="/app/js/backbone/settingsmgr.js"></script>
+    <script src="/app/js/backbone/init.js"></script>
+    <script src="/app/js/backbone/swtheme.js"></script>
+    <script src="/app/js/backbone/pagenav.js"></script>
+    <script src="/app/js/extlibs/native-toast.js"></script>
+    <script src="/app/js/extlibs/naviboard.min.js"></script>
+    <script src="/app/js/settings.js"></script>
+  </body>
 </html>

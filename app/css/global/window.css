@@ -1,5 +1,6 @@
 :root {
   --theme-color: #1BC1C4;
+  --z-index-status-softkey: 10;
 }
 
 * {
@@ -21,6 +22,7 @@ meter::-moz-meter-bar {
   width: 100%;
   height: 27px;
   background-color: var(--theme-color);
+  z-index: var(--z-index-status-softkey);
 }
 
 .header-bar {
@@ -51,7 +53,8 @@ meter::-moz-meter-bar {
   top: 27px;
   bottom: 30px;
   width: 100%;
-  height: calc(100% - 57px)
+  height: calc(100% - 57px);
+  overflow: auto;
 }
 
 .theme-softkeys-dark {
@@ -72,6 +75,7 @@ meter::-moz-meter-bar {
   display: flex;
   align-items: center;
   padding: 0 5px;
+  z-index: var(--z-index-status-softkey);
 }
 
 

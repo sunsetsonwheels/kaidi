@@ -1,4 +1,0 @@
-class SettingsManager {
-  constructor() {
-  }
-}

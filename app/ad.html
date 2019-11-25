@@ -1,8 +1,17 @@
 <!DOCTYPE html>
 <html>
-  <head></head>
-  <body>
-    <script src="/app/js/lib/kaiads.min.js"></script>
-    <script src="/app/js/ad.js"></script>
+  <head>
+    <title>Kaidi Ad</title>
+    <link rel="manifest" href="/manifest.webapp">
+    <link rel="localization" href="/app/locales/{locale}/ad.properties">
+  </head>
+  <body style="opacity: 0.1;">
+    <script src="/app/js/extlibs/l10n.js" charset="utf-8"></script>
+    <script src="/app/js/backbone/globvars.js"></script>
+    <script src="/app/js/backbone/logging.js"></script>
+    <script src="/app/js/backbone/settingsmgr.js"></script>
+    <script src="/app/js/backbone/init.js"></script>
+    <script src="/app/js/extlibs/kaiads.min.js"></script>
+    <script src="/app/js/ad.js" defer></script>
   </body>
 </html>

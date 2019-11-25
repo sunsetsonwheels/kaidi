@@ -1,5 +1,9 @@
 "use strict"
 
+if(settings.get("theme") == "dark") {
+  document.body.style.backgroundColor = "#363636";
+}
+
 function handleLocationChange() {
   switch(window.location.hash) {
     case "#home":
@@ -21,29 +25,28 @@ function handleLocationChange() {
 console.log(window.location);
 
 document.addEventListener("DOMContentLoaded", () => {
-  let adsEnabled = localStorage.getItem("beta.kaidi.adsEnabled");
+  let adsEnabled = settings.get("ads");
   if(adsEnabled == "true") {
     getKaiAd({publisher: 'c0dc495b-883a-4f7a-ac41-6e6cd754d52f',
               app: 'Kaidi Remote (Beta)',
               slot: window.location.hash,
-              timeout: 5000,
+              timeout: 2000,
               onerror: err => {
                 console.log("Ad display error: "+err);
                 handleLocationChange();
               },
               onready: ad => {
+                document.body.style.opacity = 1;
                 ad.call("display");
                 ad.on("close", () => handleLocationChange());
               }
             });
   } else if(adsEnabled == null) {
-    localStorage.setItem("beta.kaidi.adsEnabled", true);
-    window.alert("Hello, it looks like it's your first time here. \
-                  We show ads for monetization purposes, but if \
-                  you want to opt out of ads, go to:\n\n\
-                  Settings -> Enable monetization.\n\n\
-                  If you do find the ads intrusive of your experience, \
-                  please file an issue at github.com/jkelol111/kaidi/issues.");
+    settings.set("ads", true);
+    navigator.mozL10n.formatValue("ad-info").then((text) => window.alert(text))
+                                            .catch(() => window.alert("Hello, it looks like it's your first time here. We show ads for monetization purposes, but if you want to opt out of ads, go to: Settings -> Enable monetization. If you do find the ads intrusive of your experience, please file an issue at github.com/jkelol111/kaidi/issues."));
+    handleLocationChange();
+  } else {
     handleLocationChange();
   }
 });

@@ -1,4 +1,5 @@
 .home-label, .home-label-blurred {
+  padding-left: 4px;
   font-size: 17px;
   font-weight: 400;
   text-align: left;

@@ -27,11 +27,11 @@
 .native-toast-south {
   left: 50%;
   transform: translateX(-50%);
-  bottom: -50px;
+  bottom: -30px;
 }
 .native-toast-south.native-toast-shown {
   opacity: 1;
-  bottom: 50px;
+  bottom: 30px;
 }
 
 .native-toast-center {

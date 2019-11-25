@@ -27,11 +27,6 @@
       }
     },
     "activities": {
-      "me.jkelol111.kaidi.alpha.settings": {
-        "href": "/app/ad.html#settings",
-        "disposition": "inline",
-        "returnValue": true
-      },
       "me.jkelol111.kaidi.alpha.player": {
         "href": "/app/ad.html#player",
         "disposition": "inline",
