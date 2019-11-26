@@ -20,34 +20,39 @@
       <div class="separator" data-l10n-id="separator-kodi">Kodi information</div>
       <section class="settings-entry navigable">
         <h2 class="settings-entry-label" data-l10n-id="setting-ip-title">Kodi IP address</h2>
-        <button>x.x.x.x</button>
+        <button id="setting-ip">x.x.x.x</button>
       </section>
       <section class="settings-entry navigable">
         <h2 class="settings-entry-label" data-l10n-id="setting-port-title">Kodi port</h2>
-        <button>x.x.x.x</button>
+        <button id="setting-port">x.x.x.x</button>
       </section>
       <div class="separator" data-l10n-id="separator-appearance">Kodi information</div>
       <section class="settings-entry navigable">
         <h2 class="settings-entry-label" data-l10n-id="setting-theme-title">App theme</h2>
-        <select>
-          <option data-l10n-id="setting-theme-light">Light</option>
-          <option data-l10n-id="setting-theme-dark">Dark</option>
-        </select>
-      </section>
-      <section class="settings-entry navigable">
-        <h2 class="settings-entry-label" data-l10n-id="setting-ad-title">KaiAds</h2>
-        <select>
-          <option data-l10n-id="setting-ad-on">Support the developer with ads</option>
-          <option data-l10n-id="setting-ad-off">Ad free experience. Please donate to paypal.me/jkelol111</option>
+        <select id="setting-theme">
+          <option data-l10n-id="setting-theme-light" value="light">Light</option>
+          <option data-l10n-id="setting-theme-dark" value="dark">Dark</option>
         </select>
       </section>
       <div class="separator" data-l10n-id="separator-functionality"></div>
       <section class="settings-entry navigable">
         <h2 class="settings-entry-label" data-l10n-id="setting-playernotify">Kodi player notifications</h2>
-        <select>
-          <option data-l10n-id="setting-playernotify-on">On</option>
-          <option data-l10n-id="setting-playernotify-off">Off</option>
+        <select id="setting-notify">
+          <option data-l10n-id="setting-playernotify-on" value="true">On</option>
+          <option data-l10n-id="setting-playernotify-off" value="false">Off</option>
         </select>
+      </section>
+      <div class="separator" data-l10n-id="separator-monetization">Monetization & about</div>
+      <section class="settings-entry navigable">
+        <h2 class="settings-entry-label" data-l10n-id="setting-ad-title">KaiAds</h2>
+        <select id="setting-ads">
+          <option data-l10n-id="setting-ad-on" value="true">Support the developer with ads</option>
+          <option data-l10n-id="setting-ad-off" value="false">Ad free experience. Please donate!</option>
+        </select>
+      </section>
+      <section class="settings-entry navigable">
+        <h2 class="settings-entry-label" data-l10n-id="setting-about-title">About Kaidi Remote (Beta)</h2>
+        <button id="setting-version">version null</button>
       </section>
     </section>
     <footer class="softkeys-bar">
@@ -56,14 +61,11 @@
       <div id="softkey-right" data-l10n-id="sk-reset">Reset</div>
     </footer>
     <script src="/app/js/extlibs/l10n.js" charset="utf-8"></script>
-    <script src="/app/js/backbone/globvars.js"></script>
-    <script src="/app/js/backbone/logging.js"></script>
-    <script src="/app/js/backbone/settingsmgr.js"></script>
-    <script src="/app/js/backbone/init.js"></script>
-    <script src="/app/js/backbone/swtheme.js"></script>
-    <script src="/app/js/backbone/pagenav.js"></script>
     <script src="/app/js/extlibs/native-toast.js"></script>
     <script src="/app/js/extlibs/naviboard.min.js"></script>
+    <script src="/app/js/backbone/utils.js"></script>
+    <script src="/app/js/backbone/init.js"></script>
+    <script src="/app/js/backbone/pages.js"></script>
     <script src="/app/js/settings.js"></script>
   </body>
 </html>

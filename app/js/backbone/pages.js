@@ -1,6 +1,49 @@
-"use strict"
+let pageNavLogger = new Logger("gotoPage");
 
-const themeLogger = new Logger("switchTheme");
+function gotoPage(page) { 
+  pageNavLogger.log("Going to page: "+page);
+  pageNavLogger.log("Starting bluring transition animations.");
+  document.body.classList.add("blur-in");
+  document.body.classList.remove("blur-out");
+  let adsEnabled = settings.get("ads");
+  pageNavLogger.log("adsEnabled state: "+adsEnabled);
+  setTimeout(() => {
+    //pageNavLogger.log("Changing page to: "+page);
+    try{
+    switch(page) {
+      case "home":
+        if(adsEnabled == "true") {
+          window.location.assign("/app/ad.html#home");
+        } else {
+          window.location.assign("/app/home.html");
+        }
+        break;
+      case "settings":
+        if(adsEnabled == "true") {
+          window.location.assign("/app/ad.html#settings");
+        } else {
+          window.location.assign("/app/settings.html");
+        }
+        break;
+      case "player":
+        if(adsEnabled == "true") {
+          window.location.assign("/app/ad.html#player");
+        } else {
+          window.location.assign("/app/player.html");
+        }
+        break;
+    }}catch(err) {console.error(err)}
+  }, 680);
+  
+}
+
+function arrivedAtPage() {
+  pageNavLogger.log("Arrived at page. Removing transition animations.");
+  document.body.classList.remove("blur-in");
+  document.body.classList.add("blur-out");
+}
+
+let themeLogger = new Logger("switchTheme");
 
 function switchTheme() {
   themeLogger.log("Switching theme.");
@@ -63,7 +106,7 @@ function switchTheme() {
       }
       break;
     default:
-      console.error("[switchTheme] Theme %s is not available. Switching back to light theme!" % (currentSelectedTheme));
+      themeLogger.log("Theme '"+currentSelectedTheme+"' is not a valid theme. Switching back to light theme!");
       localStorage.setItem("beta.kaidi.theme", "light");
       switchTheme();
       break;

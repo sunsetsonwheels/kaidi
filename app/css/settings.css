@@ -47,7 +47,7 @@
   font-weight: 600;
 }
 
-.settings-entry button, .settings-entry select {
+.settings-entry button, .settings-entry select, #settings-entry-version{
   -moz-appearance: none;
   background: none;
   width: calc(100% - 20px);

@@ -42,10 +42,16 @@ document.addEventListener("DOMContentLoaded", () => {
               }
             });
   } else if(adsEnabled == null) {
-    settings.set("ads", true);
-    navigator.mozL10n.formatValue("ad-info").then((text) => window.alert(text))
-                                            .catch(() => window.alert("Hello, it looks like it's your first time here. We show ads for monetization purposes, but if you want to opt out of ads, go to: Settings -> Enable monetization. If you do find the ads intrusive of your experience, please file an issue at github.com/jkelol111/kaidi/issues."));
-    handleLocationChange();
+    settings.set("ads", "true");
+    navigator.mozL10n.formatValue("ad-info").then((text) => {
+      window.alert(text);
+      handleLocationChange();
+    })
+    .catch(() => {
+      window.alert("Hello, it looks like it's your first time here. We show ads for monetization purposes, but if you want to opt out of ads, go to: Settings -> Enable monetization.")
+      handleLocationChange();
+    });
+   
   } else {
     handleLocationChange();
   }

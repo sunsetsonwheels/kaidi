@@ -4,19 +4,26 @@ document.addEventListener("DOMContentLoaded", () => {
   fetch('/manifest.webapp')
   .then(responseRaw => responseRaw.text())
   .then(responseText => JSON.parse(responseText).version)
-  .then(version => document.getElementById("kaidi-version-label").textContent = "Kaidi version "+version);
+  .then(version => {
+    navigator.mozL10n.formatValue("kaidi-version-prefix").then(str => {
+      document.getElementById("kaidi-version-label").textContent = str+" "+version;
+    })
+    .catch(() => {
+      document.getElementById("kaidi-version-label").textContent = "Kaidi version "+version
+    });
+  });
   switchTheme();
-  nativeToast({message: "Initialization complete!",
-               position: 'south',
-               timeout: 3000,
-               type: "success"});
   arrivedAtPage();
 });
 
 window.addEventListener("keydown", (e) => {
   switch(e.key) {
     case "SoftRight":
-      gotoPage("settings");
+      try{
+        gotoPage("settings");
+      } catch(err) {
+        console.error(err);
+      } 
       break;
   }
 });
