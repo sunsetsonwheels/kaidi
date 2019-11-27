@@ -6,6 +6,7 @@ class Logger {
   constructor(moduleName) {
     this.logPrefix = "["+moduleName+"]";
     this.loggingEnabled = localStorage.getItem(KAIDI_ORIGIN+".debug");
+    console.log("[Logger] Logger '"+moduleName+"' created.")
   }
   log(message) {
     if(this.loggingEnabled == "true") {

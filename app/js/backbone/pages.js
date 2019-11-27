@@ -8,7 +8,7 @@ function gotoPage(page) {
   let adsEnabled = settings.get("ads");
   pageNavLogger.log("adsEnabled state: "+adsEnabled);
   setTimeout(() => {
-    //pageNavLogger.log("Changing page to: "+page);
+    pageNavLogger.log("Changing page to: "+page);
     try{
     switch(page) {
       case "home":

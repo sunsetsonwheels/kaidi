@@ -26,13 +26,6 @@
         "description": "Required for to send notifications/toasts."
       }
     },
-    "activities": {
-      "me.jkelol111.kaidi.alpha.player": {
-        "href": "/app/ad.html#player",
-        "disposition": "inline",
-        "returnValue": true
-      }
-    },
     "installs_allowed_from": [
       "*"
     ],
