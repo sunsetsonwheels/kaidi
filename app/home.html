@@ -5,6 +5,7 @@
     <title>Kaidi Home</title>
     <meta name="viewport" content="width=device-width,user-scalable=no">
     <link rel="manifest" href="/manifest.webapp">
+    <link rel="localization" href="/app/locales/{locale}/global.properties">
     <link rel="localization" href="/app/locales/{locale}/home.properties">
     <link rel="stylesheet" href="/app/css/global/window.css">
     <link rel="stylesheet" href="/app/css/global/native-toast.css">
@@ -19,7 +20,6 @@
     <section class="content">
       <h3 class="home-label" data-l10n-id="info-arrows">▲ ▼ ◀ ▶: Arrow keys</h3>
       <h3 class="home-label" data-l10n-id="info-ans">Answer call key: Back</h3>
-      <h3 class="home-label" data-l10n-id="info-1">1. Home</h3>
       <h3 class="home-label" data-l10n-id="info-2">2. Options</h3>
       <h3 class="home-label" data-l10n-id="info-3">3. Set fullscreen</h3>
       <h3 class="home-label" data-l10n-id="info-5">5. Volume up</h3>
@@ -36,8 +36,8 @@
     <script src="/app/js/extlibs/native-toast.js"></script>
     <script src="/app/js/backbone/utils.js"></script>
     <script src="/app/js/backbone/init.js"></script>
-    <script src="/app/js/extlibs/atomic.js"></script>
     <script src="/app/js/backbone/kodirpc.js"></script>
+    <script src="/app/js/backbone/kodimethods.js"></script>
     <script src="/app/js/backbone/pages.js"></script>
     <script src="/app/js/home.js"></script>
   </body>

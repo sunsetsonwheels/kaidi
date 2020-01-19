@@ -10,6 +10,8 @@ if(settings.get("ip") == null || settings.get("port") == null) {
   })
 }
 
+let kodi = new KodiMethods();
+
 document.addEventListener("DOMContentLoaded", () => {
   fetch('/manifest.webapp')
   .then(responseRaw => responseRaw.text())
@@ -37,16 +39,22 @@ window.addEventListener("keydown", (e) => {
       } 
       break;
     case "ArrowUp":
-      keyNav("Up");
+      kodi.input("Up");
       break;
     case "ArrowLeft":
-      keyNav("Left");
+      kodi.input("Left");
       break;
     case "ArrowRight":
-      keyNav("Right");
+      kodi.input("Right");
       break;
     case "ArrowDown":
-      keyNav("Down");
+      kodi.input("Down");
+      break;
+    case "Enter":
+      kodi.input("Select");
+      break;
+    case "1":
+      kodi.input("Home");
       break;
   }
 });
