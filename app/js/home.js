@@ -56,5 +56,17 @@ window.addEventListener("keydown", (e) => {
     case "1":
       kodi.input("Home");
       break;
+    case "5":
+      kodi.volume("increment");
+      break;
+    case "8":
+      kodi.volume("decrement");
+      break;
+    case "6":
+      kodi.volume("mute");
+      break;
+    case "4":
+      kodi.input("Back");
+      break;
   }
 });
