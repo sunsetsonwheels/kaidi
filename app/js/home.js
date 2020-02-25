@@ -53,7 +53,7 @@ window.addEventListener("keydown", (e) => {
     case "Enter":
       kodi.input("Select");
       break;
-    case "Backspace":
+    case "Call":
       kodi.input("Back");
       break;
     case "1":
