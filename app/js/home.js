@@ -7,7 +7,7 @@ if(settings.get("ip") == null || settings.get("port") == null) {
   }).catch(() => {
     alert("Please input the IP address and port of your device in the next page!");
     gotoPage("settings");
-  })
+  });
 }
 
 let kodi = new KodiMethods();
@@ -53,8 +53,20 @@ window.addEventListener("keydown", (e) => {
     case "Enter":
       kodi.input("Select");
       break;
+    case "Call":
+      kodi.input("Back");
+      break;
     case "1":
       kodi.input("Home");
+      break;
+    case "5":
+      kodi.volume("increment");
+      break;
+    case "8":
+      kodi.volume("decrement");
+      break;
+    case "6":
+      kodi.volume("mute");
       break;
   }
 });

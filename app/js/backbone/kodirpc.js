@@ -21,8 +21,15 @@ class KodiRPC {
         if (request.status >= 200 && request.status < 300) {
           this.xhrLogger.log("Received response for method '"+method+"': "+request.responseText);
           try {
-            resolve(JSON.parse(request.responseText));
+            this.xhrLogger.log("Attempting response JSON parse.");
+            let reply = JSON.parse(request.responseText);
+            if (reply["code"]) {
+              reject(reply);
+            } else {
+              resolve(reply);
+            }
           } catch (err) {
+            this.xhrLogger.log("Unable to parse JSON. Returning responsetext.");
             resolve(request.responseText);
           }
         } else {
