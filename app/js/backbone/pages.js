@@ -3,8 +3,8 @@ let pageNavLogger = new Logger("gotoPage");
 function gotoPage(page) { 
   pageNavLogger.log("Going to page: "+page);
   pageNavLogger.log("Starting bluring transition animations.");
-  document.body.classList.add("blur-in");
-  document.body.classList.remove("blur-out");
+  document.body.classList.add("page-transition-blur-in");
+  document.body.classList.remove("page-transition-blur-out");
   let adsEnabled = settings.get("ads");
   pageNavLogger.log("adsEnabled state: "+adsEnabled);
   setTimeout(() => {
@@ -39,8 +39,8 @@ function gotoPage(page) {
 
 function arrivedAtPage() {
   pageNavLogger.log("Arrived at page. Removing transition animations.");
-  document.body.classList.remove("blur-in");
-  document.body.classList.add("blur-out");
+  document.body.classList.remove("page-transition-blur-in");
+  document.body.classList.add("page-transition-blur-out");
 }
 
 let themeLogger = new Logger("switchTheme");

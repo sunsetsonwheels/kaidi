@@ -1,10 +1,10 @@
-.blur-in {
+.page-transition-blur-in {
   opacity: 0.1;
   transition-property: opacity;
   transition-duration: 0.7s;
 }
 
-.blur-out {
+.page-transition-blur-out {
   opacity: 1;
   transition-property: opacity;
   transition-duration: 0.7s;
