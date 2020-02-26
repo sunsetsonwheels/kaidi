@@ -22,13 +22,9 @@
 
 - Notifications of now playing track (available when app is running/screen off)
 
-**FAQ:**
+**Development logging:**
 
-**Q.** I found X bug in the app! How do I report it? -> **A.** Please use the links in this README to report the bug.
-
-**Q.** The player view is not displaying the title/artist! What should I do? -> **A.** Please kill all players by restarting Kodi. Then use Kaidi to start the player again.
-
-**Q.** The app is so slow on my device! What- -> **A.** Sorry to cut you off, but this is **ALPHA** software. Use with caution!
+To enable Development logging to attach with an issue, please enable the `debug` localStorage setting. It can be toggled on by running the following command `settings.set("debug", "true")` when the app is running on a simulator/device and is attached to a WebIDE debug JavaScript console.
 
 **You found a bug?**
 
