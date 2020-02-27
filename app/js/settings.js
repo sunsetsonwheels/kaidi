@@ -58,7 +58,6 @@ function changeSelectSettings(setting, value) {
 
 
 document.addEventListener("DOMContentLoaded", () => {
-  try{
   switchTheme();
   naviBoard.setNavigation("settings-content");
   for(let settingsElement of document.querySelectorAll(".settings-entry")) {
@@ -117,7 +116,7 @@ document.addEventListener("DOMContentLoaded", () => {
       window.alert("Kaidi Remote version "+KAIDI_VERSION);
     })
   });
-  arrivedAtPage();}catch(err) {console.error(err)}
+  arrivedAtPage();
 });
 
 window.addEventListener("keydown", (e) => {

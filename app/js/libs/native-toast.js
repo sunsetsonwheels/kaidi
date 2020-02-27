@@ -28,7 +28,7 @@ var Toast = function Toast(ref) {
   var this$1 = this;
   if ( ref === void 0 ) ref = {};
   var message = ref.message; if ( message === void 0 ) message = '';
-  var position = ref.position; if ( position === void 0 ) position = 'north';
+  var position = ref.position; if ( position === void 0 ) position = 'south';
   var timeout = ref.timeout; if ( timeout === void 0 ) timeout = 3000;
   var el = ref.el; if ( el === void 0 ) el = document.body;
   var rounded = ref.rounded; if ( rounded === void 0 ) rounded = false;
@@ -48,7 +48,7 @@ var Toast = function Toast(ref) {
   this.timeout = timeout;
   this.closeOnClick = closeOnClick;
   this.toast = document.createElement('div');
-  this.toast.className = "native-toast native-toast-" + (this.position);
+  this.toast.className = "native-toast native-toast-"+this.position;
 
   if (type) {
     this.toast.className += " native-toast-" + type;

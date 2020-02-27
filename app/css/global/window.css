@@ -1,7 +1,8 @@
 :root {
   --theme-color: #1BC1C4;
   --z-index-status-bars: 10;
-  --z-index-volume: 20;
+  --z-index-options: 20;
+  --z-index-volume: 30;
 }
 
 * {
