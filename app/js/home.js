@@ -28,6 +28,18 @@ document.addEventListener("DOMContentLoaded", () => {
   arrivedAtPage();
 });
 
+var ws = new WebSocket("ws://"+settings.get("ip")+":9090/jsonrpc");
+ws.onmessage = function(e) {
+  var j = JSON.parse(e.data);
+  if (j.method === "Input.OnInputRequested") {
+    navigator.mozL10n.formatValue("input-text").then((text) => {
+      var t = prompt(text);
+      var params = {"text": t, "done": true};
+      kodi.input("SendText", params);
+    });
+  }
+} 
+
 window.addEventListener("keydown", (e) => {
   switch(e.key) {
     case "SoftLeft":

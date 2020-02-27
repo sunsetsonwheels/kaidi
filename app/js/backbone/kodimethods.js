@@ -61,9 +61,9 @@ class KodiMethods {
       this.showToastRequestFailed();
     })
   }
-  input(direction) {
-    if(["Up", "Down", "Right", "Left", "Select", "Home", "Back"].indexOf(direction) > -1) {
-      this.kodi.kodiXmlHttpRequest("Input."+direction).then(() => {
+  input(direction, params=undefined) {
+    if(["Up", "Down", "Right", "Left", "Select", "Home", "Back", "SendText"].indexOf(direction) > -1) {
+      this.kodi.kodiXmlHttpRequest("Input."+direction, params).then(() => {
         this.successfulLog("Input", direction);
       }).catch((err) => {
         this.unsuccessfulLog("Input", direction);
