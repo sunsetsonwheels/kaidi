@@ -95,16 +95,18 @@ class KodiMethods {
             document.querySelector(".volume-hud-greyout").classList.remove("volume-hud-transition-appear");
             document.querySelector(".volume-hud-greyout").classList.add("volume-hud-transition-hide");
           }, 1500);
-        }).catch(() => {
-          this.showToastResponseUndetermined();
-        })
+        }).catch((err) => {
+          this.unsuccessfulLog(method, param);
+          this.kodiMethodsLogger.error(err);
+          this.showToastRequestFailed();
+        });
       }).catch((err) => {
-        this.unsuccessfulLog("Input", direction);
+        this.unsuccessfulLog(method, param);
         this.kodiMethodsLogger.error(err);
         this.showToastRequestFailed();
       });
     } else {
-      this.unsuccessfulLog("Input", direction);
+      this.unsuccessfulLog(method, param);
       this.showToastRequestFailed();
     }
   }
