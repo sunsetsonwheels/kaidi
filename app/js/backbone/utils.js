@@ -51,6 +51,20 @@ class SettingsManager {
   }
 }
 
+function newToast(localizationKey, noLocalizationPlaceholder, toastPosition, toastTimeout, toastType) {
+  navigator.mozL10n.formatValue(localizationKey).then((text) => {
+    nativeToast({message: text,
+                 direction: toastPosition,
+                 timeout: toastTimeout,
+                 type: toastType});
+  }).catch(() => {
+    nativeToast({message: noLocalizationPlaceholder,
+                 direction: toastPosition,
+                 timeout: toastTimeout,
+                 type: toastType});
+  });
+}
+
 
 
 

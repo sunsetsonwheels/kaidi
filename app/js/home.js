@@ -30,6 +30,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
 window.addEventListener("keydown", (e) => {
   switch(e.key) {
+    case "SoftLeft":
+      alert("The player view hasn't been revamped yet. Come back later!");
+      break;
     case "SoftRight":
       try {
         gotoPage("settings");
