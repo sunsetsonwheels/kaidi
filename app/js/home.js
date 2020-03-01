@@ -10,7 +10,11 @@ if(settings.get("ip") == null || settings.get("port") == null) {
   });
 }
 
+try {
 let kodi = new KodiMethods();
+} catch (err) {
+  console.error(err);
+}
 
 document.addEventListener("DOMContentLoaded", () => {
   fetch('/manifest.webapp')

@@ -11,47 +11,21 @@ class KodiMethods {
     this.kodiMethodsLogger.error(cls+" command not triggered for: "+method);
   }
   showToastRequestFailed() {
-    navigator.mozL10n.formatValue("request-failed-text").then((text) => {
-      nativeToast({message: text,
-                   type: "success",
-                   direction: "south",
-                   timeout: 2000});
-    }).catch(() => {
-      nativeToast({message: "Kodi request failed!",
-                   direction: "south",
-                   timeout: 2000,
-                   type: "success"});
-    });
+    newToast("request-failed-text", "Kodi request failed", "south", 2000, "error");
   }
   showToastResponseUndetermined() {
-    navigator.mozL10n.formatValue("response-undetermined-response-text").then((text) => {
-      nativeToast({message: text+" Error: "+err,
-                   direction: "south",
-                   timeout: 4000,
-                   type: "warning"});
-    }).catch(() => {
-      nativeToast({message: "Undertermined Ping response. Error: "+err,
-                   direction: "south",
-                   timeout: 4000,
-                   type: "warning"});
-    });
+    newToast("response-undetermined-response-text", "Undertermined Ping response.", "south", 4000, "warning");
   }
   ping() {
     this.kodi.kodiXmlHttpRequest("JSONRPC.Ping").then((response) => {
       try {
-        if (response["result"] == "pong") {
-          navigator.mozL10n.formatValue("kodi-connection-established-text").then((text) => {
-            nativeToast({message: text,
-                         direction: "south",
-                         timeout: 2000,
-                         type: "success"});
-          }).catch(() => {
-            nativeToast({message: "Connection to Kodi successful!",
-                         direction: "south",
-                         timeout: 2000,
-                         type: "success"});
-          });
-        } else {
+        try {
+          if (response["result"] == "pong") {
+            newToast("kodi-connection-established-text", "Connection to Kodi successful!", "south", 2000, "success");
+          } else {
+            this.showToastResponseUndetermined();
+          }
+        } catch (err) {
           this.showToastResponseUndetermined();
         }
       } catch (err) {
