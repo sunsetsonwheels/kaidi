@@ -19,19 +19,21 @@ class KodiMethods {
   ping() {
     this.kodi.kodiXmlHttpRequest("JSONRPC.Ping").then((response) => {
       try {
-        try {
-          if (response["result"] == "pong") {
-            newToast("kodi-connection-established-text", "Connection to Kodi successful!", "south", 2000, "success");
-          } else {
-            this.showToastResponseUndetermined();
-          }
-        } catch (err) {
+        if (response["result"] == "pong") {
+          this.successfulLog("JSONRPC", "Ping");
+          newToast("kodi-connection-established-text", "Connection to Kodi successful!", "south", 2000, "success");
+        } else {
+          this.unsuccessfulLog("JSONRPC", "Ping");
           this.showToastResponseUndetermined();
         }
       } catch (err) {
+        this.unsuccessfulLog("JSONRPC", "Ping");
+        this.kodiMethodsLogger.error(err);
         this.showToastResponseUndetermined();
       }
-    }).catch(() => {
+    }).catch((err) => {
+      this.unsuccessfulLog("JSONRPC", "Ping");
+      this.kodiMethodsLogger.error(err);
       this.showToastRequestFailed();
     })
   }

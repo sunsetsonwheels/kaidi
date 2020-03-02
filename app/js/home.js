@@ -11,7 +11,7 @@ if(settings.get("ip") == null || settings.get("port") == null) {
 }
 
 try {
-let kodi = new KodiMethods();
+  var kodi = new KodiMethods();
 } catch (err) {
   console.error(err);
 }
