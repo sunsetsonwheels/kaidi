@@ -51,6 +51,13 @@ class KodiMethods {
       this.showToastRequestFailed();
     }
   }
+  inputRegisterEvent(inputEventHandler) {
+    if (typeof inputEventHandler == "object") {
+      this.kodi.kodiRegisterEventListener("Input.OnInputRequested", inputEventHandler);
+    } else {
+      this.kodiMethodsLogger.log("");
+    }
+  } 
   volume(direction) {
     if(["increment", "decrement", "mute"].indexOf(direction) > -1) {
       if ( direction == "mute" ) {

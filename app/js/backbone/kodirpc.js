@@ -7,9 +7,11 @@ class KodiRPC {
     this.xhrLogger = new Logger("KodiRPC.kodiXmlHttpRequest");
     this.kodiIP = settings.get("ip");
     this.kodiPort = settings.get("port");
+    this.listeningEvents = {};
+    this.eventWorker = new Worker("/app/js/backbone/workers/kodieventsworker.js");
   }
   kodiXmlHttpRequest(method, params=undefined) {
-    if(params) {
+    if (params) {
       this.xhrLogger.log("XML request invoked for Kodi method '"+method+"' and params '"+params+"'.");
     } else {
       this.xhrLogger.log("XML request invoked for Kodi method '"+method+"'.");
@@ -51,4 +53,8 @@ class KodiRPC {
       }
     });
   }
+  kodiRegisterEventListener(kodiEvent, eventHandler) {
+    this.listeningEvents[kodiEvent] = eventHandler;
+  }
+  kodiOnEventReceived() {}
 }
