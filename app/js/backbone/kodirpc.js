@@ -2,13 +2,25 @@
 // This file is reponsible for the communcation with the Kodi device
 // Methods are almost self explainatory
 
+"use strict"
+
 class KodiRPC {
   constructor() { 
-    this.xhrLogger = new Logger("KodiRPC.kodiXmlHttpRequest");
+    this.xhrLogger = new LoggerFactory("KodiRPC.kodiXmlHttpRequest");
+    this.eventWorkerLogger = new LoggerFactory("KodiRPC.eventWorker")
     this.kodiIP = settings.get("ip");
     this.kodiPort = settings.get("port");
-    this.listeningEvents = {};
+    this.listeningKodiEvents = {};
+    this.eventWorkerLogger.log("Starting Kodi events worker.");
     this.eventWorker = new Worker("/app/js/backbone/workers/kodieventsworker.js");
+    this.eventWorker.onmessage = (e) => {
+      this.eventWorkerLogger.log("Message received from Worker: "+JSON.stringify(e.data));
+      //TODO: complete listening logic
+    }
+    this.eventWorker.postMessage({"command": "init",
+                                  "kodiInfo": {ip: this.kodiIP,
+                                               port: this.kodiPort}
+                                 });
   }
   kodiXmlHttpRequest(method, params=undefined) {
     if (params) {

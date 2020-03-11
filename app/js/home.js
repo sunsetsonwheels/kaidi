@@ -10,11 +10,7 @@ if(settings.get("ip") == null || settings.get("port") == null) {
   });
 }
 
-try {
-  var kodi = new KodiMethods();
-} catch (err) {
-  console.error(err);
-}
+var kodi = new KodiMethods();
 
 document.addEventListener("DOMContentLoaded", () => {
   fetch('/manifest.webapp')
@@ -77,6 +73,9 @@ window.addEventListener("keydown", (e) => {
       break;
     case "1":
       kodi.input("Home");
+      break;
+    case "3":
+      kodi.gui("SetFullscreen");
       break;
     case "5":
       kodi.volume("increment");

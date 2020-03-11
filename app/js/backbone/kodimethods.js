@@ -1,6 +1,8 @@
+"use strict"
+
 class KodiMethods {
   constructor() {
-    this.kodiMethodsLogger = new Logger("KodiMethods");
+    this.kodiMethodsLogger = new LoggerFactory("KodiMethods");
     this.kodi = new KodiRPC();
     this.ping();
   }
@@ -38,7 +40,7 @@ class KodiMethods {
     })
   }
   input(direction, params=undefined) {
-    if(["Up", "Down", "Right", "Left", "Select", "Home", "Back", "SendText"].indexOf(direction) > -1) {
+    if (["Up", "Down", "Right", "Left", "Select", "Home", "Back", "SendText"].indexOf(direction) > -1) {
       this.kodi.kodiXmlHttpRequest("Input."+direction, params).then(() => {
         this.successfulLog("Input", direction);
       }).catch((err) => {
@@ -58,6 +60,20 @@ class KodiMethods {
       this.kodiMethodsLogger.log("");
     }
   } 
+  gui(subcommand, params=undefined) {
+    if (["SetFullscreen"].indexOf(subcommand) > -1) {
+      this.kodi.kodiXmlHttpRequest("GUI."+subcommand, params).then(() => {
+        this.successfulLog("GUI", subcommand);
+      }).catch((err) => {
+        this.unsuccessfulLog("GUI", subcommand);
+        this.kodiMethodsLogger.error(err);
+        this.showToastRequestFailed();
+      });
+    } else {
+      this.unsuccessfulLog("GUI", subcommand);
+      this.showToastRequestFailed();
+    }
+  }
   volume(direction) {
     if(["increment", "decrement", "mute"].indexOf(direction) > -1) {
       if ( direction == "mute" ) {
