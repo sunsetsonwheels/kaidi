@@ -3,7 +3,7 @@
 class KodiMethods {
   constructor() {
     this.kodiMethodsLogger = new LoggerFactory("KodiMethods");
-    this.kodi = new KodiRPC();
+    this.kodirpc = new KodiRPC(true);
     this.ping();
   }
   successfulLog(cls, method) {
@@ -19,7 +19,7 @@ class KodiMethods {
     newToast("response-undetermined-response-text", "Undertermined Ping response.", "south", 4000, "warning");
   }
   ping() {
-    this.kodi.kodiXmlHttpRequest("JSONRPC.Ping").then((response) => {
+    this.kodirpc.kodiXmlHttpRequest("JSONRPC.Ping").then((response) => {
       try {
         if (response["result"] == "pong") {
           this.successfulLog("JSONRPC", "Ping");
@@ -41,7 +41,7 @@ class KodiMethods {
   }
   input(direction, params=undefined) {
     if (["Up", "Down", "Right", "Left", "Select", "Home", "Back", "SendText"].indexOf(direction) > -1) {
-      this.kodi.kodiXmlHttpRequest("Input."+direction, params).then(() => {
+      this.kodirpc.kodiXmlHttpRequest("Input."+direction, params).then(() => {
         this.successfulLog("Input", direction);
       }).catch((err) => {
         this.unsuccessfulLog("Input", direction);
@@ -54,15 +54,11 @@ class KodiMethods {
     }
   }
   inputRegisterEvent(inputEventHandler) {
-    if (typeof inputEventHandler == "object") {
-      this.kodi.kodiRegisterEventListener("Input.OnInputRequested", inputEventHandler);
-    } else {
-      this.kodiMethodsLogger.log("");
-    }
+    this.kodirpc.kodiRegisterEventListener("Input.OnInputRequested", inputEventHandler);
   } 
   gui(subcommand, params=undefined) {
     if (["SetFullscreen"].indexOf(subcommand) > -1) {
-      this.kodi.kodiXmlHttpRequest("GUI."+subcommand, params).then(() => {
+      this.kodirpc.kodiXmlHttpRequest("GUI."+subcommand, params).then(() => {
         this.successfulLog("GUI", subcommand);
       }).catch((err) => {
         this.unsuccessfulLog("GUI", subcommand);
@@ -83,11 +79,11 @@ class KodiMethods {
          var method = "Application.SetVolume";
          var param = { "volume": direction };
       }
-      this.kodi.kodiXmlHttpRequest(method, param).then(() => {
-        this.kodi.kodiXmlHttpRequest("Application.GetProperties", {"properties": ["volume"]})
+      this.kodirpc.kodiXmlHttpRequest(method, param).then(() => {
+        this.kodirpc.kodiXmlHttpRequest("Application.GetProperties", {"properties": ["volume"]})
         .then((response) => {
           document.querySelector("#meter-volume").value = response["result"]["volume"];
-          this.successfulLog("Input", direction);
+          this.successfulLog("Volume", direction);
           document.querySelector(".volume-hud-greyout").classList.remove("volume-hud-transition-hide");
           document.querySelector(".volume-hud-greyout").classList.add("volume-hud-transition-appear");
           setTimeout(() => {

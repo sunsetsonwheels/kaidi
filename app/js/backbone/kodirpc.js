@@ -5,26 +5,41 @@
 "use strict"
 
 class KodiRPC {
-  constructor() { 
+  constructor(startWorker=undefined) { 
+    this.startWorker = startWorker;
     this.xhrLogger = new LoggerFactory("KodiRPC.kodiXmlHttpRequest");
-    this.eventWorkerLogger = new LoggerFactory("KodiRPC.eventWorker")
     this.kodiIP = settings.get("ip");
     this.kodiPort = settings.get("port");
-    this.listeningKodiEvents = {};
-    this.eventWorkerLogger.log("Starting Kodi events worker.");
-    this.eventWorker = new Worker("/app/js/backbone/workers/kodieventsworker.js");
-    this.eventWorker.onmessage = (e) => {
-      this.eventWorkerLogger.log("Message received from Worker: "+JSON.stringify(e.data));
-      //TODO: complete listening logic
+    if (this.startWorker) {
+      this.listeningKodiEvents = {};
+      this.eventWorkerLogger = new LoggerFactory("KodiRPC:Events");
+      this.eventWorkerLogger.log("Starting Kodi events worker.");
+      this.eventWorker = new Worker("/app/js/backbone/workers/kodieventsworker.js");
+      this.eventWorker.onmessage = (e) => {
+        this.eventWorkerLogger.log("Message received from Worker: "+JSON.stringify(e.data));
+        try {
+          if (e.data["command"] == "receive") {
+            if(e.data["event"] in this.listeningKodiEvents) {
+              this.listeningKodiEvents[e.data["event"]]();
+            } else {
+              this.eventWorkerLogger.log("Event '"+e.data["event"]+"' is not a registered one. Not doing anything.");
+            }
+          }
+        } catch (err) {
+          this.eventWorkerLogger.error(new Error("An error occured handling the worker message."));
+          this.eventWorkerLogger.error(err);
+        }
+      }
+      this.eventWorker.postMessage({"command": "init",
+                                    "kodiInfo": {ip: this.kodiIP,
+                                                port: this.kodiPort}
+                                  });
+      
     }
-    this.eventWorker.postMessage({"command": "init",
-                                  "kodiInfo": {ip: this.kodiIP,
-                                               port: this.kodiPort}
-                                 });
   }
   kodiXmlHttpRequest(method, params=undefined) {
     if (params) {
-      this.xhrLogger.log("XML request invoked for Kodi method '"+method+"' and params '"+params+"'.");
+      this.xhrLogger.log("XML request invoked for Kodi method '"+method+"' and params '"+JSON.stringify(params)+"'.");
     } else {
       this.xhrLogger.log("XML request invoked for Kodi method '"+method+"'.");
     }
@@ -66,7 +81,15 @@ class KodiRPC {
     });
   }
   kodiRegisterEventListener(kodiEvent, eventHandler) {
-    this.listeningEvents[kodiEvent] = eventHandler;
+    if (this.startWorker) {
+      if (typeof(eventHandler) == "function") {
+        this.listeningKodiEvents[kodiEvent] = eventHandler;
+        this.eventWorkerLogger.log("Successfully added event handler for Kodi event '"+kodiEvent+"'.");
+      } else {
+        this.eventWorkerLogger.error(new Error("The supplied event handler is not a function. Not adding to list."));
+      }
+    } else {
+      this.eventWorkerLogger.error(new Error("This KodiRPC instance hasn't been started with a worker. Event-listening will not work."));
+    }
   }
-  kodiOnEventReceived() {}
 }

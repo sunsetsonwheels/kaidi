@@ -1,6 +1,8 @@
+"use strict"
+
 class NotificationFactory {
   constructor(notificationID) {
-    this.notificationLogger = new Logger("NotificationFactory:"+notificationID);
+    this.notificationLogger = new LoggerFactory("NotificationFactory:"+notificationID);
   }
   _notify(title, body, notifId) {
     if (Notification.permission == "granted") {

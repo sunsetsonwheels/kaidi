@@ -1,12 +1,12 @@
 "use strict"
 
-importScripts("/app/js/libs/reconnecting-websocket.min.js",
+importScripts("/app/js/libs/reconnecting-websocket-iife.min.js",
               "/app/js/backbone/workerutils.js", 
               "/app/js/backbone/notifications.js");
 
 var workerStatus = "opening";
 var notif = new NotificationFactory("KodiEventsWorker");
-var kodiEventsWorkerLogger = new Logger("KodiEventsWorker");
+var kodiEventsWorkerLogger = new LoggerFactory("KodiEventsWorker");
 
 function changeWorkerStatus(status) {
   var oldWorkerStatus = workerStatus;
@@ -15,12 +15,33 @@ function changeWorkerStatus(status) {
   kodiEventsWorkerLogger.log("Changed worker status: "+oldWorkerStatus+" --> "+workerStatus);
 }
 
-var kodiIP = null;
-var listeningEvents = [];
+var kodiInfo = {};
 var ws = null;
 
 function wsStart() {
-  ws = new ReconnectingWebSocket("ws://"+settings.get("ip")+":9090/jsonrpc");
+  kodiEventsWorkerLogger.log("Starting ReconnectingWebSocket.");
+  ws = new ReconnectingWebSocket("ws://"+kodiInfo["ip"]+":9090/jsonrpc");
+  ws.onopen = () => {
+    kodiEventsWorkerLogger.log("ReconnectingWebSocket has successfully connected to Kodi!");
+  }
+  ws.onmessage = (e) => {
+    kodiEventsWorkerLogger.log("Received message from Kodi: "+JSON.stringify(e.data));
+    try {
+      let kodiMethod = JSON.parse(e.data)["method"];
+      switch (kodiMethod) {
+        case "Player.OnPlay":
+          // TODO: onplay Kodi notification
+          break;
+        default:
+          postMessage({"command": "receive",
+                       "event": kodiMethod});
+          break;
+      }
+    } catch (err) {
+      kodiEventsWorkerLogger.error(new Error("Couldn't send event info back to KodiRPC instance."));
+      kodiEventsWorkerLogger.error(err);
+    }
+  }
 }
 
 onmessage = (e) => {
@@ -28,10 +49,26 @@ onmessage = (e) => {
   try {
     switch (e.data["command"]) {
       case "init":
-        notif.spawnNotificationNoLocalization("Test Notification", "Init!", "kodi-event");
-        changeWorkerStatus("opened");
+        if (workerStatus == "opened") {
+          kodiEventsWorkerLogger.log("The worker has finished initalization already!");
+        } else {
+          try {
+            kodiInfo = e.data["kodiInfo"];
+            if (!ws) {
+              wsStart();
+            } else {
+              kodiEventsWorkerLogger.log("ReconnectingWebSocket is already present!")
+            }
+            changeWorkerStatus("opened");
+          } catch (err) {
+            kodiEventsWorkerLogger.error(new Error("'kodiInfo' is missing in message. Initilization of worker failed!"));
+            kodiEventsWorkerLogger.error(err);
+          }
+        }
         break;
       case "close":
+        ws.close();
+        ws = null;
         changeWorkerStatus("closed");
         break;
       default:

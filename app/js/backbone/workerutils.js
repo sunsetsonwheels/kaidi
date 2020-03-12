@@ -1,10 +1,10 @@
 "use strict"
 
 
-class Logger {
+class LoggerFactory {
   constructor(moduleName) {
     this.logPrefix = "["+moduleName+"]";
-    console.log("[WorkerLogger] Logger '"+moduleName+"' created.")
+    console.log("[WorkerLoggerFactory] LoggerFactory '"+moduleName+"' created.")
   }
   log(message) {
     let displayedLog = this.logPrefix+" "+message;

@@ -1,6 +1,8 @@
 "use strict"
 
-if(settings.get("ip") == null || settings.get("port") == null) {
+try {
+
+if (settings.get("ip") == null || settings.get("port") == null) {
   navigator.mozL10n.formatValue("welcome-text", {newline: "\n\n"}).then((text) => {
     alert(text);
     gotoPage("settings");
@@ -28,17 +30,20 @@ document.addEventListener("DOMContentLoaded", () => {
   arrivedAtPage();
 });
 
-var ws = new WebSocket("ws://"+settings.get("ip")+":9090/jsonrpc");
-ws.onmessage = function(e) {
-  var j = JSON.parse(e.data);
-  if (j.method === "Input.OnInputRequested") {
-    navigator.mozL10n.formatValue("input-text").then((text) => {
-      var t = prompt(text);
-      var params = {"text": t, "done": true};
-      kodi.input("SendText", params);
-    });
+kodi.inputRegisterEvent(() => {
+  function promptInputText(text) {
+    let inputtedText = prompt(text);
+    if (inputtedText) {
+      kodi.input("SendText", {"text": inputtedText, 
+                              "done": true});
+    }
   }
-} 
+  navigator.mozL10n.formatValue("input-text").then((text) => {
+    promptInputText(text);
+  }).catch(() => {
+    promptInputText("Input text");
+  });
+});
 
 window.addEventListener("keydown", (e) => {
   switch(e.key) {
@@ -87,4 +92,4 @@ window.addEventListener("keydown", (e) => {
       kodi.volume("mute");
       break;
   }
-});
+});} catch(err) {console.error(err)}
