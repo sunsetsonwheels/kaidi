@@ -1,44 +1,35 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <meta charset="utf-8">
-        <title>Kaidi Player (Alpha)</title>
-        <meta name="viewport" content="width=device-width,user-scalable=no">
-        <link rel="stylesheet" href="/app/css/kaidi.css">
-        <link rel="stylesheet" href="/app/css/toastr.min.css">
-    </head>
-    <body class="playerBody">
-        <div class="header">
-            <div class="headertextbox">
-                <h1 class="headertext">Kaidi Player (Alpha)</h1>
-            </div>
-        </div>
-        <div id="greyOutBox">
-            <div id="volumeBarContainer">
-                <div class="labelCentered">Volume</div>
-                <meter min='0' max='100' class="kaidiMeterBar" id="volumeBar">hello</meter>
-            </div>
-        </div>
-        <div class="labelWhiteBold">Now playing:</div>
-        <div class="labelWhite" id="currentPlayingTitle">Not playing anything.</div>
-        <div class="labelWhite" id="currentPlayingArtist">To play something, go back and navigate to what you want to play.</div>
-        <div id="playerStatusContainer">
-            <img src="/icons/shuffle-grey24x24.png" class="playerStatusIndicator" id="playerShuffleIndicator">
-            <img src="/icons/repeat-grey24x24.png" class="playerStatusIndicator" id="playerRepeatIndicator">
-            <div id="labelPlayerIndicatorWhite">0:00/7:98</div>
-            <div id="playerBarContainer">
-                <meter min='0' max='100' class="kaidiMeterBar" id="playerMeterBar">player</meter>
-            </div>
-        </div>
-        <div id="softkeys-black">
-            <div id="softkey-left"></div>
-            <div id="softkey-center"></div>
-            <div id="softkey-right"></div>
-        </div>
-        <script src="/js/lib/jquery-3.3.1.min.js"></script>
-        <script src="/js/lib/toastr.min.js"></script>
-        <script src="/js/lib/atomic.min.js"></script>
-        <script src="/js/toastrConfig.js"></script>
-        <script src="/js/player.js" defer></script>
-    </body>
+  <head>
+    <meta charset="utf-8">
+    <title>Kaidi Home</title>
+    <meta name="viewport" content="width=device-width,user-scalable=no">
+    <link rel="manifest" href="/manifest.webapp">
+    <link rel="localization" href="/app/locales/{locale}/global.properties">
+    <link rel="localization" href="/app/locales/{locale}/player.properties">
+    <link rel="stylesheet" href="/app/css/global/window.css">
+    <link rel="stylesheet" href="/app/css/global/native-toast.css">
+    <link rel="stylesheet" href="/app/css/global/pagenav.css">
+    <link rel="stylesheet" href="/app/css/global/meter.css">
+    <link rel="stylesheet" href="/app/css/global/volume.css">
+    <link rel="stylesheet" href="/app/css/player.css">
+  </head>
+  <body class="page-transition-blur-in">
+    <header class="status-bar"></header>
+    <section class="content">
+      
+    </section>
+    <footer class="softkeys-bar">
+      <div id="softkey-left" data-l10n-id="sk-playback">Playback</div>
+      <div id="softkey-center" data-l10n-id="sk-none"></div>
+      <div id="softkey-right" data-l10n-id="sk-playlist">Playlist</div>
+    </footer>
+    <script src="/app/js/libs/l10n.js" charset="utf-8"></script>
+    <script src="/app/js/libs/native-toast.js"></script>
+    <script src="/app/js/backbone/utils.js"></script>
+    <script src="/app/js/backbone/init.js"></script>
+    <script src="/app/js/backbone/kodirpc.js"></script>
+    <script src="/app/js/backbone/kodimethods.js"></script>
+    <script src="/app/js/player.js"></script>
+  </body>
 </html>

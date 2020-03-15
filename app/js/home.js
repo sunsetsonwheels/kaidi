@@ -46,7 +46,7 @@ kodi.inputRegisterEvent(() => {
 window.addEventListener("keydown", (e) => {
   switch(e.key) {
     case "SoftLeft":
-      alert("The player view hasn't been revamped yet. Come back later!");
+      gotoPage("player");
       break;
     case "SoftRight":
       gotoPage("settings");

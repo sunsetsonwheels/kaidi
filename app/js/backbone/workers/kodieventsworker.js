@@ -26,16 +26,8 @@ function wsStart() {
   ws.onmessage = (e) => {
     kodiEventsWorkerLogger.log("Received message from Kodi: "+JSON.stringify(e.data));
     try {
-      let kodiMethod = JSON.parse(e.data)["method"];
-      switch (kodiMethod) {
-        case "Player.OnPlay":
-          // TODO: onplay Kodi notification
-          break;
-        default:
-          postMessage({"command": "receive",
-                       "event": kodiMethod});
-          break;
-      }
+      postMessage({"command": "receive",
+                    "event": JSON.parse(e.data)["method"]});
     } catch (err) {
       kodiEventsWorkerLogger.error(new Error("Couldn't send event info back to KodiRPC instance."));
       kodiEventsWorkerLogger.error(err);

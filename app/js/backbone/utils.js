@@ -75,7 +75,6 @@ function gotoPage(page) {
   pageNavLogger.log("adsEnabled state: "+adsEnabled);
   setTimeout(() => {
     pageNavLogger.log("Changing page to: "+page);
-    try{
     switch(page) {
       case "home":
         if(adsEnabled == "true") {
@@ -98,7 +97,7 @@ function gotoPage(page) {
           window.location.assign("/app/player.html");
         }
         break;
-    }}catch(err) {console.error(err)}
+    }
   }, 680);
   
 }
