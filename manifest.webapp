@@ -1,33 +1,33 @@
 {
-    "version": "0.4.8",
-    "name": "Kaidi Remote (Beta)",
-    "description": "A Kodi remote app for KaiOS.",
-    "launch_path": "/app/ad.html#home",
-    "orientation": "default",
-    "theme_color": "#1BC1C4",
-    "origin": "app://beta.kaidi.jkelol111.me",
-    "icons": {
-      "56": "/app/icons/kaidi_56.png",
-      "112": "/app/icons/kaidi_112.png"
+  "version": "0.4.8",
+  "name": "Kaidi Remote (Beta)",
+  "description": "A Kodi remote app for KaiOS.",
+  "launch_path": "/app/ad.html#home",
+  "orientation": "default",
+  "theme_color": "#1BC1C4",
+  "origin": "app://beta.kaidi.jkelol111.me",
+  "icons": {
+    "56": "/app/icons/kaidi_56.png",
+    "112": "/app/icons/kaidi_112.png"
+  },
+  "chrome": {
+    "statusbar": "overlap"
+  },
+  "developer": {
+    "name": "jkelol111, bartulo",
+    "url": "http://github.com/jkelol111"
+  },
+  "type": "privileged",
+  "permissions": {
+    "systemXHR": {
+      "description": "Required to POST to Kodi."
     },
-    "chrome": {
-      "statusbar": "overlap"
-    },
-    "developer": {
-      "name": "Nguyen Thanh Nam (jkelol111)",
-      "url": "http://github.com/jkelol111"
-    },
-    "type": "privileged",
-    "permissions": {
-	    "systemXHR": {
-	      "description": "Required to POST to Kodi."
-	    },
-      "desktop-notification": {
-        "description": "Required for to send notifications/toasts."
-      }
-    },
-    "installs_allowed_from": [
-      "*"
-    ],
-    "default_locale": "en"
+    "desktop-notification": {
+      "description": "Required for to send notifications/toasts."
+    }
+  },
+  "installs_allowed_from": [
+    "*"
+  ],
+  "default_locale": "en"
 }

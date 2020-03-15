@@ -1,7 +1,5 @@
 "use strict"
 
-try {
-
 if (settings.get("ip") == null || settings.get("port") == null) {
   navigator.mozL10n.formatValue("welcome-text", {newline: "\n\n"}).then((text) => {
     alert(text);
@@ -51,12 +49,7 @@ window.addEventListener("keydown", (e) => {
       alert("The player view hasn't been revamped yet. Come back later!");
       break;
     case "SoftRight":
-      try {
-        gotoPage("settings");
-      } catch(err) {
-        arrivedAtPage();
-        console.error(err);
-      } 
+      gotoPage("settings");
       break;
     case "ArrowUp":
       kodi.input("Up");
@@ -79,6 +72,9 @@ window.addEventListener("keydown", (e) => {
     case "1":
       kodi.input("Home");
       break;
+    case "2":
+      kodi.input("ContextMenu");
+      break;
     case "3":
       kodi.gui("SetFullscreen");
       break;
@@ -92,4 +88,4 @@ window.addEventListener("keydown", (e) => {
       kodi.volume("mute");
       break;
   }
-});} catch(err) {console.error(err)}
+});

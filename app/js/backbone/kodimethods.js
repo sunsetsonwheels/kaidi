@@ -40,7 +40,7 @@ class KodiMethods {
     })
   }
   input(direction, params=undefined) {
-    if (["Up", "Down", "Right", "Left", "Select", "Home", "Back", "SendText"].indexOf(direction) > -1) {
+    if (["Up", "Down", "Right", "Left", "Select", "Home", "Back", "ContentMenu","SendText"].indexOf(direction) > -1) {
       this.kodirpc.kodiXmlHttpRequest("Input."+direction, params).then(() => {
         this.successfulLog("Input", direction);
       }).catch((err) => {

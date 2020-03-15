@@ -8,18 +8,17 @@ class LoggerFactory {
     this.loggingEnabled = localStorage.getItem(KAIDI_ORIGIN+".debug");
     console.log("[LoggerFactory] LoggerFactory '"+moduleName+"' created.")
   }
+  _getLogString(log) {
+    return this.logPrefix+" "+String(log);
+  }
   log(message) {
     if(this.loggingEnabled == "true") {
-      let displayedLog = this.logPrefix+" "+message;
-      console.log(displayedLog);
-      return displayedLog;
+      console.debug(this._getLogString(message));
     }
   }
   error(error) {
     if(this.loggingEnabled == "true") {
-      let displayedError = this.logPrefix+" "+error;
-      console.error(displayedError);
-      return displayedError;
+      console.error(this._getLogString(error));
     }
   }
 }

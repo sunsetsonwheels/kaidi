@@ -16,12 +16,20 @@ class NotificationFactory {
     } else {
       this.notificationLogger.error(new Error("Cannot send notification with content: "+
                                               JSON.stringify({title: title, body: body, id: notifId})));
+      this.notificationLogger.error(new Error("Notification permission denied. Notification not sent."));
     }
   }
   spawnNotification(titleLocalizationKey, bodyLocalizationKey, notifId) {
-    // TODO: Complete localization for notification
-  }
-  spawnNotificationNoLocalization(title, body, notifId) {
-    this._notify(title, body, notifId);
+    navigator.mozl10n.formatValue(titleLocalizationKey).then((titleText) => {
+      navigator.mozl10n.formatValue(bodyLocalizationKey).then((bodyText) => {
+        this._notify(titleText, bodyText, notifId);
+      }).catch((err) => {
+        this.notificationLogger.error(new Error("Failed to retrieve localization for bodyKey '"+titleLocalizationKey+"'."));
+        this.notificationLogger.error(err);
+      });
+    }).catch((err) => {
+      this.notificationLogger.error(new Error("Failed to retrieve localization for titleKey '"+titleLocalizationKey+"'."));
+      this.notificationLogger.error(err);
+    })
   }
 }

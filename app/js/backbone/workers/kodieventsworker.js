@@ -1,8 +1,7 @@
 "use strict"
 
 importScripts("/app/js/libs/reconnecting-websocket-iife.min.js",
-              "/app/js/backbone/workerutils.js", 
-              "/app/js/backbone/notifications.js");
+              "/app/js/backbone/workerutils.js");
 
 var workerStatus = "opening";
 var notif = new NotificationFactory("KodiEventsWorker");
@@ -60,6 +59,7 @@ onmessage = (e) => {
               kodiEventsWorkerLogger.log("ReconnectingWebSocket is already present!")
             }
             changeWorkerStatus("opened");
+            notif.spawnNotification("G")
           } catch (err) {
             kodiEventsWorkerLogger.error(new Error("'kodiInfo' is missing in message. Initilization of worker failed!"));
             kodiEventsWorkerLogger.error(err);
