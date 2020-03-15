@@ -2,7 +2,7 @@
 <html>
   <head>
     <meta charset="utf-8">
-    <title>Kaidi Home</title>
+    <title>Kaidi Player</title>
     <meta name="viewport" content="width=device-width,user-scalable=no">
     <link rel="manifest" href="/manifest.webapp">
     <link rel="localization" href="/app/locales/{locale}/global.properties">
@@ -12,13 +12,30 @@
     <link rel="stylesheet" href="/app/css/global/pagenav.css">
     <link rel="stylesheet" href="/app/css/global/meter.css">
     <link rel="stylesheet" href="/app/css/global/volume.css">
+    <link rel="stylesheet" href="/app/css/global/throbber.css">
     <link rel="stylesheet" href="/app/css/player.css">
   </head>
   <body class="page-transition-blur-in">
     <header class="status-bar"></header>
     <section class="content">
-      
+      <div class="player-playing-info">
+        <div id="player-playing-info-title">Not playing anything</div>
+        <div id="player-playing-info-artists">no artist</div>
+      </div>
+      <img id="player-playing-art">
+      <div class="player-playing-playback">
+        <img src="/app/icons/shuffle-grey_24.png" id="player-playing-playback-shuffle">
+        <img src="/app/icons/repeat-grey_24.png" id="player-playing-playback-repeat">
+        <div id="player-playing-playback-duration-text">0:00/0:00</div>
+        <meter min='0' max='100' class="meter-bar" id="player-playing-playback-duration-meter"></meter>
+      </div> 
     </section>
+    <div class="volume-hud-greyout volume-hud-transition-hide">
+      <div class="volume-hud-container">
+        <div class="volume-hud-label" data-l10n-id="volume-hud-label">Volume</div>
+        <meter min="0" max="100" class="meter-bar" id="meter-volume"></meter>
+      </div>
+    </div>
     <footer class="softkeys-bar">
       <div id="softkey-left" data-l10n-id="sk-playback">Playback</div>
       <div id="softkey-center" data-l10n-id="sk-none"></div>

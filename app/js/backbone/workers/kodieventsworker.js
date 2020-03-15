@@ -26,8 +26,10 @@ function wsStart() {
   ws.onmessage = (e) => {
     kodiEventsWorkerLogger.log("Received message from Kodi: "+JSON.stringify(e.data));
     try {
+      eventMessage = JSON.parse(e.data);
       postMessage({"command": "receive",
-                    "event": JSON.parse(e.data)["method"]});
+                   "event": eventMessage["method"],
+                   "data": JSON.parse(e.data)});
     } catch (err) {
       kodiEventsWorkerLogger.error(new Error("Couldn't send event info back to KodiRPC instance."));
       kodiEventsWorkerLogger.error(err);
@@ -51,7 +53,7 @@ onmessage = (e) => {
               kodiEventsWorkerLogger.log("ReconnectingWebSocket is already present!")
             }
             changeWorkerStatus("opened");
-            notif.spawnNotification("G")
+            notif.spawnNotification("We're live!", "Hello from Kaidi webworker!")
           } catch (err) {
             kodiEventsWorkerLogger.error(new Error("'kodiInfo' is missing in message. Initilization of worker failed!"));
             kodiEventsWorkerLogger.error(err);

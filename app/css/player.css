@@ -1,0 +1,54 @@
+:root {
+  --z-index-player-art: 5;
+}
+
+.player-playing-info, .player-playing-playback {
+  background-color: rgba(184,184,184,0.6);
+  z-index: var(--z-index-status-bars);
+  width: 100%;
+  position: fixed;
+}
+
+.player-playing-info {
+  top: 27px;
+}
+
+#player-playing-info-title, #player-playing-info-artists {
+  padding: 4px;
+  text-align: left;
+  text-overflow: ellipsis;
+  width: calc(100% - 8px);
+}
+
+#player-playing-info-title {
+  font-weight: 700;
+  font-size: 18px;
+}
+
+#player-playing-info-artist {
+  font-weight: 400;
+  font-size: 12px;
+}
+
+#player-playing-art {
+  width: 100%;
+  height: calc(100% - 57px);
+  z-index: var(--z-index-player-art);
+  position: fixed;
+  top: 27px;
+  bottom: 30px;
+}
+
+.player-playing-playback {
+  bottom: 30px;
+}
+
+#player-playing-playback-shuffle, #player-playing-playback-repeat {
+  float: left;
+  padding-left: 4px;
+}
+
+#player-playing-playback-duration-text {
+  float: right;
+  padding-right: 4px;
+}
