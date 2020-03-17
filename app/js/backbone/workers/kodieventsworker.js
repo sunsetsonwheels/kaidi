@@ -53,7 +53,7 @@ onmessage = (e) => {
               kodiEventsWorkerLogger.log("ReconnectingWebSocket is already present!")
             }
             changeWorkerStatus("opened");
-            notif.spawnNotification("We're live!", "Hello from Kaidi webworker!")
+            // notif.spawnNotification("We're live!", "Hello from Kaidi webworker!")
           } catch (err) {
             kodiEventsWorkerLogger.error(new Error("'kodiInfo' is missing in message. Initilization of worker failed!"));
             kodiEventsWorkerLogger.error(err);

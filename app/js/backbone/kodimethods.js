@@ -106,7 +106,18 @@ class KodiMethods {
     }
   }
   player(subcommand, params=undefined) {
-    
+    switch (subcommand) {
+      case "GetActivePlayers":
+        return this.kodirpc.kodiXmlHttpRequest("Player.GetActivePlayers");
+        break;
+      case "GetItem":
+        return this.kodirpc.kodiXmlHttpRequest("Player.GetItem", params);
+        break;
+      default:
+        this.unsuccessfulLog(subcommand, params);
+        this.showToastRequestFailed();
+        break;
+    }
   }
   playbackRegisterEvents(onPlayCb, onPauseCb, onStopCb, onPlaylistAddCb, onPlaylistRemoveCb, onPlaylistClearCb) {
     this.kodirpc.kodiRegisterEventListener("Player.OnPlay", onPlayCb);
