@@ -1,31 +1,11 @@
 let KAIDI_VERSION = null;
 
 function showToastSuccess() {
-  navigator.mozL10n.formatValue("setting-change-succeed").then((str) => {
-    nativeToast({message: str,
-                 position: "north",
-                 timeout: 3000,
-                 type: "success"});
-  }).catch(() => {
-    nativeToast({message: "Setting changed successfully!",
-                 position: "north",
-                 timeout: 3000,
-                 type: "success"});
-  });
+  newToast("setting-change-succeed", "Setting changed successfully!", "north", 3000, "success");
 }
 
 function showToastFailed() {
-  navigator.mozL10n.formatValue("setting-change-failed").then((str) => {
-    nativeToast({message: str,
-                 position: "north",
-                 timeout: 3000,
-                 type: "error"});
-  }).catch(() => {
-    nativeToast({message: "Setting change failed!",
-                 position: "north",
-                 timeout: 3000,
-                 type: "error"});
-  });
+  newToast("setting-change-failed", "Setting change failed!", "north", 3000, "error");
 }
 
 function changeKodiSettings(setting) {
@@ -50,9 +30,10 @@ function changeSelectSettings(setting, value) {
     settings.set(setting, value);
     showToastSuccess();
     return true;
-  } catch(err) {
+  } catch (err) {
     showToastFailed();
-    return false
+    console.error(err);
+    return false;
   }
 }
 
@@ -69,32 +50,32 @@ document.addEventListener("DOMContentLoaded", () => {
   if(settings.get("port") == null) settings.set("port", "8080");
   if(settings.get("notify") == null) settings.set("notify", "true");
   document.getElementById("setting-ip").textContent = settings.get("ip");
-  document.getElementById("setting-ip").addEventListener("focus", () => {
+  document.getElementById("setting-ip").onfocus = () => {
     changeKodiSettings("ip");
-  });
+  };
   document.getElementById("setting-port").textContent = settings.get("port");
-  document.getElementById("setting-port").addEventListener("focus", () => {
+  document.getElementById("setting-port").onfocus = () => {
     changeKodiSettings("port");
-  });
+  };
   document.getElementById("setting-theme").value = settings.get("theme");
-  document.getElementById("setting-theme").addEventListener("change", (e) => {
+  document.getElementById("setting-theme").onchange =  (e) => {
     if(changeSelectSettings("theme", e.target.value)) switchTheme();
-  })
+  }
   document.getElementById("setting-notify").value = settings.get("notify");
-  document.getElementById("setting-notify").addEventListener("change", (e) => {
+  document.getElementById("setting-notify").onchange = (e) => {
     changeSelectSettings("notify", e.target.value);
-  })
-  document.getElementById("setting-ads").value= settings.get("ads");
-  document.getElementById("setting-ads").addEventListener("change", (e) => {
+  }
+  document.getElementById("setting-ads").value = settings.get("ads");
+  document.getElementById("setting-ads").onchange = (e) => {
     if(e.target.value == "false") {
       navigator.mozL10n.formatValue("donate-text").then((text) => {
         alert(text);
       }).catch(() => {
         alert("Please donate to us: paypal.me/jkelol111");
-      })
+      });
     }
     changeSelectSettings("ads", e.target.value);
-  })
+  }
   fetch('/manifest.webapp')
   .then(responseRaw => responseRaw.text())
   .then(responseText => JSON.parse(responseText).version)
@@ -107,15 +88,19 @@ document.addEventListener("DOMContentLoaded", () => {
       document.getElementById("setting-version").textContent = "version "+version;
     });
   });
-  document.getElementById("setting-version").addEventListener("focus", () => {
+  document.getElementById("setting-version").onfocus = () => {
     navigator.mozL10n.formatValue("about-text", {"version": KAIDI_VERSION,
-                                                 "newline": "\n\n"})
+                                                 "newline": "\n\n",
+                                                 "currentYear": new Date().getFullYear()})
     .then((text) => {
       window.alert(text);
     }).catch((err) => {
       window.alert("Kaidi Remote version "+KAIDI_VERSION);
-    })
-  });
+    });
+  };
+  document.getElementById("setting-donate").onclick = () => {
+    window.open("https://paypal.me/jkelol111");
+  }
   arrivedAtPage();
 });
 

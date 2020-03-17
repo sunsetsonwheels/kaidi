@@ -2,7 +2,8 @@
   --theme-color: #1BC1C4;
   --z-index-status-bars: 10;
   --z-index-options: 20;
-  --z-index-volume: 30;
+  --z-index-content-top: 30;
+  --z-index-volume: 40;
 }
 
 * {
@@ -57,6 +58,20 @@ meter::-moz-meter-bar {
   width: 100%;
   height: calc(100% - 57px);
   overflow: auto;
+}
+
+.content-hidden-right, .content-visible-right {
+  z-index: var(--z-index-content-top);
+  transition-property: left;
+  transition-duration: 0.6s;
+}
+
+.content-hidden-right {
+  left: 100%;
+}
+
+.content-visible-right {
+  left: 0%;
 }
 
 .theme-softkeys-dark {

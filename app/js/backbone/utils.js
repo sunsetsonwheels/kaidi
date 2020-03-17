@@ -53,12 +53,12 @@ class SettingsManager {
 function newToast(localizationKey, noLocalizationPlaceholder, toastPosition, toastTimeout, toastType) {
   navigator.mozL10n.formatValue(localizationKey).then((text) => {
     nativeToast({message: text,
-                 direction: toastPosition,
+                 position: toastPosition,
                  timeout: toastTimeout,
                  type: toastType});
   }).catch(() => {
     nativeToast({message: noLocalizationPlaceholder,
-                 direction: toastPosition,
+                 position: toastPosition,
                  timeout: toastTimeout,
                  type: toastType});
   });
@@ -115,7 +115,7 @@ function switchTheme() {
   let currentSelectedTheme = settings.get("theme");
   themeLogger.log("Currently selected theme: "+currentSelectedTheme);
   if(currentSelectedTheme == null) {
-    localStorage.setItem("beta.kaidi.theme", "light");
+    settings.set("theme", "light");
   }
   let contentElements = document.querySelectorAll(".content");
   let softkeyBars = document.querySelectorAll(".softkeys-bar");

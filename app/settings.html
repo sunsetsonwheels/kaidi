@@ -5,6 +5,7 @@
     <title>Kaidi Settings</title>
     <meta name="viewport" content="width=device-width,user-scalable=no">
     <link rel="manifest" href="/manifest.webapp">
+    <link rel="localization" href="/app/locales/{locale}/global.properties">
     <link rel="localization" href="/app/locales/{locale}/settings.properties">
     <link rel="stylesheet" href="/app/css/global/window.css">
     <link rel="stylesheet" href="/app/css/global/native-toast.css">
@@ -49,6 +50,10 @@
           <option data-l10n-id="setting-ad-on" value="true">Support the developer with ads</option>
           <option data-l10n-id="setting-ad-off" value="false">Ad free experience. Please donate!</option>
         </select>
+      </section>
+      <section class="settings-entry navigable">
+        <h2 class="settings-entry-label" data-l10n-id="setting-donate-title">Donate</h2>
+        <button id="setting-donate" data-l10n-id="setting-donate-secondary">Help fund the app!</button>
       </section>
       <section class="settings-entry navigable">
         <h2 class="settings-entry-label" data-l10n-id="setting-about-title">About Kaidi Remote (Beta)</h2>

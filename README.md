@@ -11,6 +11,8 @@
   <br>
   <span align="center">Supports KaiOS 2.5 and above</span>
   <br>
+  <span align="center">Tested with Kodi Krypton and above</span>
+  <br>
   <a href="https://www.google.com/url?q=https%3A%2F%2Fsites.google.com%2Fview%2Fbananahackers%2Fhome&sa=D&sntz=1&usg=AFQjCNEtvVwlme7uKDuqfJaXLKBnLWNHTg">BananaHackers page</a> |
   <a href="https://github.com/jkelol111/kaidi/issues">Issue tracker</a> |
   <a href="https://github.com/jkelol111/kaidi/releases">Download now</a><br>

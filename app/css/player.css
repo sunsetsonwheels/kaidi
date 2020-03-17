@@ -41,14 +41,20 @@
 
 .player-playing-playback {
   bottom: 30px;
+  visibility: hidden;
+}
+
+#player-playing-playback-shuffle, #player-playing-playback-repeat, #player-playing-playback-duration-text {
+  padding-top: 4px;
 }
 
 #player-playing-playback-shuffle, #player-playing-playback-repeat {
   float: left;
-  padding-left: 4px;
+  padding-left: 6px;
 }
 
 #player-playing-playback-duration-text {
   float: right;
-  padding-right: 4px;
+  text-align: right;
+  padding-right: 6px;
 }

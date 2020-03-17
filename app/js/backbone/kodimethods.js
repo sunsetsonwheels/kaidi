@@ -105,4 +105,15 @@ class KodiMethods {
       this.showToastRequestFailed();
     }
   }
+  player(subcommand, params=undefined) {
+    
+  }
+  playbackRegisterEvents(onPlayCb, onPauseCb, onStopCb, onPlaylistAddCb, onPlaylistRemoveCb, onPlaylistClearCb) {
+    this.kodirpc.kodiRegisterEventListener("Player.OnPlay", onPlayCb);
+    this.kodirpc.kodiRegisterEventListener("Player.OnPause", onPauseCb);
+    this.kodirpc.kodiRegisterEventListener("Player.OnStop", onStopCb);
+    this.kodirpc.kodiRegisterEventListener("Playlist.OnAdd", onPlaylistAddCb);
+    this.kodirpc.kodiRegisterEventListener("Playlist.OnRemove", onPlaylistRemoveCb);
+    this.kodirpc.kodiRegisterEventListener("Playlist.OnClear", onPlaylistClearCb);
+  }
 }

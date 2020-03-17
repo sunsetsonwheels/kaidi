@@ -30,6 +30,12 @@
         <meter min='0' max='100' class="meter-bar" id="player-playing-playback-duration-meter"></meter>
       </div> 
     </section>
+    <section class="content content-hidden-right" id="player-playlist" style="right: 100%">
+      <header class="header-bar">
+        <h1 id="header-title" data-l10n-id="header-title">Playlist</h1>
+      </header>
+      <div class="navigable">Hey</div>
+    </section>
     <div class="volume-hud-greyout volume-hud-transition-hide">
       <div class="volume-hud-container">
         <div class="volume-hud-label" data-l10n-id="volume-hud-label">Volume</div>
@@ -37,12 +43,13 @@
       </div>
     </div>
     <footer class="softkeys-bar">
-      <div id="softkey-left" data-l10n-id="sk-playback">Playback</div>
+      <div id="softkey-left" data-l10n-id="sk-none"></div>
       <div id="softkey-center" data-l10n-id="sk-none"></div>
-      <div id="softkey-right" data-l10n-id="sk-playlist">Playlist</div>
+      <div id="softkey-right" data-l10n-id="sk-none"></div>
     </footer>
     <script src="/app/js/libs/l10n.js" charset="utf-8"></script>
     <script src="/app/js/libs/native-toast.js"></script>
+    <script src="/app/js/libs/naviboard.min.js"></script>
     <script src="/app/js/backbone/utils.js"></script>
     <script src="/app/js/backbone/init.js"></script>
     <script src="/app/js/backbone/kodirpc.js"></script>
