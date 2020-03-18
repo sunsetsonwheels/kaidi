@@ -19,8 +19,8 @@
     <header class="status-bar"></header>
     <section class="content">
       <div class="player-playing-info">
-        <div id="player-playing-info-title">Not playing anything</div>
-        <div id="player-playing-info-artists">no artist</div>
+        <div id="player-playing-info-title" data-l10n-id="player-playing-info-title-none">Not playing anything</div>
+        <div id="player-playing-info-artists" data-l10n-id="player-playing-info-artists-none">no artist</div>
       </div>
       <img id="player-playing-art">
       <div class="player-playing-playback">
@@ -29,12 +29,6 @@
         <div id="player-playing-playback-duration-text">0:00/0:00</div>
         <meter min='0' max='100' class="meter-bar" id="player-playing-playback-duration-meter"></meter>
       </div> 
-    </section>
-    <section class="content content-hidden-right" id="player-playlist" style="right: 100%">
-      <header class="header-bar">
-        <h1 id="header-title" data-l10n-id="header-title">Playlist</h1>
-      </header>
-      <div class="navigable">Hey</div>
     </section>
     <div class="volume-hud-greyout volume-hud-transition-hide">
       <div class="volume-hud-container">
@@ -49,7 +43,6 @@
     </footer>
     <script src="/app/js/libs/l10n.js" charset="utf-8"></script>
     <script src="/app/js/libs/native-toast.js"></script>
-    <script src="/app/js/libs/naviboard.min.js"></script>
     <script src="/app/js/backbone/utils.js"></script>
     <script src="/app/js/backbone/init.js"></script>
     <script src="/app/js/backbone/kodirpc.js"></script>

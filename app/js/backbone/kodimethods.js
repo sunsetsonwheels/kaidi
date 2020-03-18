@@ -91,12 +91,12 @@ class KodiMethods {
             document.querySelector(".volume-hud-greyout").classList.add("volume-hud-transition-hide");
           }, 1500);
         }).catch((err) => {
-          this.unsuccessfulLog(method, param);
+          this.unsuccessfulLog("Volume", subcommand);
           this.kodiMethodsLogger.error(err);
           this.showToastRequestFailed();
         });
       }).catch((err) => {
-        this.unsuccessfulLog(method, param);
+        this.unsuccessfulLog("Volume", subcommand);
         this.kodiMethodsLogger.error(err);
         this.showToastRequestFailed();
       });
@@ -106,17 +106,27 @@ class KodiMethods {
     }
   }
   player(subcommand, params=undefined) {
-    switch (subcommand) {
-      case "GetActivePlayers":
-        return this.kodirpc.kodiXmlHttpRequest("Player.GetActivePlayers");
-        break;
-      case "GetItem":
-        return this.kodirpc.kodiXmlHttpRequest("Player.GetItem", params);
-        break;
-      default:
-        this.unsuccessfulLog(subcommand, params);
-        this.showToastRequestFailed();
-        break;
+    if (["GetActivePlayers", "GetItem", "PlayPause"].indexOf(subcommand) > -1) {
+      return new Promise((resolve, reject) => {
+        this.kodirpc.kodiXmlHttpRequest("Player."+subcommand).then((response) => {
+          try {
+            this.successfulLog("Player", subcommand);
+            resolve(response["result"]);
+          } catch (err) {
+            this.unsuccessfulLog("Player", subcommand);
+            this.kodiMethodsLogger.error(err);
+            this.showToastRequestFailed();
+            reject(err);
+          }
+        }).catch((err) => {
+          this.unsuccessfulLog(method, param);
+          this.kodiMethodsLogger.error(err);
+          this.showToastRequestFailed();
+        });
+      });
+    } else {
+      this.unsuccessfulLog("Player", subcommand);
+      this.showToastRequestFailed();
     }
   }
   playbackRegisterEvents(onPlayCb, onPauseCb, onStopCb, onPlaylistAddCb, onPlaylistRemoveCb, onPlaylistClearCb) {

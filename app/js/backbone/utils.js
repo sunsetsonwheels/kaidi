@@ -50,17 +50,23 @@ class SettingsManager {
   }
 }
 
+let newToastLogger = new LoggerFactory("newToast");
+
 function newToast(localizationKey, noLocalizationPlaceholder, toastPosition, toastTimeout, toastType) {
+  newToastLogger.log("Creating new toast with localizationKey '"+localizationKey+"'.");
   navigator.mozL10n.formatValue(localizationKey).then((text) => {
     nativeToast({message: text,
                  position: toastPosition,
                  timeout: toastTimeout,
                  type: toastType});
+    newToastLogger.log("Toast displayed successfully.");
   }).catch(() => {
+    newToastLogger.log("Couldn't find localizationKey. Displaying toast with localizationPlaceholder.");
     nativeToast({message: noLocalizationPlaceholder,
                  position: toastPosition,
                  timeout: toastTimeout,
                  type: toastType});
+    newToastLogger.log("Toast displayed successfully.");
   });
 }
 

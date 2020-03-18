@@ -52,14 +52,14 @@ class KodiRPC {
           try {
             this.xhrLogger.log("Attempting response JSON parse.");
             let reply = JSON.parse(request.responseText);
-            if (reply["code"]) {
+            if (reply["error"]) {
               reject(reply);
             } else {
               resolve(reply);
             }
           } catch (err) {
-            this.xhrLogger.log("Unable to parse JSON. Returning responsetext.");
-            resolve(request.responseText);
+            this.xhrLogger.log("Unable to parse JSON. Erroring out.");
+            reject(request.responseText);
           }
         } else {
           this.xhrLogger.error("Request for method '"+method+"' unsuccessful.");

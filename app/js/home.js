@@ -76,7 +76,7 @@ window.addEventListener("keydown", (e) => {
       kodi.input("ContextMenu");
       break;
     case "3":
-      kodi.gui("SetFullscreen");
+      kodi.gui("SetFullscreen", {"fullscreen": "toggle"});
       break;
     case "5":
       kodi.volume("increment");
