@@ -1,73 +1,135 @@
+//
+// /app/js/player.js
+//
+// This file handles the tasks required for the operation of player.html
+//
+// (C) jkelol111 and contributors 2020
+//
+
 "use strict"
 
-var kodi = new KodiMethods();
+//
+// Constant KodiMethods kodi
+// 
+// Handles communication with Kodi and provides core functions for Kaidi
+//
 
-class KaidiPlayer {
-  constructor() {
-    this.playing = false;
-    this.lastDuration = 0;
-    this.endDuration = 0;
-    this.ticker = null;
-  }
-  blankPlayer() {
-    document.getElementById("player-playing-info-title").setAttribute("data-l10n-id", "player-playing-info-title-none");
-    document.getElementById("player-playing-artists-title").setAttribute("data-l10n-id", "player-playing-info-artists-none");
-    document.getElementById("player-playing-playback").style.visibility = "hidden";
-    this.lastDuration = 0;
-  }
-  refreshPlayer() {
-    function updatePlayingInfo(kodiResponse) {
-      document.getElementById("player-playing-info-title").removeAttribute("data-l10n-id");
-      document.getElementById("player-playing-info-artists").removeAttribute("data-l10n-id");
-      var playingDetails = {"title": null,
-                            "artists": null,
-                            "art": null,
-                            "totalDuration": null};
-      if (kodiResponse["title"]) {
-        playingDetails["title"] = kodiResponse["title"];
-      } else if (kodiResponse["label"]) {
-        playingDetails["title"] = kodiResponse["label"];
-      }
-      document.getElementById("player-playing-info-title").textContent = playingDetails["title"];
-      document.getElementById("player-playing-info-artists").textContent = playingDetails["artists"];
-      document.getElementById("player-playing-art").src = playingDetails["art"];
-      this.endDuration = kodiResponse["totalDuration"];
-    }
-    function updatePlayback(kodiResponse) {
-      document.getElementById("player-playing-playback").style.visibility = "";
-    }
-    kodi.player("GetActivePlayers").then((response) => {
-      if (response[0]) {
-        kodi.player("GetItem", {"properties": ["title", "label", "artist", "duration", "thumbnail"],
-                              "playerid": response[0]["playerid"]}).then((response) => {
-        updatePlayingInfo(response);
-        }).catch((err) => {
-          this.blankPlayer();
-        });
-      } else {
-        this.blankPlayer();
-      }
-    }).catch((err) => {
-      this.blankPlayer();
-    });
-  }
-  playPauseEventHandler() {
+const kodi = new KodiMethods();
 
-  }
-}
+//
+// Constant Object PLAYERPLAYINGINFOELEMENTS
+//
+// Names of the HTML elements that comprise the player playing information card
+//
+
+const PLAYERPLAYINGINFOELEMENTS = {"title": "player-playing-info-title",
+                                   "artists": "player-playing-info-artists"};
+
+//
+// Function blankPlayer()
+//
+// Empties the player, returns it to not playing state.
+//
+// To be executed after ticker completes, Player.OnStop
+//
 
 function blankPlayer() {
-  document.getElementById("player-playing-info-title").setAttribute("data-l10n-id", "player-playing-info-title-none");
-  document.getElementById("player-playing-artists-title").setAttribute("data-l10n-id", "player-playing-info-artists-none");
+  document.getElementById(PLAYERPLAYINGINFOELEMENTS["title"]).setAttribute("data-l10n-id", "player-playing-info-title-none");
+  document.getElementById(PLAYERPLAYINGINFOELEMENTS["artists"]).setAttribute("data-l10n-id", "player-playing-info-artists-none");
   document.getElementById("player-playing-playback").style.visibility = "hidden";
 }
+
+//
+// Variables Boolean playing, Number ticked , Number maxTick, Function,null ticker
+//
+// Local time ticker to update the playback time meter and labels.
+//
+// Boolean to determine player state.
+//
+
+var playing = false;
+var ticked = 0;
+var maxTick = 0;
+var ticker = null;
+
+//
+// Function tickTimer()
+//
+// Ticks the time every one second for the ticker.
+//
+// If the ticked time has exceeded the maximum tick time, blank the player and stop the interval.
+// And reset the timer.
+//
+
+function tickTimer() {
+  tick++;
+  updatePlayerPlayback();
+  if (ticked > maxTick) {
+    if (typeof ticker == "function") {
+      clearInterval(ticker);
+      ticked = 0;
+      maxTick = 0;
+      blankPlayer();
+    }
+  }
+}
+
+//
+// Function updatePlayerInfo(String title, String artists)
+//
+// Update the player info (title and artists).
+//
+
+function updatePlayerInfo(title, artists) {
+  if (typeof title == "string") {
+    document.getElementById(PLAYERPLAYINGINFOELEMENTS["title"]).textContent = title;
+  } else {
+    document.getElementById(PLAYERPLAYINGINFOELEMENTS["title"]).setAttribute("data-l10n-id", "player-playing-info-title-unavailable");
+  }
+  if (typeof artists == "string") {
+    document.getElementById(PLAYERPLAYINGINFOELEMENTS["artists"]).textContent = artists;
+  } else {
+    document.getElementById(PLAYERPLAYINGINFOELEMENTS["artists"]).setAttribute("data-l10n-id", "player-playing-info-artists-unavailable");
+  }
+}
+
+//
+// Function updatePlaybackInfo()
+//
+// Update the player playback (playback meter and playback label).
+//
+
+function updatePlayerPlayback() {
+  // TODO: Code to pause or update the ticker
+}
+
+//
+// Function initPlayer()
+//
+// Initializes the player view for the first time. 
+//
+// From here onwards, we will rely on the events Kodi supplies us with,
+// to reduce the number of requests we have to make.
+//
 
 function initPlayer() {
   kodi.player("GetActivePlayers").then((response) => {
     if (response[0]) {
-      kodi.player("GetItem", {"properties": ["title", "label", "artist", "duration", "thumbnail"],
+      kodi.player("GetProperties", {"properties": ["title", "artist", "duration", "thumbnail"],
                             "playerid": response[0]["playerid"]}).then((response) => {
-      updatePlayingInfo(response);
+        blankPlayer();
+        if (response["title"]) {
+          updatePlayerInfo(response["title"]);
+        } else {
+          document.getElementById(PLAYERPLAYINGINFOELEMENTS["title"]).setAttribute("data-l10n-id", "player-playing-info-title-unavailable");
+        }
+        if (response["artist"]) {
+          updatePlayerInfo(undefined, response["artist"]);
+        } else {
+          document.getElementById(PLAYERPLAYINGINFOELEMENTS["artists"]).setAttribute("data-l10n-id", "player-playing-info-artists-unavailable");
+        }
+        console.log("Player duration: "+response["duration"]);
+        console.log("Player thumbnail: "+response["thumbnail"]);
       }).catch((err) => {
         this.blankPlayer();
       });
@@ -79,11 +141,26 @@ function initPlayer() {
   })
 }
 
+//
+// Function playerEventHandler(Object kodiEventResponse)
+//
+// Handles the events from Kodi.
+//
+
+function playerEventHandler(kodiEventResponse) {
+  switch (kodiEventResponse["event"]) {
+    case "PlayPause":
+      break;
+    case "OnStop":
+      break;
+  }
+}
+
 document.addEventListener("DOMContentLoaded", () => {
   switchTheme();
   arrivedAtPage();
-  var player = new KaidiPlayer();
   //kodi.playbackRegisterEvents(getPlayer);
+  //initPlayer();
   window.addEventListener("keydown", (e) => {
     switch (e.key) {
       case "SoftLeft":
@@ -112,7 +189,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
         break;
       case "Right":
-        if (player.playing) {
+        if (playing) {
           //TODO: port code from 0.4.7.3
         }
         break;

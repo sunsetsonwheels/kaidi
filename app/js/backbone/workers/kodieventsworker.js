@@ -1,11 +1,43 @@
+//
+// /app/js/backbone/kodieventsworker.js
+//
+// This file handles the task of listening to Kodi events and forwarding them back
+// to the KodiRPC instance that initialized it.
+//
+// (C) jkelol111 and contributors 2020
+//
+
 "use strict"
+
+//
+// Import all the scripts we will need in this Web Worker.
+//
 
 importScripts("/app/js/libs/reconnecting-websocket-iife.min.js",
               "/app/js/backbone/workerutils.js");
 
+//
+// Variables String workerStatus, NotificationFactory notif, LoggerFactory kodiEventsWorkerLogger 
+//
+// workerStatus: defines the current state of the Web Worker.
+//
+// notif: NotificationFactory instance to send notifications directly from this Web Worker, albeit
+//        with no localization because we're not in the same scope as the main thread.
+//
+// kodiEventsWorkerLogger: LoggerFactory instance to log messages for debugging into the JavaScript
+//                         console.
+//
+
 var workerStatus = "opening";
 var notif = new NotificationFactory("KodiEventsWorker");
 var kodiEventsWorkerLogger = new LoggerFactory("KodiEventsWorker");
+
+//
+// Function changeWorkerStatus()
+//
+// Quite self-explainatory, this function just changes the workerStatus variable to the desired value,
+// and relaying the new status back to the main thread.
+//
 
 function changeWorkerStatus(status) {
   var oldWorkerStatus = workerStatus;
@@ -14,8 +46,21 @@ function changeWorkerStatus(status) {
   kodiEventsWorkerLogger.log("Changed worker status: "+oldWorkerStatus+" --> "+workerStatus);
 }
 
+//
+// Variables Object kodiInfo, ReconnectingWebSocket,null ws
+//
+// kodiInfo: the IP address and port of Kodi
+// 
+// ws: If the Web Worker is opened, ws is a ReconnectingWebSocket, if not, it is null.
+//
+
 var kodiInfo = {};
 var ws = null;
+
+//
+// Function wsStart()
+// Again, quite self-explainatory. This function starts the ReconnectingWebSocket.
+//
 
 function wsStart() {
   kodiEventsWorkerLogger.log("Starting ReconnectingWebSocket.");
@@ -37,7 +82,13 @@ function wsStart() {
   }
 }
 
-onmessage = (e) => {
+//
+// Event self.onmessage
+//
+// Handles incoming requests from the KodiRPC instance which started this Web Worker.
+//
+
+self.onmessage = (e) => {
   kodiEventsWorkerLogger.log("Message received: "+JSON.stringify(e.data));
   try {
     switch (e.data["command"]) {

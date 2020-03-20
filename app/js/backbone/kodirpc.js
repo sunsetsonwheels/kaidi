@@ -1,6 +1,11 @@
-// kodirpc.js
+//
+// /app/js/backbone/kodirpc.js
+//
 // This file is reponsible for the communcation with the Kodi device
 // Methods are almost self explainatory
+//
+// (C) jkelol111 and contributors 2020
+//
 
 "use strict"
 
@@ -20,7 +25,7 @@ class KodiRPC {
         try {
           if (e.data["command"] == "receive") {
             if(e.data["event"] in this.listeningKodiEvents) {
-              this.listeningKodiEvents[e.data["event"]]();
+              this.listeningKodiEvents[e.data["event"]](e.data);
             } else {
               this.eventWorkerLogger.log("Event '"+e.data["event"]+"' is not a registered one. Not doing anything.");
             }
