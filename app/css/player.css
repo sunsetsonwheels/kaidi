@@ -2,7 +2,7 @@
   --z-index-player-art: 5;
 }
 
-.player-playing-info, .player-playing-playback {
+.player-playing-info, #player-playing-playback {
   background-color: rgba(184,184,184,0.6);
   z-index: var(--z-index-status-bars);
   width: 100%;
@@ -39,7 +39,7 @@
   bottom: 30px;
 }
 
-.player-playing-playback {
+#player-playing-playback {
   bottom: 30px;
   visibility: hidden;
 }

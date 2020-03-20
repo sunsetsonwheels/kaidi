@@ -26,66 +26,64 @@ document.addEventListener("DOMContentLoaded", () => {
   });
   switchTheme();
   arrivedAtPage();
-});
-
-kodi.inputRegisterEvent(() => {
-  function promptInputText(text) {
-    let inputtedText = prompt(text);
-    if (inputtedText) {
-      kodi.input("SendText", {"text": inputtedText, 
-                              "done": true});
+  window.onkeydown = (e) => {
+    switch(e.key) {
+      case "SoftLeft":
+        gotoPage("player");
+        break;
+      case "SoftRight":
+        gotoPage("settings");
+        break;
+      case "ArrowUp":
+        kodi.input("Up");
+        break;
+      case "ArrowLeft":
+        kodi.input("Left");
+        break;
+      case "ArrowRight":
+        kodi.input("Right");
+        break;
+      case "ArrowDown":
+        kodi.input("Down");
+        break;
+      case "Enter":
+        kodi.input("Select");
+        break;
+      case "Call":
+        kodi.input("Back");
+        break;
+      case "1":
+        kodi.input("Home");
+        break;
+      case "2":
+        kodi.input("ContextMenu");
+        break;
+      case "3":
+        kodi.gui("SetFullscreen", {"fullscreen": "toggle"});
+        break;
+      case "5":
+        kodi.volume("increment");
+        break;
+      case "8":
+        kodi.volume("decrement");
+        break;
+      case "6":
+        kodi.volume("mute");
+        break;
     }
-  }
-  navigator.mozL10n.formatValue("input-text").then((text) => {
-    promptInputText(text);
-  }).catch(() => {
-    promptInputText("Input text");
+  };
+  kodi.inputRegisterEvent(() => {
+    function promptInputText(text) {
+      let inputtedText = prompt(text);
+      if (inputtedText) {
+        kodi.input("SendText", {"text": inputtedText, 
+                                "done": true});
+      }
+    }
+    navigator.mozL10n.formatValue("input-text").then((text) => {
+      promptInputText(text);
+    }).catch(() => {
+      promptInputText("Input text");
+    });
   });
-});
-
-window.addEventListener("keydown", (e) => {
-  switch(e.key) {
-    case "SoftLeft":
-      gotoPage("player");
-      break;
-    case "SoftRight":
-      gotoPage("settings");
-      break;
-    case "ArrowUp":
-      kodi.input("Up");
-      break;
-    case "ArrowLeft":
-      kodi.input("Left");
-      break;
-    case "ArrowRight":
-      kodi.input("Right");
-      break;
-    case "ArrowDown":
-      kodi.input("Down");
-      break;
-    case "Enter":
-      kodi.input("Select");
-      break;
-    case "Call":
-      kodi.input("Back");
-      break;
-    case "1":
-      kodi.input("Home");
-      break;
-    case "2":
-      kodi.input("ContextMenu");
-      break;
-    case "3":
-      kodi.gui("SetFullscreen", {"fullscreen": "toggle"});
-      break;
-    case "5":
-      kodi.volume("increment");
-      break;
-    case "8":
-      kodi.volume("decrement");
-      break;
-    case "6":
-      kodi.volume("mute");
-      break;
-  }
 });

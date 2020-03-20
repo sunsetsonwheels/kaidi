@@ -33,7 +33,7 @@ class KodiRPC {
       this.eventWorker.postMessage({"command": "init",
                                     "kodiInfo": {ip: this.kodiIP,
                                                 port: this.kodiPort}
-                                  });
+                                   });
       
     }
   }
@@ -52,18 +52,20 @@ class KodiRPC {
           try {
             this.xhrLogger.log("Attempting response JSON parse.");
             let reply = JSON.parse(request.responseText);
+            this.xhrLogger.log("Response JSON parsed successfully.");
             if (reply["error"]) {
+              this.xhrLogger.log("Got error in Kodi response. Erroring out.")
               reject(reply);
             } else {
               resolve(reply);
             }
           } catch (err) {
             this.xhrLogger.log("Unable to parse JSON. Erroring out.");
-            reject(request.responseText);
+            reject(new Error("JSON couldn't be parsed!"));
           }
         } else {
           this.xhrLogger.error("Request for method '"+method+"' unsuccessful.");
-          reject(request.status+":"+request.statusText);
+          reject(new Error("XMLHttpRequest failed with error codes: "+request.status+" ("+request.statusText+")."));
         }
       };
       request.open("POST", "http://"+this.kodiIP+":"+this.kodiPort+"/jsonrpc", true);

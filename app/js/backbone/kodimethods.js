@@ -108,7 +108,7 @@ class KodiMethods {
   player(subcommand, params=undefined) {
     if (["GetActivePlayers", "GetItem", "PlayPause"].indexOf(subcommand) > -1) {
       return new Promise((resolve, reject) => {
-        this.kodirpc.kodiXmlHttpRequest("Player."+subcommand).then((response) => {
+        this.kodirpc.kodiXmlHttpRequest("Player."+subcommand, params).then((response) => {
           try {
             this.successfulLog("Player", subcommand);
             resolve(response["result"]);
@@ -129,12 +129,9 @@ class KodiMethods {
       this.showToastRequestFailed();
     }
   }
-  playbackRegisterEvents(onPlayCb, onPauseCb, onStopCb, onPlaylistAddCb, onPlaylistRemoveCb, onPlaylistClearCb) {
-    this.kodirpc.kodiRegisterEventListener("Player.OnPlay", onPlayCb);
-    this.kodirpc.kodiRegisterEventListener("Player.OnPause", onPauseCb);
-    this.kodirpc.kodiRegisterEventListener("Player.OnStop", onStopCb);
-    this.kodirpc.kodiRegisterEventListener("Playlist.OnAdd", onPlaylistAddCb);
-    this.kodirpc.kodiRegisterEventListener("Playlist.OnRemove", onPlaylistRemoveCb);
-    this.kodirpc.kodiRegisterEventListener("Playlist.OnClear", onPlaylistClearCb);
+  playbackRegisterEvents(cb) {
+    this.kodirpc.kodiRegisterEventListener("Player.OnPlay", cb);
+    this.kodirpc.kodiRegisterEventListener("Player.OnPause", cb);
+    this.kodirpc.kodiRegisterEventListener("Player.OnStop", cb);
   }
 }
