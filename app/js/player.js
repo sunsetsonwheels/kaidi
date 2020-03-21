@@ -119,7 +119,7 @@ function initPlayer() {
                             "playerid": response[0]["playerid"]}).then((response) => {
         blankPlayer();
         if (response["title"]) {
-          updatePlayerInfo(response["title"]);
+          updatePlayerInfo(response["title"], undefined);
         } else {
           document.getElementById(PLAYERPLAYINGINFOELEMENTS["title"]).setAttribute("data-l10n-id", "player-playing-info-title-unavailable");
         }
@@ -150,8 +150,11 @@ function initPlayer() {
 function playerEventHandler(kodiEventResponse) {
   switch (kodiEventResponse["event"]) {
     case "PlayPause":
+      // TODO: Handle the PlayPause event
       break;
     case "OnStop":
+      blankPlayer();
+      tick = maxTick + 1;
       break;
   }
 }
