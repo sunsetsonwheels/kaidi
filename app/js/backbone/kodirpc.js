@@ -75,7 +75,7 @@ class KodiRPC {
       };
       request.open("POST", "http://"+this.kodiIP+":"+this.kodiPort+"/jsonrpc", true);
       request.setRequestHeader("Content-Type", "application/json");
-      if(params) {
+      if (params) {
         request.send(JSON.stringify({jsonrpc: "2.0",
                                     id: "KodiRPCJavascript",
                                     method: method,

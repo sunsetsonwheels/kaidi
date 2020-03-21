@@ -106,7 +106,7 @@ class KodiMethods {
     }
   }
   player(subcommand, params=undefined) {
-    if (["GetActivePlayers", "GetItem", "PlayPause"].indexOf(subcommand) > -1) {
+    if (["GetActivePlayers", "GetItem", "GetProperties", "PlayPause"].indexOf(subcommand) > -1) {
       return new Promise((resolve, reject) => {
         this.kodirpc.kodiXmlHttpRequest("Player."+subcommand, params).then((response) => {
           try {

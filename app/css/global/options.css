@@ -1,0 +1,60 @@
+/* This section taken and adapted from KaiUI. */
+/* Thanks a bunch nadim1992! :) */
+
+.options-menu-container {
+  visibility: hidden;
+  z-index: var(--z-index-options);
+  width: 100%;
+  height: calc(100% - 30px);
+  position: fixed;
+  bottom: 30px;
+  background-color: rgba(68, 66, 66, 0.5);
+}
+
+.options-menu {
+  width: 100%;
+  position: absolute;
+  overflow: hidden;
+  bottom: 0px;
+}
+
+.kui-pri, .kui-sec {
+  font-weight: 400;
+}
+
+.kui-pri {
+  font-size: 17px;
+}
+
+.kui-sec {
+  font-size: 14px;
+}
+
+.options-menu .options-title {
+  margin: 0;
+  color: #323232;
+  text-align: center;
+  background-color: #d8d8d8;
+  height: 28px;
+  line-height: 28px;
+}
+
+.options {
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+}
+
+.options div {
+  height: 50px;
+  line-height: 50px;
+  padding-left: 10px;
+  background-color: #fff;
+  font-family: "Open Sans"
+}
+
+.options div:focus {
+  outline: 0;
+  color: #fff;
+  background-color: var(--theme-color);
+}

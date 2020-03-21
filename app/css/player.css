@@ -14,10 +14,12 @@
 }
 
 #player-playing-info-title, #player-playing-info-artists {
-  padding: 4px;
-  text-align: left;
+  margin: 6px;
   text-overflow: ellipsis;
-  width: calc(100% - 8px);
+  word-wrap: break-word;
+  width: calc(100% - 12px);
+  max-height: 50%;
+  overflow: hidden;
 }
 
 #player-playing-info-title {

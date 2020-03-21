@@ -13,14 +13,25 @@
     <link rel="stylesheet" href="/app/css/global/meter.css">
     <link rel="stylesheet" href="/app/css/global/volume.css">
     <link rel="stylesheet" href="/app/css/global/throbber.css">
+    <link rel="stylesheet" href="/app/css/global/options.css">
     <link rel="stylesheet" href="/app/css/player.css">
   </head>
   <body class="page-transition-blur-in">
     <header class="status-bar"></header>
+    <div class="volume-hud-greyout volume-hud-transition-hide">
+      <div class="volume-hud-container">
+        <div class="volume-hud-label" data-l10n-id="volume-hud-label">Volume</div>
+        <meter min="0" max="100" class="meter-bar" id="meter-volume"></meter>
+      </div>
+    </div>
     <section class="content">
       <div class="player-playing-info">
         <div id="player-playing-info-title" data-l10n-id="player-playing-info-title-none">Not playing anything</div>
         <div id="player-playing-info-artists" data-l10n-id="player-playing-info-artists-none">no artist</div>
+      </div>
+      <div id="throbber">
+        <div class="double-bounce1"></div>
+        <div class="double-bounce2"></div>
       </div>
       <img id="player-playing-art">
       <div id="player-playing-playback">
@@ -30,12 +41,16 @@
         <meter min='0' max='100' class="meter-bar" id="player-playing-playback-duration-meter"></meter>
       </div> 
     </section>
-    <div class="volume-hud-greyout volume-hud-transition-hide">
-      <div class="volume-hud-container">
-        <div class="volume-hud-label" data-l10n-id="volume-hud-label">Volume</div>
-        <meter min="0" max="100" class="meter-bar" id="meter-volume"></meter>
+    <section class="options-menu-container">
+      <div class="options-menu-blur"></div>
+      <div id="player-options" class="options-menu">
+        <h2 data-l10n-id="player-options-title" class="kui-pri options-title">Playback</h2>
+        <div id="player-options-list" class="options">
+          <div tabindex="-1" id="player-options-list-repeat" data-l10n-id="player-options-list-repeat-off">Repeat off</div>
+          <div tabindex="-1" id="player-options-list-shuffle" data-l10n-id="player-options-list-shuffle-off">Shuffle off</div>
+        </div>
       </div>
-    </div>
+    </section>
     <footer class="softkeys-bar">
       <div id="softkey-left" data-l10n-id="sk-none"></div>
       <div id="softkey-center" data-l10n-id="sk-none"></div>
@@ -47,6 +62,7 @@
     <script src="/app/js/backbone/init.js"></script>
     <script src="/app/js/backbone/kodirpc.js"></script>
     <script src="/app/js/backbone/kodimethods.js"></script>
+    <script src="/app/js/libs/naviboard.min.js"></script>
     <script src="/app/js/player.js"></script>
   </body>
 </html>

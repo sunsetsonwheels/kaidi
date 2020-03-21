@@ -72,6 +72,9 @@ function wsStart() {
     kodiEventsWorkerLogger.log("Received message from Kodi: "+JSON.stringify(e.data));
     try {
       let eventMessage = JSON.parse(e.data);
+      if (eventMessage["method"] == "Player.OnPlay") {
+      	// TODO: spawn a notification if something is playing.
+      }
       postMessage({"command": "receive",
                    "event": eventMessage["method"],
                    "data": eventMessage["params"]});
