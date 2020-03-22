@@ -60,6 +60,16 @@ var maxTick = 0;
 var ticker = null;
 
 //
+// Function updatePlayerTime()
+//
+// Update the player playback (playback meter and playback label).
+//
+
+function updatePlayerTime() {
+  // TODO: Code to pause or update the ticker
+}
+
+//
 // Function tickTimer()
 //
 // Ticks the time every one second for the ticker.
@@ -127,16 +137,6 @@ function updatePlayerInfo(playerInfoObj) {
 }
 
 //
-// Function updatePlaybackInfo()
-//
-// Update the player playback (playback meter and playback label).
-//
-
-function updatePlayerTime() {
-  // TODO: Code to pause or update the ticker
-}
-
-//
 // Function updatePlayerPlayPause(Number playerSpeed)
 //
 // Update the Play/Pause controls and status of this Player view.
@@ -147,8 +147,9 @@ function updatePlayerPlayPause(playerSpeed) {
     case "0":
       playing = false;
       playerPlayingPlaybackElements["playbackContainer"].style.visibility = "hidden";
-      document.getElementById("softkey-left").setAttribute("data-l10n-id", "sk-none");
-      document.getElementById("softkey-center").setAttribute("data-l10n-id", "sk-pause");
+      playerSoftkeys["left"].setAttribute("data-l10n-id", "sk-none");
+      playerSoftkeys["center"].setAttribute("data-l10n-id", "sk-pause");
+      playerSoftkeys["right"].setAttribute("data-l10n-id", "sk-none");
       break;
   }
 }
@@ -210,6 +211,16 @@ function updatePlayerShuffle(shuffleStatus) {
   }
 }
 
+// 
+// Function updatePlayerThumbnail(String thumbnailUri)
+//
+// Gets and updates the player thumbnail from Kodi.
+//
+
+function updatePlayerThumbnail(thumbnailUri) {
+  //TODO: fetch and update the thumbnail.
+}
+
 //
 // Function initPlayer()
 //
@@ -243,12 +254,13 @@ function initPlayer() {
       });
       kodi.player("GetProperties", {"properties": ["speed", "repeat", "shuffled", "time", "totaltime"],
                                     "playerid": response[0]["playerid"]}).then((response) => {
-        // updatePlayerPlayPause(response["speed"]);
-        // updatePlayerRepeat(response["repeat"]);
-        // updatePlayerShuffle(response["shuffled"]);
+        updatePlayerPlayPause(response["speed"]);
+        updatePlayerRepeat(response["repeat"]);
+        updatePlayerShuffle(response["shuffled"]);
         maxTick = convertTimeToSeconds(response["totaltime"]["hours"], 
                                        response["totaltime"]["minutes"], 
                                        response["totaltime"]["seconds"]);
+        playerPlayingPlaybackElements["throbber"].style.display = "none";
         console.log(JSON.stringify(response));
       }).catch((err) => {
         // TODO: Fail gracefully

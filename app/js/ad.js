@@ -22,8 +22,6 @@ function handleLocationChange() {
   }
 }
 
-console.log(window.location);
-
 document.addEventListener("DOMContentLoaded", () => {
   let adsEnabled = settings.get("ads");
   if(adsEnabled == "true") {
@@ -32,7 +30,7 @@ document.addEventListener("DOMContentLoaded", () => {
               slot: window.location.hash,
               timeout: 2000,
               onerror: err => {
-                console.log("Ad display error: "+err);
+                console.error("Ad display error: "+err);
                 handleLocationChange();
               },
               onready: ad => {
@@ -46,8 +44,7 @@ document.addEventListener("DOMContentLoaded", () => {
     navigator.mozL10n.formatValue("ad-info").then((text) => {
       window.alert(text);
       handleLocationChange();
-    })
-    .catch(() => {
+    }).catch(() => {
       window.alert("Hello, it looks like it's your first time here. We show ads for monetization purposes, but if you want to opt out of ads, go to: Settings -> Enable monetization.")
       handleLocationChange();
     });

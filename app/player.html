@@ -18,7 +18,7 @@
   </head>
   <body class="page-transition-blur-in">
     <header class="status-bar"></header>
-    <div class="volume-hud-greyout volume-hud-transition-hide">
+    <div id="volume-hud-greyout" class="volume-hud-transition-hide">
       <div class="volume-hud-container">
         <div class="volume-hud-label" data-l10n-id="volume-hud-label">Volume</div>
         <meter min="0" max="100" class="meter-bar" id="meter-volume"></meter>
@@ -59,9 +59,7 @@
     <script src="/app/js/libs/l10n.js" charset="utf-8"></script>
     <script src="/app/js/libs/native-toast.js"></script>
     <script src="/app/js/backbone/utils.js"></script>
-    <script src="/app/js/backbone/init.js"></script>
     <script src="/app/js/backbone/kodirpc.js"></script>
-    <script src="/app/js/backbone/kodimethods.js"></script>
     <script src="/app/js/libs/naviboard.min.js"></script>
     <script src="/app/js/player.js"></script>
   </body>

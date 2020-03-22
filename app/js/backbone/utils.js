@@ -2,85 +2,42 @@
 
 const KAIDI_ORIGIN = "beta.kaidi";
 
-class LoggerFactory {
-  constructor(moduleName) {
-    this.logPrefix = "["+moduleName+"]";
-    this.loggingEnabled = localStorage.getItem(KAIDI_ORIGIN+".debug");
-    console.log("[LoggerFactory] LoggerFactory '"+moduleName+"' created.")
-  }
-  _getLogString(log) {
-    return this.logPrefix+" "+String(log);
-  }
-  log(message) {
-    if(this.loggingEnabled == "true") {
-      console.debug(this._getLogString(message));
-    }
-  }
-  error(error) {
-    if(this.loggingEnabled == "true") {
-      console.error(this._getLogString(error));
-    }
-  }
-}
-
 class SettingsManager {
-  constructor() {
-    this.settingsLogger = new LoggerFactory("SettingsManager");
-  }
+  constructor() {}
   set(key, value) {
-    this.settingsLogger.log("Setting setting key '"+key+"' with value: "+value);
-    if(key && value) {
-      return localStorage.setItem(KAIDI_ORIGIN+"."+key, value);
-    } else {
-      throw new Error(this.LoggerFactory.error("Arguments not supplied!"));
-    }
+    return localStorage.setItem(KAIDI_ORIGIN+"."+key, value);
   }
   get(key) {
-    this.settingsLogger.log("Getting setting key '"+key+"'.");
-    if(key) {
-      return localStorage.getItem(KAIDI_ORIGIN+"."+key);
-    } else {
-      throw new Error(this.LoggerFactory.error("Arguments not supplied!"));
-    }
+    return localStorage.getItem(KAIDI_ORIGIN+"."+key);
   }
   reset() {
-    this.settingsLogger.log("Reseting settings and closing app.");
     localStorage.clear();
     window.close();
   }
 }
 
-let newToastLogger = new LoggerFactory("newToast");
+var settings = new SettingsManager();
 
 function newToast(localizationKey, noLocalizationPlaceholder, toastPosition, toastTimeout, toastType) {
-  newToastLogger.log("Creating new toast with localizationKey '"+localizationKey+"'.");
   navigator.mozL10n.formatValue(localizationKey).then((text) => {
     nativeToast({message: text,
                  position: toastPosition,
                  timeout: toastTimeout,
                  type: toastType});
-    newToastLogger.log("Toast displayed successfully.");
   }).catch(() => {
-    newToastLogger.log("Couldn't find localizationKey. Displaying toast with localizationPlaceholder.");
     nativeToast({message: noLocalizationPlaceholder,
                  position: toastPosition,
                  timeout: toastTimeout,
                  type: toastType});
-    newToastLogger.log("Toast displayed successfully.");
   });
 }
 
-let pageNavLogger = new LoggerFactory("gotoPage");
 
-function gotoPage(page) { 
-  pageNavLogger.log("Going to page: "+page);
-  pageNavLogger.log("Starting bluring transition animations.");
+function gotoPage(page) {
   document.body.classList.add("page-transition-blur-in");
   document.body.classList.remove("page-transition-blur-out");
   let adsEnabled = settings.get("ads");
-  pageNavLogger.log("adsEnabled state: "+adsEnabled);
   setTimeout(() => {
-    pageNavLogger.log("Changing page to: "+page);
     switch(page) {
       case "home":
         if(adsEnabled == "true") {
@@ -109,17 +66,13 @@ function gotoPage(page) {
 }
 
 function arrivedAtPage() {
-  pageNavLogger.log("Arrived at page. Removing transition animations.");
   document.body.classList.remove("page-transition-blur-in");
   document.body.classList.add("page-transition-blur-out");
 }
 
-let themeLogger = new LoggerFactory("switchTheme");
 
 function switchTheme() {
-  themeLogger.log("Switching theme.");
   let currentSelectedTheme = settings.get("theme");
-  themeLogger.log("Currently selected theme: "+currentSelectedTheme);
   if(currentSelectedTheme == null) {
     settings.set("theme", "light");
   }
@@ -129,22 +82,18 @@ function switchTheme() {
   let settingsElements = document.querySelectorAll(".settings-entry");
   switch(currentSelectedTheme) {
     case "light":
-      themeLogger.log("Changing .content to .theme-content-light");
       for(let contentElement of contentElements) {
         contentElement.classList.remove("theme-content-dark");
         contentElement.classList.add("theme-content-light");
       }
-      themeLogger.log("Changing .softkeys-bar to .theme-softkeys-light");
       for(let softkeyBar of softkeyBars) {
         softkeyBar.classList.remove("theme-softkeys-dark");
         softkeyBar.classList.add("theme-softkeys-light");
       }
-      themeLogger.log("Changing .separator to .theme-content-light");
       for(let separatorsElement of separatorElements) {
         separatorsElement.classList.remove("theme-separator-dark");
         separatorsElement.classList.add("theme-separator-light");
       };
-      themeLogger.log("Changing .settings-entry to .theme-settings-light");
       for(let settingsElement of settingsElements) {
         settingsElement.classList.remove("theme-settings-dark");
         settingsElement.classList.add("theme-settings-light");
@@ -153,22 +102,18 @@ function switchTheme() {
       }
       break;
     case "dark":
-      themeLogger.log("Changing .content to .theme-content-dark");
       for(var contentElement of contentElements) {
         contentElement.classList.remove("theme-content-light");
         contentElement.classList.add("theme-content-dark");
       }
-      themeLogger.log("Changing .softkeys-bar to .theme-softkeys-dark");
       for(var softkeyBar of softkeyBars) {
         softkeyBar.classList.remove("theme-softkeys-light");
         softkeyBar.classList.add("theme-softkeys-dark");
       }
-      themeLogger.log("Changing .separator to .theme-content-dark");
       for(let separatorElement of separatorElements) {
         separatorElement.classList.remove("theme-separator-light");
         separatorElement.classList.add("theme-separator-dark");
       };
-      themeLogger.log("Changing .settings-entry to .theme-settings-dark");
       for(let settingsElement of settingsElements) {
         settingsElement.classList.remove("theme-settings-light");
         settingsElement.classList.add("theme-settings-dark");
@@ -177,8 +122,7 @@ function switchTheme() {
       }
       break;
     default:
-      themeLogger.log("Theme '"+currentSelectedTheme+"' is not a valid theme. Switching back to light theme!");
-      localStorage.setItem("beta.kaidi.theme", "light");
+      settings.set("theme", "light");
       switchTheme();
       break;
   }

@@ -13,23 +13,13 @@ if (settings.get("ip") == null || settings.get("port") == null) {
 var kodi = new KodiMethods();
 
 document.addEventListener("DOMContentLoaded", () => {
-  fetch('/manifest.webapp')
-  .then(responseRaw => responseRaw.text())
-  .then(responseText => JSON.parse(responseText).version)
-  .then(version => {
-    navigator.mozL10n.formatValue("kaidi-version-prefix").then(str => {
-      document.getElementById("kaidi-version-label").textContent = str+" "+version;
-    })
-    .catch(() => {
-      document.getElementById("kaidi-version-label").textContent = "Kaidi version "+version;
-    });
-  });
   switchTheme();
   arrivedAtPage();
   window.onkeydown = (e) => {
     switch(e.key) {
       case "SoftLeft":
-        gotoPage("player");
+        // gotoPage("player");
+        alert("We're busy constructing this page. Check back later!");
         break;
       case "SoftRight":
         gotoPage("settings");
@@ -70,9 +60,12 @@ document.addEventListener("DOMContentLoaded", () => {
       case "6":
         kodi.volume("mute");
         break;
+      case "#":
+        alert("We're busy reconstructing this page too!");
+        break;
     }
   };
-  kodi.inputRegisterEvent(() => {
+  kodi.kodiRegisterEventListener("Input.OnInputRequested", () => {
     function promptInputText(text) {
       let inputtedText = prompt(text);
       if (inputtedText) {

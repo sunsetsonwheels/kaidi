@@ -44,7 +44,7 @@ document.addEventListener("DOMContentLoaded", () => {
   for(let settingsElement of document.querySelectorAll(".settings-entry")) {
     settingsElement.children[1].addEventListener("blur", () => {
       naviBoard.getActiveElement().focus();
-    })
+    });
   }
   if(settings.get("ip") == null) settings.set("ip", "192.168.0.123");
   if(settings.get("port") == null) settings.set("port", "8080");
