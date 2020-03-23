@@ -1,4 +1,13 @@
-"use strict"
+//
+// /app/js/backbone/utils.js
+//
+// Contains utility functions used throughout the app
+// 
+// (C) jkelol111 and contributors 2020. Licensed under The Unlicense.
+// 
+
+
+"use strict";
 
 const KAIDI_ORIGIN = "beta.kaidi";
 
@@ -32,6 +41,18 @@ function newToast(localizationKey, noLocalizationPlaceholder, toastPosition, toa
   });
 }
 
+function changeLocalization(htmlElement, localizationKey) {
+  console.log("Localizing "+htmlElement.id+" with "+localizationKey);
+  try {
+    htmlElement.setAttribute("data-l10n-id", htmlElement.id+"-"+localizationKey);
+  } catch (err) {
+    htmlElement.setAttribute("data-l10n-id", localizationKey);
+  }
+}
+
+function removeLocalization(htmlElement) {
+  htmlElement.removeAttribute("data-l10n-id");
+}
 
 function gotoPage(page) {
   document.body.classList.add("page-transition-blur-in");
@@ -69,7 +90,6 @@ function arrivedAtPage() {
   document.body.classList.remove("page-transition-blur-in");
   document.body.classList.add("page-transition-blur-out");
 }
-
 
 function switchTheme() {
   let currentSelectedTheme = settings.get("theme");

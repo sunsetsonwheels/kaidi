@@ -3,34 +3,44 @@
 //
 // This file handles the tasks required for the operation of player.html
 //
-// (C) jkelol111 and contributors 2020
+// (C) jkelol111 and contributors 2020. Licensed under The Unlicense.
 //
 
-"use strict"
+"use strict";
 
 //
 // Constant KodiMethods kodi
 // 
 // Handles communication with Kodi and provides core functions for Kaidi
 //
+//
 
 const kodi = new KodiMethods();
 
 //
-// Variables Object playerPlayingInfoElements, Object playerPlayingPlaybackElements, Object playerSoftkeys
+// Variables Object playerPlayingInfoElements, Object playerPlayingPlaybackElements, Object playerOptionMenuElements,Object playerSoftkeyElements
 //
 // Names of the HTML elements that are commonly used throughout this script.
 //
 
 var playerPlayingInfoElements = {"title": document.getElementById("player-playing-info-title"),
-                                 "artists": document.getElementById("player-playing-info-artists")};
+                                 "artists": document.getElementById("player-playing-info-artists"),
+                                 "thumbnail": document.getElementById("player-playing-info-thumbnail")};
 
 var playerPlayingPlaybackElements = {"throbber": document.getElementById("throbber"),
-                                     "playbackContainer": document.getElementById("player-playing-playback")};
+                                     "playbackContainer": document.getElementById("player-playing-playback"),
+                                     "repeat": document.getElementById("player-playing-playback-repeat"),
+                                     "shuffle": document.getElementById("player-playing-playback-shuffle"),
+                                     "playbackDuration": document.getElementById("player-playing-playback-duration-text"),
+                                     "playbackMeter": document.getElementById("player-playing-playback-duration-meter")};
 
-var playerSoftkeys = {"left": document.getElementById("softkey-left"),
-                      "center": document.getElementById("softkey-center"),
-                      "right": document.getElementById("softkey-right")};
+var playerOptionsMenuElements = {"optionsMenu": document.getElementById("player-options"),
+                                 "repeat": document.getElementById("player-options-list-repeat"),
+                                 "shuffle": document.getElementById("player-options-list-shuffle")}
+
+var playerSoftkeyElements = {"left": document.getElementById("softkey-left"),
+                             "center": document.getElementById("softkey-center"),
+                             "right": document.getElementById("softkey-right")};
 
 //
 // Function blankPlayer()
@@ -41,9 +51,10 @@ var playerSoftkeys = {"left": document.getElementById("softkey-left"),
 //
 
 function blankPlayer() {
-  playerPlayingInfoElements["title"].setAttribute("data-l10n-id", "player-playing-info-title-none");
-  playerPlayingInfoElements["artists"].setAttribute("data-l10n-id", "player-playing-info-artists-none");
-  document.getElementById("player-playing-playback").style.visibility = "hidden";
+  changeLocalization(playerPlayingInfoElements["title"], "none");
+  changeLocalization(playerPlayingInfoElements["artists"], "none");
+  playerPlayingPlaybackElements["playbackContainer"].style.visibility = "hidden";
+  playerPlayingPlaybackElements["throbber"].style.display = "none";
 }
 
 //
@@ -100,11 +111,7 @@ function tickTimer() {
 //
 
 function convertTimeToSeconds(hours, minutes, seconds) {
-  if (typeof(hours) == "number" && typeof(minutes) == "number" && typeof(seconds) == "number") {
-    return (((hours*60)+minutes)*60+seconds);
-  } else {
-    throw new TypeError("A supplied argument does not match the required type. Please check again.");
-  }
+  return (((hours*60)+minutes)*60+seconds);
 }
 
 //
@@ -113,26 +120,26 @@ function convertTimeToSeconds(hours, minutes, seconds) {
 // Update the player info (title and artists).
 //
 
-function updatePlayerInfo(playerInfoObj) {
-  if (typeof(playerInfoObj["title"]) == "string") {
-    playerPlayingInfoElements["title"].removeAttribute("data-l10n-id");
-    if (playerInfoObj["title"] != "") {
-      playerPlayingInfoElements["title"].innerText = playerInfoObj["title"];
+function updatePlayerInfo(playerInfoObject) {
+  if (typeof(playerInfoObject["title"]) == "string") {
+    removeLocalization(playerPlayingInfoElements["title"]);
+    if (playerInfoObject["title"] != "") {
+      playerPlayingInfoElements["title"].innerText = playerInfoObject["title"];
     } else {
-      playerPlayingInfoElements["title"].setAttribute("data-l10n-id", "player-playing-info-title-none");
+      changeLocalization(playerPlayingInfoElements["title"], "none");
     }
   } else {
-    playerPlayingInfoElements["title"].setAttribute("data-l10n-id", "player-playing-info-title-unavailable");
+    changeLocalization(playerPlayingInfoElements["title"], "unavailable");
   }
-  if (typeof(playerInfoObj["artists"]) == "string") {
-    playerPlayingInfoElements["artists"].removeAttribute("data-l10n-id");
-    if (playerInfoObj["artists"] != "") {
-      playerPlayingInfoElements["artists"].innerText = playerInfoObj["artists"];
+  if (typeof(playerInfoObject["artists"]) == "string") {
+    removeLocalization(playerPlayingInfoElements["artists"]);
+    if (playerInfoObject["artists"] != "") {
+      playerPlayingInfoElements["artists"].innerText = playerInfoObject["artists"];
     } else {
-      playerPlayingInfoElements["artists"].setAttribute("data-l10n-id", "player-playing-info-artists-none");
+      changeLocalization(playerPlayingInfoElements["artists"], "none");
     }
   } else {
-    playerPlayingInfoElements["artists"].setAttribute("data-l10n-id", "player-playing-info-artists-unavailable");
+    changeLocalization(playerPlayingInfoElements["artists"], "unavailable");
   }
 }
 
@@ -147,15 +154,29 @@ function updatePlayerPlayPause(playerSpeed) {
     case "0":
       playing = false;
       playerPlayingPlaybackElements["playbackContainer"].style.visibility = "hidden";
-      playerSoftkeys["left"].setAttribute("data-l10n-id", "sk-none");
-      playerSoftkeys["center"].setAttribute("data-l10n-id", "sk-pause");
-      playerSoftkeys["right"].setAttribute("data-l10n-id", "sk-none");
+      changeLocalization(playerSoftkeyElements["left"], "none")
+      changeLocalization(playerSoftkeyElements["center"], "play");
+      changeLocalization(playerSoftkeyElements["right"], "none");
+      break;
+    default:
+      playing = true;
+      playerPlayingPlaybackElements["playbackContainer"].style.visibility = "initial";
+      changeLocalization(playerSoftkeyElements["left"], "playback");
+      changeLocalization(playerSoftkeyElements["center"], "pause");
+      changeLocalization(playerSoftkeyElements["right"], "none");
       break;
   }
 }
 
+class KodiPlayerTypeError extends TypeError {
+  constructor(arg, expected, got) {
+    super("The supplied argument '"+arg+"' is not of expected values(s) '"+expected+"', got '"+got+".");
+    this.name = "KodiTypeError"
+  }
+}
+
 //
-// Function updatePlaterRepeat(String repeatStatus)
+// Function updatePlayerRepeat(String repeatStatus)
 //
 // Update the Repeat controls and status of this Player view.
 //
@@ -163,28 +184,28 @@ function updatePlayerPlayPause(playerSpeed) {
 function updatePlayerRepeat(repeatStatus) {
   switch (repeatStatus) {
     case "off":
-      document.getElementById("player-playing-playback-repeat").src = "/app/icons/repeat-grey_24.png";
+      playerPlayingPlaybackElements["repeat"].src = "/app/icons/repeat-grey_24.png";
       break;
     case "one":
     case "all":
-      document.getElementById("player-playing-playback-repeat").src = "/app/icons/repeat_24.png";
+      playerPlayingPlaybackElements["repeat"].src = "/app/icons/repeat_24.png";
       break;
     default:
-      throw new TypeError("The supplied repeatStatus is invalid.");
+      throw new KodiPlayerTypeError("repeatStatus", "off, one, all", repeatStatus);
       break;
   }
   switch (repeatStatus) {
     case "off":
-      document.getElementById("player-options-list-repeat").setAttribute("data-l10n-id", "player-options-list-repeat-one");
+      changeLocalization(playerOptionsMenuElements["repeat"], "one");
       break;
     case "one":
-      document.getElementById("player-options-list-repeat").setAttribute("data-l10n-id", "player-options-list-repeat-all");
+      changeLocalization(playerOptionsMenuElements["repeat"], "all");
       break;
     case "all":
-      document.getElementById("player-options-list-repeat").setAttribute("data-l10n-id", "player-options-list-repeat-off");
+      changeLocalization(playerOptionsMenuElements["repeat"], "off");
       break;
     default:
-      throw new TypeError("The supplied repeatStatus is invalid.");
+      throw new KodiPlayerTypeError("repeatStatus", "off, one, all", repeatStatus);
       break;
   }
 }
@@ -198,15 +219,15 @@ function updatePlayerRepeat(repeatStatus) {
 function updatePlayerShuffle(shuffleStatus) {
   switch (shuffleStatus) {
     case true:
-      document.getElementById("player-playing-playback-shuffle").src = "/app/icons/shuffle_24.png";
-      document.getElementById("player-options-list-shuffle").setAttribute("data-l10n-id", "player-options-list-shuffle-off");
+      playerPlayingPlaybackElements["shuffle"].src = "/app/icons/shuffle_24.png";
+      changeLocalization(playerOptionsMenuElements["shuffle"], "off");
       break;
     case false:
-      document.getElementById("player-playing-playback-shuffle").src = "/app/icons/shuffle-grey_24.png";
-      document.getElementById("player-options-list-shuffle").setAttribute("data-l10n-id", "player-options-list-shuffle-on");
+      playerPlayingPlaybackElements["shuffle"].src = "/app/icons/shuffle-grey_24.png";
+      changeLocalization(playerOptionsMenuElements["shuffle"], "on");
       break;
     default:
-      throw new TypeError("The supplied shuffleStatus is invalid.");
+      throw new KodiPlayerTypeError("shuffleStatus", "off, on", shuffleStatus);
       break;
   }
 }
@@ -219,6 +240,11 @@ function updatePlayerShuffle(shuffleStatus) {
 
 function updatePlayerThumbnail(thumbnailUri) {
   //TODO: fetch and update the thumbnail.
+  kodi.kodiXmlHttpRequest("Files.PrepareDownload", {"path": thumbnailUri})
+  .then((response) => {
+    // Not sure if this is right but whatever. I'm coding this at 1:15am.
+    playerPlayingInfoElements["thumbnail"].src = "http://"+kodi.kodiIP+":"+kodi.kodiPort+"/"+response["details"]["path"];
+  })
 }
 
 //
@@ -233,72 +259,55 @@ function updatePlayerThumbnail(thumbnailUri) {
 //
 
 function initPlayer() {
-  kodi.player("GetActivePlayers").then((response) => {
-    if (response[0]) {
-      tickTimer();
-      kodi.player("GetItem", {"properties": ["title", "artist", "thumbnail"],
-                              "playerid": response[0]["playerid"]}).then((response) => {
-        var playerInfoObj = {}
+  kodi.kodiXmlHttpRequest("Player.GetActivePlayers").then((response) => {
+    if(response[0]) {
+      var activePlayer = response[0]["playerid"];
+      kodi.kodiXmlHttpRequest("Player.GetItem", {"properties": ["title", "artist", "thumbnail"],
+                                                 "playerid": activePlayer})
+      .then((response) => {
+        var playerInfoObject = {};
         if (response["item"]["title"]) {
-          playerInfoObj["title"] = response["item"]["title"];
+          playerInfoObject["title"] = response["item"]["title"];
         } else if (response["item"]["label"]) {
-          playerInfoObj["title"] = response["item"]["label"];
+          playerInfoObject["title"] = response["item"]["label"];
         }
         if (response["item"]["artist"]) {
-          playerInfoObj["artists"] = response["item"]["artist"];
+          playerInfoObject["artists"] = response["item"]["artist"];
           console.log("Player artists: "+JSON.stringify(response["item"]["artist"])+" (type: "+typeof(response["item"]["artist"]));
         }
-        updatePlayerInfo(playerInfoObj);
+        updatePlayerInfo(playerInfoObject);
+        updatePlayerThumbnail(response["item"]["thumbnail"]);
+        kodi.kodiXmlHttpRequest("Player.GetProperties", {"properties": ["speed", "repeat", "shuffled", "time", "totaltime"],
+                                                         "playerid": activePlayer})
+        .then((response) => {
+          updatePlayerPlayPause(response["speed"]);
+          updatePlayerRepeat(response["repeat"]);
+          updatePlayerShuffle(response["shuffled"]);
+          ticked = convertTimeToSeconds(response["time"]["hours"], 
+                                        response["time"]["minutes"], 
+                                        response["time"]["seconds"]);
+          maxTick = convertTimeToSeconds(response["totaltime"]["hours"], 
+                                         response["totaltime"]["minutes"], 
+                                         response["totaltime"]["seconds"]);
+          playerPlayingPlaybackElements["playbackContainer"].style.visibility = "initial";
+        })
+        .catch((err) => {
+          kodi.errorOut(err);
+        });
       }).catch((err) => {
-        tickTimer();
-      });
-      kodi.player("GetProperties", {"properties": ["speed", "repeat", "shuffled", "time", "totaltime"],
-                                    "playerid": response[0]["playerid"]}).then((response) => {
-        updatePlayerPlayPause(response["speed"]);
-        updatePlayerRepeat(response["repeat"]);
-        updatePlayerShuffle(response["shuffled"]);
-        maxTick = convertTimeToSeconds(response["totaltime"]["hours"], 
-                                       response["totaltime"]["minutes"], 
-                                       response["totaltime"]["seconds"]);
-        playerPlayingPlaybackElements["throbber"].style.display = "none";
-        console.log(JSON.stringify(response));
-      }).catch((err) => {
-        // TODO: Fail gracefully
+        blankPlayer();
+        kodi.errorOut(err);
       });
     } else {
-      tickTimer();
+      newToast("toast-playerinactive", "No player active.", "south", 3000, "warning");
+      blankPlayer();
     }
-  }).catch(() => {
-    tickTimer();
   })
-}
-
-//
-// Function playerEventHandler(Object kodiEventResponse)
-//
-// Handles the events from Kodi.
-//
-
-function playerEventHandler(kodiEventResponse) {
-  switch (kodiEventResponse["event"]) {
-    case "OnPause":
-      // TODO: Handle the PlayPause event
-      playing = false;
-      break;
-    case "OnPlay":
-      // TODO: Handle the OnPlay event
-      playing = true;
-      break;
-    case "OnStop":
-      tickTimer();
-      break;
-  }
 }
 
 document.addEventListener("DOMContentLoaded", () => {
   switchTheme();
   arrivedAtPage();
-  //kodi.playbackRegisterEvents(getPlayer);
   initPlayer();
   window.addEventListener("keydown", (e) => {
     switch (e.key) {
@@ -317,17 +326,18 @@ document.addEventListener("DOMContentLoaded", () => {
       case "ArrowDown":
         kodi.volume("decrement");
         break;
-      case "Left":
+      case "ArrowLeft":
         if (playing) {
           //TODO: port code from 0.4.7.3
         }
         break;
       case "Enter":
         if (playing) {
-          kodi.player("PlayPause");
+          // TODO: remake this shit.
+          // kodi.player("PlayPause");
         }
         break;
-      case "Right":
+      case "ArrowRight":
         if (playing) {
           //TODO: port code from 0.4.7.3
         }

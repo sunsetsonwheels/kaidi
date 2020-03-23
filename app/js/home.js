@@ -18,8 +18,7 @@ document.addEventListener("DOMContentLoaded", () => {
   window.onkeydown = (e) => {
     switch(e.key) {
       case "SoftLeft":
-        // gotoPage("player");
-        alert("We're busy constructing this page. Check back later!");
+        gotoPage("player");
         break;
       case "SoftRight":
         gotoPage("settings");

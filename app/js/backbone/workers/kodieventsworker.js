@@ -4,7 +4,7 @@
 // This file handles the task of listening to Kodi events and forwarding them back
 // to the KodiRPC instance that initialized it.
 //
-// (C) jkelol111 and contributors 2020
+// (C) jkelol111 and contributors 2020. Licensed under The Unlicense.
 //
 
 "use strict"
@@ -55,6 +55,7 @@ function changeWorkerStatus(status) {
 //
 
 var kodiInfo = {};
+var kodiNotificationsEnabled = null;
 var ws = null;
 
 //
@@ -101,6 +102,7 @@ self.onmessage = (e) => {
         } else {
           try {
             kodiInfo = e.data["kodiInfo"];
+            kodiNotificationsEnabled = e.data["notifications"];
             if (!ws) {
               wsStart();
             } else {

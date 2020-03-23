@@ -11,19 +11,15 @@
 
 class KodiResponseError extends Error {
   constructor(otherErr) {
-    const errorMessage = "We have a error in the response ("+otherErr+").";
-    super(errorMessage);
+    super("We have a error in the response ("+otherErr+").");
     this.name = "KodiResponseError";
-    this.message = errorMessage;
   }
 }
 
 class KodiXHRError extends Error {
   constructor(xhrErrorCode, xhrErrorMessage) {
-    const errorMessage = "Request to Kodi failed due to XHR error: "+xhrErrorMessage+" ("+xhrErrorCode+").";
-    super(errorMessage);
+    super("Request to Kodi failed due to XHR error: "+xhrErrorMessage+" ("+xhrErrorCode+").");
     this.name = "KodiXHRError";
-    this.message = errorMessage;
   }
 }
 
@@ -63,10 +59,10 @@ class KodiRPC {
             if (reply["error"]) {
               reject(new KodiResponseError(new Error("Response contains error")));
             } else {
-              resolve(reply);
+              resolve(reply["result"]);
             }
           } catch (err) {
-            reject(new KodiResponseError("JSON couldn't be parsed!"));
+            reject(new KodiResponseError(new Error("JSON couldn't be parsed!")));
           }
         } else {
           reject(new KodiXHRError(request.status, request.statusText));
@@ -76,12 +72,12 @@ class KodiRPC {
       request.setRequestHeader("Content-Type", "application/json");
       if (params) {
         request.send(JSON.stringify({jsonrpc: "2.0",
-                                    id: "KodiRPCJavascript",
+                                    id: "KodiRPCJavascript-"+method,
                                     method: method,
                                     params: params}));
       } else {
         request.send(JSON.stringify({jsonrpc: "2.0",
-                                    id: "KodiRPCJavascript",
+                                    id: "KodiRPCJavascript-"+method,
                                     method: method}));
       }
     });
@@ -101,9 +97,8 @@ class KodiRPC {
 
 class KodiMethodsError extends Error {
   constructor(err) {
+    super("The KodiMethod function didn't execute properly because of: "+err);
     this.name = "KodiMethodsError";
-    this.message  = "The KodiMethod function didn't execute properly because of: "+err;
-    super(this.message);
   }
 }
 
@@ -114,24 +109,24 @@ class KodiMethods extends KodiRPC {
                            "meter": document.getElementById("meter-volume")}
     this.ping();
   }
-  _errorOut(err) {
-    newToast("request-failed-text", "Kodi request failed", "south", 3000, "error");
+  errorOut(err) {
+    newToast("kodi-request-failed", "Kodi request failed!", "south", 3000, "error");
     throw new KodiMethodsError(err); 
   }
   ping() {
     this.kodiXmlHttpRequest("JSONRPC.Ping").then((response) => {
-      if (response["result"] == "pong") {
+      if (response == "pong") {
         newToast("kodi-connection-established-text", "Connected to Kodi!", "south", 2000, "success");
       } else {
-        newToast("kodi-connection-unsure-text", "Undetermined Ping response.", "south", 2000, "success");
+        newToast("kodi-connection-unsure-text", "Connection to Kodi unsure!", "south", 2000, "success");
       }
     }).catch((err) => {
-      this._errorOut(err);
+      this.errorOut(err);
     })
   }
   input(direction, params=undefined) {
     this.kodiXmlHttpRequest("Input."+direction, params).catch((err) => {
-      this._errorOut(err);
+      this.errorOut(err);
     })
   }
   volume(direction, params=undefined) {
@@ -146,7 +141,7 @@ class KodiMethods extends KodiRPC {
       if (method == "Application.SetVolume") {
         this.kodiXmlHttpRequest("Application.GetProperties", {"properties": ["volume"]})
         .then((response) => {
-          this.volumeElements["meter"].value = response["result"]["volume"];
+          this.volumeElements["meter"].value = response["volume"];
           this.volumeElements["greyout"].classList.remove("volume-hud-transition-hide");
           this.volumeElements["greyout"].classList.add("volume-hud-transition-appear");
           setTimeout(() => {
@@ -155,11 +150,11 @@ class KodiMethods extends KodiRPC {
           }, 1500);
         })
         .catch((err) => {
-          this._errorOut(err);
+          this.errorOut(err);
         });
       }   
     }).catch((err) => {
-      this._errorOut(err);
+      this.errorOut(err);
     });
   }
 }

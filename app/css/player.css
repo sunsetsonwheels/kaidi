@@ -1,5 +1,5 @@
 :root {
-  --z-index-player-art: 5;
+  --z-index-player-thumbnail: 5;
 }
 
 .player-playing-info, #player-playing-playback {
@@ -32,10 +32,10 @@
   font-size: 12px;
 }
 
-#player-playing-art {
+#player-playing-info-thumbnail {
   width: 100%;
   height: calc(100% - 57px);
-  z-index: var(--z-index-player-art);
+  z-index: var(--z-index-player-thumbnail);
   position: fixed;
   top: 27px;
   bottom: 30px;
