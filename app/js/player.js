@@ -150,6 +150,7 @@ function updatePlayerInfo(playerInfoObject) {
 //
 
 function updatePlayerPlayPause(playerSpeed) {
+  console.log(playerSpeed);
   switch (playerSpeed) {
     case "0":
       playing = false;
