@@ -54,6 +54,16 @@ function removeLocalization(htmlElement) {
   htmlElement.removeAttribute("data-l10n-id");
 }
 
+var softkeyElements = {"left": document.getElementById("softkey-left"),
+                       "center": document.getElementById("softkey-center"),
+                       "right": document.getElementById("softkey-right")}
+
+function updateSoftkeys(localizationKeyLeft, localizationKeyCenter, localizationKeyRight) {
+  changeLocalization(softkeyElements["left"], localizationKeyLeft);
+  changeLocalization(softkeyElements["center"], localizationKeyCenter);
+  changeLocalization(softkeyElements["right"], localizationKeyRight);
+}
+
 function gotoPage(page) {
   document.body.classList.add("page-transition-blur-in");
   document.body.classList.remove("page-transition-blur-out");

@@ -35,12 +35,9 @@ var playerPlayingPlaybackElements = {"throbber": document.getElementById("throbb
                                      "playbackMeter": document.getElementById("player-playing-playback-duration-meter")};
 
 var playerOptionsMenuElements = {"optionsMenu": document.getElementById("player-options"),
+                                 "optionsList": document.getElementById("player-options-list"),
                                  "repeat": document.getElementById("player-options-list-repeat"),
                                  "shuffle": document.getElementById("player-options-list-shuffle")}
-
-var playerSoftkeyElements = {"left": document.getElementById("softkey-left"),
-                             "center": document.getElementById("softkey-center"),
-                             "right": document.getElementById("softkey-right")};
 
 //
 // Function blankPlayer()
@@ -51,6 +48,7 @@ var playerSoftkeyElements = {"left": document.getElementById("softkey-left"),
 //
 
 function blankPlayer() {
+  updateSoftkeys("none", "none", "none");
   changeLocalization(playerPlayingInfoElements["title"], "none");
   changeLocalization(playerPlayingInfoElements["artists"], "none");
   playerPlayingPlaybackElements["playbackContainer"].style.visibility = "hidden";
@@ -65,7 +63,7 @@ function blankPlayer() {
 // Boolean to determine player state.
 //
 
-var playing = false;
+var isPlaying = false;
 var ticked = 0;
 var maxTick = 0;
 var ticker = null;
@@ -153,18 +151,14 @@ function updatePlayerPlayPause(playerSpeed) {
   console.log(playerSpeed);
   switch (playerSpeed) {
     case "0":
-      playing = false;
+      isPlaying = false;
       playerPlayingPlaybackElements["playbackContainer"].style.visibility = "hidden";
-      changeLocalization(playerSoftkeyElements["left"], "none")
-      changeLocalization(playerSoftkeyElements["center"], "play");
-      changeLocalization(playerSoftkeyElements["right"], "none");
+      updateSoftkeys("none", "play", "none");
       break;
     default:
-      playing = true;
+      isPlaying = true;
       playerPlayingPlaybackElements["playbackContainer"].style.visibility = "initial";
-      changeLocalization(playerSoftkeyElements["left"], "playback");
-      changeLocalization(playerSoftkeyElements["center"], "pause");
-      changeLocalization(playerSoftkeyElements["right"], "none");
+      updateSoftkeys("playback", "pause", "none");
       break;
   }
 }
@@ -172,7 +166,7 @@ function updatePlayerPlayPause(playerSpeed) {
 class KodiPlayerTypeError extends TypeError {
   constructor(arg, expected, got) {
     super("The supplied argument '"+arg+"' is not of expected values(s) '"+expected+"', got '"+got+".");
-    this.name = "KodiTypeError"
+    this.name = "KodiTypeError";
   }
 }
 
@@ -303,23 +297,57 @@ function initPlayer() {
       newToast("toast-playerinactive", "No player active.", "south", 3000, "warning");
       blankPlayer();
     }
+  }).catch((err) => {
+    blankPlayer();
+    kodi.errorOut(err);
   })
+}
+
+function openOptionsMenu() {
+  playerOptionMenuElements["optionsMenu"].style.display = "initial";
+  updateSoftkeys("none", "toggle", "none");
+  naviBoard.setNavigation(playerOptionMenuElements["optionsList"]);
+}
+
+function closeOptionsMenu() {
+  naviBoard.destroyNavigation(playerOptionMenuElements["optionsList"]);
+  playerOptionMenuElements["optionsMenu"].style.display = "none";
+  kodi.kodiXmlHttpRequest("Player.GetActivePlayers").then((response) => {
+    if (response[0]) {
+      kodi.kodiXmlHttpRequest("Player.GetProperties", {"properties": ["speed"],
+                                                       "playerid": response[0]["playerid"]})
+      .then((response) => {
+        updatePlayerPlayPause(response["speed"]);
+      }).catch((err) => {
+        kodi.errorOut(err);
+      })
+    }
+  });
 }
 
 document.addEventListener("DOMContentLoaded", () => {
   switchTheme();
   arrivedAtPage();
   initPlayer();
+  var isOptionsMenuOpen = false;
   window.addEventListener("keydown", (e) => {
     switch (e.key) {
       case "SoftLeft":
-        if (playing) {
-          //TODO: open the Options menu.
+        if (isPlaying) {
+          if (!isOptionsMenuOpen) {
+            openOptionsMenu();
+            isOptionsMenuOpen = true;
+          }
         }
         break;
       case "Backspace":
         e.preventDefault();
-        gotoPage("home");
+        if (isOptionsMenuOpen) {
+          closeOptionsMenu();
+          isOptionsMenuOpen = false;
+        } else {
+          gotoPage("home");
+        }
         break;
       case "ArrowUp":
         kodi.volume("increment");
@@ -328,18 +356,18 @@ document.addEventListener("DOMContentLoaded", () => {
         kodi.volume("decrement");
         break;
       case "ArrowLeft":
-        if (playing) {
+        if (isPlaying) {
           //TODO: port code from 0.4.7.3
         }
         break;
       case "Enter":
-        if (playing) {
+        if (isPlaying) {
           // TODO: remake this shit.
           // kodi.player("PlayPause");
         }
         break;
       case "ArrowRight":
-        if (playing) {
+        if (isPlaying) {
           //TODO: port code from 0.4.7.3
         }
         break;
