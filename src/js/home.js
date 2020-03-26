@@ -1,5 +1,7 @@
 "use strict"
 
+try {
+
 if (settings.get("ip") == null || settings.get("port") == null) {
   navigator.mozL10n.formatValue("welcome-text", {newline: "\n\n"}).then((text) => {
     alert(text);
@@ -11,6 +13,13 @@ if (settings.get("ip") == null || settings.get("port") == null) {
 }
 
 var kodi = new KodiMethods();
+
+function toggleFullScreen() {
+  kodi.kodiXmlHttpRequest("GUI.SetFullscreen", {"fullscreen": "toggle"})
+  .catch((err) => {
+    kodi.errorOut(err);
+  });
+}
 
 document.addEventListener("DOMContentLoaded", () => {
   switchTheme();
@@ -48,7 +57,7 @@ document.addEventListener("DOMContentLoaded", () => {
         kodi.input("ContextMenu");
         break;
       case "3":
-        kodi.gui("SetFullscreen", {"fullscreen": "toggle"});
+        toggleFullScreen();
         break;
       case "5":
         kodi.volume("increment");
@@ -79,3 +88,6 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 });
+} catch (err) {
+  console.error(err);
+}

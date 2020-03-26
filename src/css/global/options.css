@@ -2,7 +2,7 @@
 /* Thanks a bunch nadim1992! :) */
 
 .options-menu-container {
-  visibility: hidden;
+  display: none;
   z-index: var(--z-index-options);
   width: 100%;
   height: calc(100% - 30px);

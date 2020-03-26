@@ -4,17 +4,17 @@
     <meta charset="utf-8">
     <title>Kaidi Player</title>
     <meta name="viewport" content="width=device-width,user-scalable=no">
-    <link rel="manifest" href="/manifest.webapp">
-    <link rel="localization" href="/app/locales/{locale}/global.properties">
-    <link rel="localization" href="/app/locales/{locale}/player.properties">
-    <link rel="stylesheet" href="/app/css/global/window.css">
-    <link rel="stylesheet" href="/app/css/global/native-toast.css">
-    <link rel="stylesheet" href="/app/css/global/pagenav.css">
-    <link rel="stylesheet" href="/app/css/global/meter.css">
-    <link rel="stylesheet" href="/app/css/global/volume.css">
-    <link rel="stylesheet" href="/app/css/global/throbber.css">
-    <link rel="stylesheet" href="/app/css/global/options.css">
-    <link rel="stylesheet" href="/app/css/player.css">
+    <link rel="manifest" href="manifest.webapp">
+    <link rel="localization" href="locales/{locale}/global.properties">
+    <link rel="localization" href="locales/{locale}/player.properties">
+    <link rel="stylesheet" href="css/global/window.css">
+    <link rel="stylesheet" href="css/global/native-toast.css">
+    <link rel="stylesheet" href="css/global/pagenav.css">
+    <link rel="stylesheet" href="css/global/meter.css">
+    <link rel="stylesheet" href="css/global/volume.css">
+    <link rel="stylesheet" href="css/global/throbber.css">
+    <link rel="stylesheet" href="css/global/options.css">
+    <link rel="stylesheet" href="css/player.css">
   </head>
   <body class="page-transition-blur-in">
     <header class="status-bar"></header>
@@ -33,7 +33,7 @@
         <div class="double-bounce1"></div>
         <div class="double-bounce2"></div>
       </div>
-      <img id="player-playing-info-thumbnail">
+      <img id="player-playing-info-thumbnail" alt="Kodi playing thumbnail" src="/app/icons/kaidi_112.png">
       <div id="player-playing-playback">
         <img src="/app/icons/shuffle-grey_24.png" id="player-playing-playback-shuffle">
         <img src="/app/icons/repeat-grey_24.png" id="player-playing-playback-repeat">
@@ -56,11 +56,11 @@
       <div id="softkey-center" data-l10n-id="softkey-center-none"></div>
       <div id="softkey-right" data-l10n-id="softkey-right-none"></div>
     </footer>
-    <script src="/app/js/libs/l10n.js" charset="utf-8"></script>
-    <script src="/app/js/libs/native-toast.js"></script>
-    <script src="/app/js/backbone/utils.js"></script>
-    <script src="/app/js/backbone/kodirpc.js"></script>
-    <script src="/app/js/libs/naviboard.min.js"></script>
-    <script src="/app/js/player.js"></script>
+    <script src="js/libs/l10n.js" charset="utf-8"></script>
+    <script src="js/libs/native-toast.js"></script>
+    <script src="js/backbone/utils.js"></script>
+    <script src="js/backbone/kodirpc.js"></script>
+    <script src="js/libs/naviboard.js"></script>
+    <script src="js/player.js"></script>
   </body>
 </html>

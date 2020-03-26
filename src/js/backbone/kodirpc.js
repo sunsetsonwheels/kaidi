@@ -49,7 +49,10 @@ class KodiRPC {
     }
   }
   kodiXmlHttpRequest(method, params=undefined) {
-    let request = new XMLHttpRequest({mozSystem: true});
+    var request = new XMLHttpRequest({mozSystem: true});
+    request.timeout = 2000;
+    request.open("POST", "http://"+this.kodiIP+":"+this.kodiPort+"/jsonrpc", true);
+    request.setRequestHeader("Content-Type", "application/json");
     return new Promise((resolve, reject) => {
       request.onreadystatechange = () => {
         if (request.readyState !== 4) return;
@@ -68,8 +71,9 @@ class KodiRPC {
           reject(new KodiXHRError(request.status, request.statusText));
         }
       };
-      request.open("POST", "http://"+this.kodiIP+":"+this.kodiPort+"/jsonrpc", true);
-      request.setRequestHeader("Content-Type", "application/json");
+      request.ontimeout = () => {
+        reject(new KodiXHRError("unknown", "The request timed out."));
+      }
       if (params) {
         request.send(JSON.stringify({jsonrpc: "2.0",
                                     id: "KodiRPCJavascript-"+method,

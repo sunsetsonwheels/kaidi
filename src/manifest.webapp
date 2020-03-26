@@ -2,19 +2,19 @@
   "version": "0.4.8",
   "name": "Kaidi Remote (Beta)",
   "description": "A Kodi remote app for KaiOS.",
-  "launch_path": "/app/ad.html#home",
+  "launch_path": "/ad.html#home",
   "orientation": "default",
   "theme_color": "#1BC1C4",
   "origin": "app://beta.kaidi.jkelol111.me",
   "icons": {
-    "56": "/app/icons/kaidi_56.png",
-    "112": "/app/icons/kaidi_112.png"
+    "56": "/icons/kaidi_56.png",
+    "112": "/icons/kaidi_112.png"
   },
   "chrome": {
     "statusbar": "overlap"
   },
   "developer": {
-    "name": "jkelol111, bartulo",
+    "name": "jkelol111 & contributors",
     "url": "http://github.com/jkelol111"
   },
   "type": "privileged",

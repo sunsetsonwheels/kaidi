@@ -27,6 +27,10 @@
 
 - Notifications of now playing track (available when app is running/screen off)
 
+**Building the app:**
+
+To be added. For now just know we will use Gulp to minify the app and package into `./dist`.
+
 **You found a bug?**
 
 Please submit the bug to the [issues tracker](https://github.com/jkelol111/kaidi/issues).
@@ -34,3 +38,5 @@ Please submit the bug to the [issues tracker](https://github.com/jkelol111/kaidi
 **Want to help out?**
 
 Feel free to fork this repo and add your improvements, then create a pull request.
+
+We now enforce [Standard JS](https://standardjs.com/) since 27/3/2020. Some files might not have been modified to reflect this change yet, but please do practice Standard JS (use ESLint, installable if you run `npm install` to install our dev-dependencies) if you ever submit your pull requests/modifications for review. This doesn't mean we will reject your pull request, but for large changes, bad Standard JS compliance will lead to rejected pull requests.
