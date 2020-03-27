@@ -39,30 +39,25 @@ var playerPlayingPlaybackElements = {
 }
 
 var playerOptionsMenuElements = {
-  menu: document.getElementById('player-options'),
+  container: document.getElementById('player-options-container'),
   list: document.getElementById('player-options-list'),
   repeat: document.getElementById('player-options-list-repeat'),
   shuffle: document.getElementById('player-options-list-shuffle')
 }
 
 //
-// Variables Boolean isPlaying, Number ticked , Number maxTickable, Function,null ticker
+// Variables Boolean isPlaying , Date endingTime, Function,null ticker
 //
-// Local time ticker to update the playback time meter and labels.
+// isPlaying: whether the player is playing or not.
 //
-// Boolean to determine player state.
+// endingTime: the Date when the player finishes.
+//
+// timeTicker: setTimeout function if isPlaying is true, null if there is no ticker.
 //
 
 var isPlaying = false
-var ticked = 0
-var tickedPercent = 0
-var maxTickable = 0
-var maxTickableLabel = {
-  hours: 0,
-  minutes: 0,
-  seconds: 0
-}
-var ticker = null
+var endingTime = new Date()
+var timeTicker = null
 
 //
 // Function blankPlayer()
@@ -73,11 +68,12 @@ var ticker = null
 //
 
 function blankPlayer () {
-  updateSoftkeys("none", "none", "none")
-  changeLocalization(playerPlayingInfoElements["title"], "none")
-  changeLocalization(playerPlayingInfoElements["artists"], "none")
-  playerPlayingPlaybackElements["container"].style.visibility = "hidden"
-  playerPlayingPlaybackElements["throbber"].style.display = "none"
+  updateSoftkeys('none', 'none', 'none')
+  changeLocalization(playerPlayingInfoElements.title, 'none')
+  changeLocalization(playerPlayingInfoElements.artists, 'none')
+  playerPlayingPlaybackElements.container.style.visibility = 'hidden'
+  playerPlayingPlaybackElements.throbber.style.display = 'none'
+  // isPlaying = false
 }
 
 //
@@ -87,16 +83,11 @@ function blankPlayer () {
 //
 
 function updatePlayerTime () {
-  let currentTimeHours = Math.floor((ticked / 60) / 60)
-  let currentTimeMinutes = Math.floor((ticked - ((currentTimeHours * 60 * 60)) / 60))
-  let currentTimeSeconds = Math.floor(ticked - (currentTimeMinutes * 60))
-  tickedPercent = ticked / maxTickable
-  if (currentTimeHours > 0) {
-    playerPlayingPlaybackElements["playbackDuration"].innerText = currentTimeHours+":"+("0" + currentTimeMinutes).slice(-2)+":"+("0" + currentTimeSeconds).slice(-2)+"/"+maxTickableLabel["hour"]+":"+("0" + maxTickableLabel["minutes"]).slice(-2)+":"+("0" + maxTickableLabel["seconds"]).slice(-2)
-  } else {
-    playerPlayingPlaybackElements["playbackDuration"] = ("0" +currentTimeMinutes).slice(-2)+":"+("0" + currentTimeSeconds).slice(-2)+"/"+("0" + maxTickableLabel["minutes"]).slice(-2)+":"+("0" + maxTickableLabel["seconds"]).slice(-2)
-  }
-  playerPlayingPlaybackElements["playbackMeter"].value = tickedPercent
+  // if (currentTimeHours > 0) {
+  //   playerPlayingPlaybackElements.playbackDuration.innerText = currentTimeHours + ':' + ('0' + currentTimeMinutes).slice(-2) + ':' + ('0' + currentTimeSeconds).slice(-2) + '/' + maxTickableLabel.hours + ':' + ('0' + maxTickableLabel.minutes).slice(-2) + ':' + ('0' + maxTickableLabel.seconds).slice(-2)
+  // } else {
+  //   playerPlayingPlaybackElements.playbackDuration = ('0' + currentTimeMinutes).slice(-2) + ':' + ('0' + currentTimeSeconds).slice(-2) + '/' + ('0' + maxTickableLabel.minutes).slice(-2) + ':' + ('0' + maxTickableLabel.seconds).slice(-2)
+  // }
 }
 
 //
@@ -107,30 +98,66 @@ function updatePlayerTime () {
 // If the ticked time has exceeded the maximum tick time, blank the player and stop the interval.
 // And reset the timer, and blank out the page.
 //
+// Still under construction! Use with caution!
+//
 
 function tickTimer () {
-  ticked++
-  updatePlayerTime()
-  if (ticked > maxTickable) {
-    if (typeof(ticker) === "function") {
-      clearInterval(ticker)
-    }
-    ticked = 0
-    maxTickable = 0
-    blankPlayer()
-  }
+
 }
 
 //
-// Function convertTimeToSeconds(Number hours, Number minutes, Number seconds)
+// Function oldTickTimer()
 //
-// Converts the time data given by Kodi to seconds, for use with tickTimer()
+// The old-implementation from Kaidi Remote (Alpha) rewriten with KodiRPC in mind.
 //
-// Return type: Number
+// Contacts Kodi for the time every one second. This is the default behaviour before
+// we have the new local ticking function sorted.
+//
+// To test out the new ticking function (tickTimer), set "beta.kaidi.useNewTicker" to "true".
 //
 
-function convertTimeToSeconds (hours, minutes, seconds) {
-  return (((hours * 60) + minutes) * 60 + seconds)
+function oldTickTimer () {
+  if (document.visibilityState == "visible" && isPlaying) {
+    kodi.kodiXmlHttpRequest('Player.GetActivePlayers').then((response) => {
+      if (response[0]) {
+        kodi.kodiXmlHttpRequest('Player.GetProperties', {
+          properties: ['percentage', 'time', 'totaltime'],
+          playerid: response[0].playerid
+        }).then((response2) => {
+          const TIME_IN = response2.time
+          const TIME_OUT = response2.totaltime
+          if (TIME_IN === TIME_OUT) {
+            if (typeof tickTimer === 'function') {
+              clearInterval(tickTimer)
+            }
+            blankPlayer()
+          } else {
+            if (response2.time.hours > 0) {
+              playerPlayingPlaybackElements.playbackDuration.innerText = response2.time.hours + ':' + ('0' + response2.time.minutes).slice(-2) + ':' + ('0' + response2.time.seconds).slice(-2) + '/' + response2.totaltime.hours + ':' + ('0' + response2.totaltime.minutes).slice(-2) + ('0' + response2.totaltime.seconds).slice(-2)
+            } else {
+              playerPlayingPlaybackElements.playbackDuration.innerText = ('0' + response2.time.minutes).slice(-2) + ':' + ('0' + response2.time.seconds).slice(-2) + '/' + ('0' + response2.totaltime.minutes).slice(-2) + ':' + ('0' + response2.totaltime.seconds).slice(-2)
+            }
+            playerPlayingPlaybackElements.playbackMeter.value = response2.percentage
+          }
+        }).catch((err) => {
+          kodi.errorOut(err)
+        })
+      } else {
+        if (typeof tickTimer === 'function') {
+          clearInterval(tickTimer)
+        }
+        newToast('toast-playerinactive', 'No player active.', 'south', 3000, 'warning')
+        blankPlayer()
+      }
+    }).catch((err) => {
+      kodi.errorOut(err)
+    })
+  } else {
+    if (typeof tickTimer === 'function') {
+      clearInterval(tickTimer)
+    }
+    blankPlayer()
+  }
 }
 
 //
@@ -140,25 +167,32 @@ function convertTimeToSeconds (hours, minutes, seconds) {
 //
 
 function updatePlayerInfo (playerInfoObject) {
-  if (typeof(playerInfoObject["title"]) == "string") {
-    removeLocalization(playerPlayingInfoElements["title"])
-    if (playerInfoObject["title"] != "") {
-      playerPlayingInfoElements["title"].innerText = playerInfoObject["title"]
+  if (typeof playerInfoObject.title === 'string') {
+    removeLocalization(playerPlayingInfoElements.title)
+    if (playerInfoObject.title !== '') {
+      playerPlayingInfoElements.title.innerText = playerInfoObject.title
     } else {
-      changeLocalization(playerPlayingInfoElements["title"], "none")
+      changeLocalization(playerPlayingInfoElements.title, 'none')
     }
   } else {
-    changeLocalization(playerPlayingInfoElements["title"], "unavailable")
+    changeLocalization(playerPlayingInfoElements.title, 'unavailable')
   }
-  if (typeof(playerInfoObject["artists"]) == "string") {
-    removeLocalization(playerPlayingInfoElements["artists"])
-    if (playerInfoObject["artists"] != "") {
-      playerPlayingInfoElements["artists"].innerText = playerInfoObject["artists"]
+  if (typeof playerInfoObject.artists === 'string') {
+    removeLocalization(playerPlayingInfoElements.artists)
+    if (playerInfoObject.artists !== '') {
+      playerPlayingInfoElements.artists.innerText = playerInfoObject.artists
     } else {
-      changeLocalization(playerPlayingInfoElements["artists"], "none")
+      changeLocalization(playerPlayingInfoElements.artists, 'none')
     }
   } else {
-    changeLocalization(playerPlayingInfoElements["artists"], "unavailable")
+    changeLocalization(playerPlayingInfoElements.artists, 'unavailable')
+  }
+}
+
+class KodiPlayerTypeError extends TypeError {
+  constructor (arg, expected, got) {
+    super('The supplied argument "' + arg + '" is not of expected values(s) "' + expected + '", got "' + got + '.')
+    this.name = 'KodiTypeError'
   }
 }
 
@@ -172,21 +206,19 @@ function updatePlayerPlayPause (playerSpeed) {
   switch (playerSpeed) {
     case 0:
       isPlaying = false
-      playerPlayingPlaybackElements["container"].style.visibility = "hidden"
-      updateSoftkeys("none", "play", "none")
+      playerPlayingPlaybackElements.container.style.visibility = 'hidden'
+      updateSoftkeys('none', 'play', 'none')
+      if (typeof tickTimer === 'function') {
+        clearInterval(tickTimer)
+      } else {
+        console.log('The timer might not be running yet?')
+      }
       break
-    default:
+    case 1:
       isPlaying = true
-      playerPlayingPlaybackElements["container"].style.visibility = "initial"
-      updateSoftkeys("playback", "pause", "none")
+      playerPlayingPlaybackElements.container.style.visibility = 'initial'
+      updateSoftkeys('playback', 'pause', 'none')
       break
-  }
-}
-
-class KodiPlayerTypeError extends TypeError {
-  constructor (arg, expected, got) {
-    super("The supplied argument '"+arg+"' is not of expected values(s) '"+expected+"', got '"+got+".")
-    this.name = "KodiTypeError"
   }
 }
 
@@ -198,30 +230,28 @@ class KodiPlayerTypeError extends TypeError {
 
 function updatePlayerRepeat (repeatStatus) {
   switch (repeatStatus) {
-    case "off":
-      playerPlayingPlaybackElements["repeat"].src = "/app/icons/repeat-grey_24.png"
+    case 'off':
+      playerPlayingPlaybackElements.repeat.src = 'icons/repeat-grey_24.png'
       break
-    case "one":
-    case "all":
-      playerPlayingPlaybackElements["repeat"].src = "/app/icons/repeat_24.png"
+    case 'one':
+    case 'all':
+      playerPlayingPlaybackElements.repeat.src = 'icons/repeat_24.png'
       break
     default:
-      throw new KodiPlayerTypeError("repeatStatus", "off, one, all", repeatStatus)
-      break
+      throw new KodiPlayerTypeError('repeatStatus', 'off, one, all', repeatStatus)
   }
   switch (repeatStatus) {
-    case "off":
-      changeLocalization(playerOptionsMenuElements["repeat"], "one")
+    case 'off':
+      changeLocalization(playerOptionsMenuElements.repeat, 'one')
       break
-    case "one":
-      changeLocalization(playerOptionsMenuElements["repeat"], "all")
+    case 'one':
+      changeLocalization(playerOptionsMenuElements.repeat, 'all')
       break
-    case "all":
-      changeLocalization(playerOptionsMenuElements["repeat"], "off")
+    case 'all':
+      changeLocalization(playerOptionsMenuElements.repeat, 'off')
       break
     default:
-      throw new KodiPlayerTypeError("repeatStatus", "off, one, all", repeatStatus)
-      break
+      throw new KodiPlayerTypeError('repeatStatus', 'off, one, all', repeatStatus)
   }
 }
 
@@ -234,16 +264,15 @@ function updatePlayerRepeat (repeatStatus) {
 function updatePlayerShuffle (shuffleStatus) {
   switch (shuffleStatus) {
     case true:
-      playerPlayingPlaybackElements["shuffle"].src = "/app/icons/shuffle_24.png"
-      changeLocalization(playerOptionsMenuElements["shuffle"], "off")
+      playerPlayingPlaybackElements.shuffle.src = 'icons/shuffle_24.png'
+      changeLocalization(playerOptionsMenuElements.shuffle, 'off')
       break
     case false:
-      playerPlayingPlaybackElements["shuffle"].src = "/app/icons/shuffle-grey_24.png"
-      changeLocalization(playerOptionsMenuElements["shuffle"], "on")
+      playerPlayingPlaybackElements.shuffle.src = 'icons/shuffle-grey_24.png'
+      changeLocalization(playerOptionsMenuElements.shuffle, 'on')
       break
     default:
-      throw new KodiPlayerTypeError("shuffleStatus", "off, on", shuffleStatus)
-      break
+      throw new KodiPlayerTypeError('shuffleStatus', 'off, on', shuffleStatus)
   }
 }
 
@@ -254,11 +283,11 @@ function updatePlayerShuffle (shuffleStatus) {
 //
 
 function updatePlayerThumbnail (thumbnailUri) {
-  //TODO: fetch and update the thumbnail.
-  kodi.kodiXmlHttpRequest("Files.PrepareDownload", {"path": thumbnailUri})
-  .then((response) => {
+  kodi.kodiXmlHttpRequest('Files.PrepareDownload', {
+    path: thumbnailUri
+  }).then((response) => {
     // Not sure if this is right but whatever. I'm coding this at 1:15am.
-    playerPlayingInfoElements["thumbnail"].src = "http://"+kodi.kodiIP+":"+kodi.kodiPort+"/"+response["details"]["path"]
+    playerPlayingInfoElements.thumbnail.src = 'http://' + kodi.kodiIP + ':' + kodi.kodiPort + '/' + response.details.path
   })
 }
 
@@ -274,48 +303,39 @@ function updatePlayerThumbnail (thumbnailUri) {
 //
 
 function initPlayer () {
-  kodi.kodiXmlHttpRequest("Player.GetActivePlayers").then((response) => {
+  kodi.kodiXmlHttpRequest('Player.GetActivePlayers').then((response) => {
     if (response[0]) {
-      var activePlayer = response[0]["playerid"]
-      kodi.kodiXmlHttpRequest("Player.GetItem", {"properties": ["title", "artist", "thumbnail"],
-                                                 "playerid": activePlayer})
-      .then((response) => {
+      var activePlayer = response[0].playerid
+      kodi.kodiXmlHttpRequest('Player.GetItem', {
+        properties: ['title', 'artist', 'thumbnail', 'starttime', 'endtime'],
+        playerid: activePlayer
+      }).then((response) => {
         var playerInfoObject = {}
-        if (response["item"]["title"]) {
-          playerInfoObject["title"] = response["item"]["title"]
-        } else if (response["item"]["label"]) {
-          playerInfoObject["title"] = response["item"]["label"]
+        if (response.item.title) {
+          playerInfoObject.title = response.item.title
+        } else if (response.item.label) {
+          playerInfoObject.title = response.item.label
         }
-        if (response["item"]["artist"]) {
-          playerInfoObject["artists"] = response["item"]["artist"]
-          console.log("Player artists: "+JSON.stringify(response["item"]["artist"])+" (type: "+typeof(response["item"]["artist"]))
+        if (response.item.artist) {
+          playerInfoObject.artists = response.item.artist
+          console.log('Player artists: ' + JSON.stringify(response.item.artist))
         }
         updatePlayerInfo(playerInfoObject)
-        updatePlayerThumbnail(response["item"]["thumbnail"])
-        kodi.kodiXmlHttpRequest("Player.GetProperties", {"properties": ["speed", "repeat", "shuffled", "time", "totaltime"],
-                                                         "playerid": activePlayer})
-        .then((response) => {
-          updatePlayerPlayPause(response["speed"])
-          updatePlayerRepeat(response["repeat"])
-          updatePlayerShuffle(response["shuffled"])
-          ticked = convertTimeToSeconds(response["time"]["hours"], 
-                                        response["time"]["minutes"], 
-                                        response["time"]["seconds"])
-          maxTickable = convertTimeToSeconds(response["totaltime"]["hours"], 
-                                             response["totaltime"]["minutes"], 
-                                             response["totaltime"]["seconds"])
-          maxTickableLabel["hours"] = Math.floor((maxTickable / 60) / 60)
-          maxTickableLabel["minutes"] = Math.floor(maxTickable - ((maxTickable * 60 * 60) / 60))
-          maxTickableLabel["seconds"] = Math.floor(maxTickable - (maxTickableLabel["minutes"] * 60))
-          try {
-            updatePlayerTime()
-          } catch (err) {
-            console.error(err)
-          }
-          playerPlayingPlaybackElements["container"].style.visibility = "inital"
-          playerPlayingPlaybackElements["throbber"].style.display = "none"
-        })
-        .catch((err) => {
+        updatePlayerThumbnail(response.item.thumbnail)
+        kodi.kodiXmlHttpRequest('Player.GetProperties', {
+          properties: ['speed', 'repeat', 'shuffled', 'time', 'totaltime'],
+          playerid: activePlayer
+        }).then((response) => {
+          updatePlayerRepeat(response.repeat)
+          updatePlayerShuffle(response.shuffled)
+          // try {
+          //   updatePlayerTime()
+          // } catch (err) {
+          //   console.error(err)
+          // }
+          updatePlayerPlayPause(response.speed)
+          playerPlayingPlaybackElements.throbber.style.display = 'none'
+        }).catch((err) => {
           kodi.errorOut(err)
         })
       }).catch((err) => {
@@ -323,7 +343,7 @@ function initPlayer () {
         kodi.errorOut(err)
       })
     } else {
-      newToast("toast-playerinactive", "No player active.", "south", 3000, "warning")
+      newToast('toast-playerinactive', 'No player active.', 'south', 3000, 'warning')
       blankPlayer()
     }
   }).catch((err) => {
@@ -332,8 +352,9 @@ function initPlayer () {
   })
 }
 
-kodi.kodiRegisterEventListener("Player.OnPause", (message) => {
-  console.log("OnPause: "+JSON.stringify(message))
+kodi.kodiRegisterEventListener('Player.OnPause', (message) => {
+  console.log('OnPause: ' + JSON.stringify(message))
+  //updatePlayerPlayPause(message.player.speed)
 })
 
 //
@@ -344,27 +365,28 @@ kodi.kodiRegisterEventListener("Player.OnPause", (message) => {
 //
 
 function openOptionsMenu () {
-  playerOptionsMenuElements["optionsMenu"].style.display = "initial"
-  updateSoftkeys("none", "toggle", "none")
-  naviBoard.setNavigation(playerOptionsMenuElements["optionsList"])
+  playerOptionsMenuElements.container.style.display = 'initial'
+  updateSoftkeys('none', 'toggle', 'none')
+  naviBoard.setNavigation(playerOptionsMenuElements.list)
 }
 
 //
 // Function closeOptionsMenu()
 //
-// If the options menu is opened, close it. This function be called in the 
+// If the options menu is opened, close it. This function be called in the
 // keydown event listener.
 //
 
 function closeOptionsMenu () {
-  naviBoard.destroyNavigation(playerOptionsMenuElements["optionsList"])
-  playerOptionsMenuElements["optionsMenu"].style.display = "none"
-  kodi.kodiXmlHttpRequest("Player.GetActivePlayers").then((response) => {
+  naviBoard.destroyNavigation(playerOptionsMenuElements.list)
+  playerOptionsMenuElements.container.style.display = 'none'
+  kodi.kodiXmlHttpRequest('Player.GetActivePlayers').then((response) => {
     if (response[0]) {
-      kodi.kodiXmlHttpRequest("Player.GetProperties", {"properties": ["speed"],
-                                                       "playerid": response[0]["playerid"]})
-      .then((response) => {
-        updatePlayerPlayPause(response["speed"])
+      kodi.kodiXmlHttpRequest('Player.GetProperties', {
+        properties: ['speed'],
+        playerid: response[0].playerid
+      }).then((response) => {
+        updatePlayerPlayPause(response.speed)
       }).catch((err) => {
         kodi.errorOut(err)
       })
@@ -372,14 +394,14 @@ function closeOptionsMenu () {
   })
 }
 
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener('DOMContentLoaded', () => {
   switchTheme()
   arrivedAtPage()
   initPlayer()
   var isOptionsMenuOpen = false
   window.onkeydown = (e) => {
     switch (e.key) {
-      case "SoftLeft":
+      case 'SoftLeft':
         if (isPlaying) {
           if (!isOptionsMenuOpen) {
             try {
@@ -391,33 +413,33 @@ document.addEventListener("DOMContentLoaded", () => {
           }
         }
         break
-      case "Backspace":
+      case 'Backspace':
         e.preventDefault()
         if (isOptionsMenuOpen) {
           closeOptionsMenu()
           isOptionsMenuOpen = false
         } else {
-          gotoPage("home")
+          gotoPage('home')
         }
         break
-      case "ArrowUp":
-        kodi.volume("increment")
+      case 'ArrowUp':
+        kodi.volume('increment')
         break
-      case "ArrowDown":
-        kodi.volume("decrement")
+      case 'ArrowDown':
+        kodi.volume('decrement')
         break
-      case "ArrowLeft":
+      case 'ArrowLeft':
         if (isPlaying) {
           //TODO: port code from 0.4.7.3
         }
         break
-      case "Enter":
+      case 'Enter':
         if (isPlaying) {
           // TODO: remake this shit.
-          // kodi.player("PlayPause")
+          // kodi.player('PlayPause')
         }
         break
-      case "ArrowRight":
+      case 'ArrowRight':
         if (isPlaying) {
           //TODO: port code from 0.4.7.3
         }
