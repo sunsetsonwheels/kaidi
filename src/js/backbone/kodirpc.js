@@ -30,15 +30,16 @@ class KodiRPC {
     this.kodiPort = settings.get('port')
     if (this.startWorker) {
       this.listeningKodiEvents = {}
-      this.eventWorker = new Worker('/js/backbone/workers/kodieventsworker.js')
+      this.eventWorker = new Worker('/js/backbone/workers/kodievents.js')
       this.eventWorker.onmessage = (e) => {
         try {
           if (e.data.command === 'receive') {
             if (e.data.event in this.listeningKodiEvents) {
-              this.listeningKodiEvents[e.data.event](e.data)
+              this.listeningKodiEvents[e.data.event](e.data.data)
             }
           }
         } catch (err) {
+          console.error(err)
           throw new KodiResponseError(err)
         }
       }
@@ -70,7 +71,7 @@ class KodiRPC {
               resolve(reply.result)
             }
           } catch (err) {
-            reject(new KodiResponseError(new Error('JSON could not be parsed!')))
+            reject(new KodiResponseError(err))
           }
         } else {
           reject(new KodiXHRError(request.status, request.statusText))
@@ -126,7 +127,7 @@ class KodiMethods extends KodiRPC {
     this.ping()
   }
 
-  errorOut (err) {
+  methodErrorOut (err) {
     newToast('kodi-request-failed', 'Kodi request failed!', 'south', 3000, 'error')
     console.error(err)
     throw new KodiMethodsError(err)

@@ -87,17 +87,17 @@ function changeWorkerStatus (status) {
 }
 
 //
-// Variables Object kodiInfo, Boolean kodiNotificationsEnabled, ReconnectingWebSocket,null ws
+// Variables Object kodiInfo, Boolean isKodiNotificationsEnabled, ReconnectingWebSocket,null ws
 //
 // kodiInfo: the IP address and port of Kodi
 //
-// kodiNotificationsEnabled: whether we should display Kodi Now Playing notifications.
+// isKodiNotificationsEnabled: whether we should display Kodi Now Playing notifications.
 //
 // ws: If the Web Worker is opened, ws is a ReconnectingWebSocket, if not, it is null.
 //
 
 var kodiInfo = {}
-var kodiNotificationsEnabled = false
+var isKodiNotificationsEnabled = false
 var ws = null
 
 //
@@ -116,7 +116,8 @@ function wsStart () {
     try {
       var eventMessage = JSON.parse(e.data)
       if (eventMessage.method === 'Player.OnPlay') {
-        if (kodiNotificationsEnabled) {
+        if (isKodiNotificationsEnabled) {
+          console.log(JSON.stringify(eventMessage.params))
           notif.spawnNotification(eventMessage.params, eventMessage.params)
         }
       }
@@ -147,8 +148,8 @@ self.onmessage = (e) => {
         } else {
           try {
             kodiInfo = e.data.kodiInfo
-            kodiNotificationsEnabled = e.data.kodiNotifications
-            if (!ws) {
+            isKodiNotificationsEnabled = e.data.kodiNotifications
+            if (!ws || ws === null) {
               wsStart()
             } else {
               console.log(LOG_PREFIX + 'ReconnectingWebSocket is already present!')
