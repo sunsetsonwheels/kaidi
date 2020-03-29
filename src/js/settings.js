@@ -98,8 +98,11 @@ document.addEventListener("DOMContentLoaded", () => {
       window.alert("Kaidi Remote version "+KAIDI_VERSION);
     });
   };
-  document.getElementById("setting-donate").onclick = () => {
+  document.getElementById("setting-donate-paypal").onclick = () => {
     window.open("https://paypal.me/jkelol111");
+  }
+  document.getElementById("setting-donate-buymeacoffee").onclick = () => {
+    window.open("https://buymeacoffee.com/jkelol111");
   }
   arrivedAtPage();
 });

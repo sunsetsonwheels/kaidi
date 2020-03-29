@@ -115,17 +115,21 @@ function wsStart () {
     console.log(LOG_PREFIX + 'Received message from Kodi: ' + JSON.stringify(e.data))
     try {
       var eventMessage = JSON.parse(e.data)
-      if (eventMessage.method === 'Player.OnPlay') {
-        if (isKodiNotificationsEnabled) {
-          console.log(JSON.stringify(eventMessage.params))
-          notif.spawnNotification(eventMessage.params, eventMessage.params)
-        }
-      }
       postMessage({
         command: 'receive',
         event: eventMessage.method,
         data: eventMessage.params
       })
+      if (eventMessage.method === 'Player.OnPlay') {
+        if (isKodiNotificationsEnabled) {
+          const CAPITALIZED_PLAYER_TYPE = eventMessage.params.data.item.type[0].toUpperCase() + eventMessage.params.data.item.type.slice(1)
+          if (eventMessage.params.data.item.label) {
+            notif.spawnNotification(CAPITALIZED_PLAYER_TYPE, eventMessage.params.data.item.label)
+          } else {
+            notif.spawnNotification(CAPITALIZED_PLAYER_TYPE, eventMessage.params.data.item.title)
+          }
+        }
+      }
     } catch (err) {
       throw new Error('Could not send event info back to KodiRPC instance. Error: ' + err)
     }
