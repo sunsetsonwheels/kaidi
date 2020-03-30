@@ -3,9 +3,10 @@
 }
 
 .player-playing-info, #player-playing-playback {
-  background-color: rgba(184,184,184,0.6);
+  background-color: rgba(184,184,184,0.7);
   z-index: var(--z-index-status-bars);
   width: 100%;
+  max-height: 50%;
   position: fixed;
 }
 
@@ -18,7 +19,6 @@
   text-overflow: ellipsis;
   word-wrap: break-word;
   width: calc(100% - 12px);
-  max-height: 50%;
   overflow: hidden;
 }
 

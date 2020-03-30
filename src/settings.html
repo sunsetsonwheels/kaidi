@@ -10,6 +10,7 @@
     <link rel="stylesheet" href="css/global/window.css">
     <link rel="stylesheet" href="css/global/native-toast.css">
     <link rel="stylesheet" href="css/global/pagenav.css">
+    <link rel="stylesheet" href="css/global/options.css">
     <link rel="stylesheet" href="css/settings.css">
   </head>
   <body class="page-transition-blur-in">
@@ -18,7 +19,7 @@
       <header class="header-bar">
         <h1 id="header-title" data-l10n-id="header-title">Settings</h1>
       </header>
-      <div class="separator" data-l10n-id="separator-kodi">Kodi information</div>
+      <div class="separator" data-l10n-id="settings-separator-kodi">Kodi information</div>
       <section class="settings-entry navigable">
         <h2 class="settings-entry-label" data-l10n-id="setting-ip-title">Kodi IP address</h2>
         <button id="setting-ip">x.x.x.x</button>
@@ -27,7 +28,7 @@
         <h2 class="settings-entry-label" data-l10n-id="setting-port-title">Kodi port</h2>
         <button id="setting-port">x.x.x.x</button>
       </section>
-      <div class="separator" data-l10n-id="separator-appearance">Kodi information</div>
+      <div class="separator" data-l10n-id="settings-separator-appearance">Kodi information</div>
       <section class="settings-entry navigable">
         <h2 class="settings-entry-label" data-l10n-id="setting-theme-title">App theme</h2>
         <select id="setting-theme">
@@ -35,7 +36,7 @@
           <option data-l10n-id="setting-theme-dark" value="dark">Dark</option>
         </select>
       </section>
-      <div class="separator" data-l10n-id="separator-functionality"></div>
+      <div class="separator" data-l10n-id="settings-separator-functionality"></div>
       <section class="settings-entry navigable">
         <h2 class="settings-entry-label" data-l10n-id="setting-playernotify">Kodi player notifications</h2>
         <select id="setting-notify">
@@ -43,7 +44,7 @@
           <option data-l10n-id="setting-playernotify-off" value="false">Off</option>
         </select>
       </section>
-      <div class="separator" data-l10n-id="separator-monetization">Monetization & about</div>
+      <div class="separator" data-l10n-id="settings-separator-monetization">Monetization & about</div>
       <section class="settings-entry navigable">
         <h2 class="settings-entry-label" data-l10n-id="setting-ad-title">KaiAds</h2>
         <select id="setting-ads">
@@ -52,22 +53,27 @@
         </select>
       </section>
       <section class="settings-entry navigable">
-        <h2 class="settings-entry-label" data-l10n-id="setting-donate-title-paypal">Donate via PayPal</h2>
-        <button id="setting-donate-paypal" data-l10n-id="setting-donate-secondary">Help fund the app!</button>
-      </section>
-      <section class="settings-entry navigable">
-        <h2 class="settings-entry-label" data-l10n-id="setting-donate-title-buymeacoffee">Donate via BuyMeACoffee</h2>
-        <button id="setting-donate-buymeacoffee" data-l10n-id="setting-donate-secondary">Help fund the app!</button>
+        <h2 class="settings-entry-label" data-l10n-id="setting-donate-title">Donate</h2>
+        <button id="setting-donate" data-l10n-id="setting-donate-secondary">Help fund the app!</button>
       </section>
       <section class="settings-entry navigable">
         <h2 class="settings-entry-label" data-l10n-id="setting-about-title">About Kaidi Remote (Beta)</h2>
         <button id="setting-version">version null</button>
       </section>
     </section>
+    <section id="settings-options-menu-container" class="options-menu-container">
+      <section class="options-menu">
+        <h2 data-l10n-id="settings-options-title" class="options-title">Donation</h2>
+        <div id="settings-options-list" class="options">
+          <div tabindex="-1" id="settings-options-list-paypal" class="navigable" data-l10n-id="settings-options-list-paypal">Via PayPal...</div>
+          <div tabindex="-1" id="settings-options-list-buymeacoffee" class="navigable" data-l10n-id="settings-options-list-buymeacoffee">Via BuyMeACoffee</div>
+        </div>
+      </section>
+    </section>
     <footer class="softkeys-bar">
-      <div id="softkey-left" data-l10n-id="sk-back">Back</div>
-      <div id="softkey-center" data-l10n-id="sk-select">SELECT</div>
-      <div id="softkey-right" data-l10n-id="sk-reset">Reset</div>
+      <div id="softkey-left" data-l10n-id="softkey-left-back">Back</div>
+      <div id="softkey-center" data-l10n-id="softkey-center-edit">EDIT</div>
+      <div id="softkey-right" data-l10n-id="softkey-right-reset">Reset</div>
     </footer>
     <script src="js/libs/l10n.js" charset="utf-8"></script>
     <script src="js/libs/native-toast.js"></script>

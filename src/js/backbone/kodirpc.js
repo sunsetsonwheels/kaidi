@@ -17,7 +17,7 @@ class KodiResponseError extends Error {
 }
 
 class KodiXHRError extends Error {
-  constructor(xhrErrorCode, xhrErrorMessage) {
+  constructor (xhrErrorCode, xhrErrorMessage) {
     super('Request to Kodi failed due to XHR error: ' + xhrErrorMessage + ' (' + xhrErrorCode + ').')
     this.name = 'KodiXHRError'
   }
@@ -83,14 +83,14 @@ class KodiRPC {
       if (params) {
         request.send(JSON.stringify({
           jsonrpc: '2.0',
-          id: 'KodiRPCJavascript-' + method,
+          id: 'KodiRPCJavascript-' + Math.random().toString(36).substr(2, 5),
           method: method,
           params: params
         }))
       } else {
         request.send(JSON.stringify({
           jsonrpc: '2.0',
-          id: 'KodiRPCJavascript-' + method,
+          id: 'KodiRPCJavascript-' + Math.random().toString(36).substr(2, 5),
           method: method
         }))
       }
@@ -128,7 +128,7 @@ class KodiMethods extends KodiRPC {
   }
 
   methodErrorOut (err) {
-    newToast('kodi-request-failed', 'Kodi request failed!', 'south', 3000, 'error')
+    newLocalizedToast('kodi-request-failed', 'Kodi request failed!', 'south', 3000, 'error')
     console.error(err)
     throw new KodiMethodsError(err)
   }
@@ -136,22 +136,16 @@ class KodiMethods extends KodiRPC {
   ping () {
     this.kodiXmlHttpRequest('JSONRPC.Ping').then((response) => {
       if (response === 'pong') {
-        newToast('kodi-connection-established-text', 'Connected to Kodi!', 'south', 2000, 'success')
+        newLocalizedToast('kodi-connection-established-text', 'Connected to Kodi!', 'south', 2000, 'success')
       } else {
-        newToast('kodi-connection-unsure-text', 'Connection to Kodi unsure!', 'south', 2000, 'success')
+        newLocalizedToast('kodi-connection-unsure-text', 'Connection to Kodi unsure!', 'south', 2000, 'success')
       }
     }).catch((err) => {
       this.errorOut(err)
     })
   }
 
-  input (direction, params = undefined) {
-    this.kodiXmlHttpRequest('Input.' + direction, params).catch((err) => {
-      this.errorOut(err)
-    })
-  }
-
-  volume (direction, params = undefined) {
+  volumeWrapper (direction, params = undefined) {
     if (direction === 'mute') {
       var method = 'Application.SetMute'
       var params = { mute: 'toggle' }

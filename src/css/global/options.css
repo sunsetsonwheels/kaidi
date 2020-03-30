@@ -5,11 +5,12 @@
   height: calc(100% - 30px);
   position: fixed;
   bottom: 30px;
-  background-color: rgba(68, 66, 66, 0.5);
+  background-color: rgba(68, 66, 66, 0.7);
 }
 
 .options-menu {
   width: 100%;
+  max-height: 80%;
   position: absolute;
   overflow: hidden;
   bottom: 0;

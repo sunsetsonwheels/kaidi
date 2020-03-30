@@ -27,26 +27,63 @@ class SettingsManager {
 
 var settings = new SettingsManager()
 
-function newToast (localizationKey, noLocalizationPlaceholder, toastPosition, toastTimeout, toastType) {
-  navigator.mozL10n.formatValue(localizationKey).then((text) => {
+function newLocalizedToast (localizationKey, noLocalizationPlaceholder, toastPosition, toastTimeout, toastType) {
+  function toaster (textToToast) {
     nativeToast({
-      message: text, 
-      position: toastPosition, 
-      timeout: toastTimeout, 
-      type: toastType
-    })
-  }).catch(() => {
-    nativeToast({
-      message: noLocalizationPlaceholder,
+      message: textToToast,
       position: toastPosition,
       timeout: toastTimeout,
       type: toastType
     })
+  }
+  navigator.mozL10n.formatValue(localizationKey).then((localizedText) => {
+    toaster(localizedText)
+  }).catch(() => {
+    toaster(noLocalizationPlaceholder)
   })
 }
 
-function changeLocalization (htmlElement, localizationKey) {
-  console.log('Localizing "' + htmlElement.id + '" with "' + localizationKey + '"')
+function newLocalizedPrompt (localizationKey, noLocalizationPlaceholder, formatTextObj = undefined) {
+  return new Promise((resolve, reject) => {
+    navigator.mozL10n.formatValue(localizationKey, formatTextObj).then((localizedText) => {
+      const INPUTTED_TEXT = prompt(localizedText)
+      if (INPUTTED_TEXT) {
+        resolve(INPUTTED_TEXT)
+      } else {
+        reject(new Error('No text inputted'))
+      }
+    }).catch(() => {
+      const INPUTTED_TEXT = prompt(noLocalizationPlaceholder)
+      if (INPUTTED_TEXT) {
+        resolve(INPUTTED_TEXT)
+      } else {
+        reject(new Error('No text inputted'))
+      }
+    })
+  })
+}
+
+function newLocalizedConfirm (localizationKey, noLocalizationPlaceholder, formatTextObj = undefined) {
+  return new Promise((resolve, reject) => {
+    navigator.mozL10n.formatValue(localizationKey, formatTextObj).then((localizedText) => {
+      const ACCEPTED = confirm(localizedText)
+      if (ACCEPTED) {
+        resolve(true)
+      } else {
+        reject(new Error(false))
+      }
+    }).catch(() => {
+      const ACCEPTED = confirm(noLocalizationPlaceholder)
+      if (ACCEPTED) {
+        resolve(true)
+      } else {
+        reject(new Error(false))
+      }
+    })
+  })
+}
+
+function changeElementLocalization (htmlElement, localizationKey) {
   try {
     htmlElement.setAttribute('data-l10n-id', htmlElement.id + '-' + localizationKey)
   } catch (err) {
@@ -54,20 +91,20 @@ function changeLocalization (htmlElement, localizationKey) {
   }
 }
 
-function removeLocalization (htmlElement) {
+function removeElementLocalization (htmlElement) {
   htmlElement.removeAttribute('data-l10n-id')
 }
 
 var softkeyElements = {
-  'left': document.getElementById('softkey-left'),
-  'center': document.getElementById('softkey-center'),
-  'right': document.getElementById('softkey-right')
+  left: document.getElementById('softkey-left'),
+  center: document.getElementById('softkey-center'),
+  right: document.getElementById('softkey-right')
 }
 
-function updateSoftkeys (localizationKeyLeft, localizationKeyCenter, localizationKeyRight) {
-  changeLocalization(softkeyElements.left, localizationKeyLeft)
-  changeLocalization(softkeyElements.center, localizationKeyCenter)
-  changeLocalization(softkeyElements.right, localizationKeyRight)
+function updateSoftkeysLocalization (localizationKeyLeft, localizationKeyCenter, localizationKeyRight) {
+  changeElementLocalization(softkeyElements.left, localizationKeyLeft)
+  changeElementLocalization(softkeyElements.center, localizationKeyCenter)
+  changeElementLocalization(softkeyElements.right, localizationKeyRight)
 }
 
 function gotoPage (page) {

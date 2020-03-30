@@ -18,25 +18,35 @@
   <body class="page-transition-blur-in">
     <header class="status-bar"></header>
     <section class="content">
-      <h3 class="home-label" data-l10n-id="info-arrows">▲ ▼ ◀ ▶: Arrow keys</h3>
-      <h3 class="home-label" data-l10n-id="info-ans">Answer call key: Back</h3>
-      <h3 class="home-label" data-l10n-id="info-2">2. Options</h3>
-      <h3 class="home-label" data-l10n-id="info-3">3. Toggle fullscreen</h3>
-      <h3 class="home-label" data-l10n-id="info-5">5. Volume up</h3>
-      <h3 class="home-label" data-l10n-id="info-8">8. Volume down</h3>
-      <h3 class="home-label" data-l10n-id="info-6">6. Toggle mute</h3>
-      <h3 class="home-label-blurred" data-l10n-id="info-#">#. More controls</h3>
+      <h3 class="home-label" data-l10n-id="home-control-dpad">▲ ▼ ◀ ▶: Arrow keys</h3>
+      <h3 class="home-label" data-l10n-id="home-control-ans">Answer call key: Back</h3>
+      <h3 class="home-label" data-l10n-id="home-control-2">2. Options</h3>
+      <h3 class="home-label" data-l10n-id="home-control-3">3. Toggle fullscreen</h3>
+      <h3 class="home-label" data-l10n-id="home-control-5">5. Volume up</h3>
+      <h3 class="home-label" data-l10n-id="home-control-8">8. Volume down</h3>
+      <h3 class="home-label" data-l10n-id="home-control-6">6. Toggle mute</h3>
+      <h3 class="home-label-blurred" data-l10n-id="home-control-#">#. More controls</h3>
     </section>
-    <div id="volume-hud-greyout" class="volume-hud-transition-hide">
+    <section id="volume-hud-greyout" class="volume-hud-transition-hide">
       <div class="volume-hud-container">
         <div class="volume-hud-label" data-l10n-id="volume-hud-label">Volume</div>
         <meter min="0" max="100" class="meter-bar" id="meter-volume"></meter>
       </div>
-    </div>
+    </section>
+    <section id="home-options-menu-container" class="options-menu-container">
+      <section class="options-menu">
+        <h2 data-l10n-id="home-options-title" class="options-title">Playback</h2>
+        <div id="home-options-list" class="options">
+          <div tabindex="-1" id="home-options-list-input" class="navigable" data-l10n-id="home-options-list-input">Input text...</div>
+          <div tabindex="-1" id="home-options-list-home" class="navigable" data-l10n-id="home-options-list-home">Go home...</div>
+          <div tabindex="-1" id="home-options-list-exit" class="navigable" data-l10n-id="home-options-list-exit">Exit Kaidi Remote...</div>
+        </div>
+      </section>
+    </section>
     <footer class="softkeys-bar">
-      <div id="softkey-left" data-l10n-id="sk-player">Player</div>
-      <div id="softkey-center" data-l10n-id="sk-select">SELECT</div>
-      <div id="softkey-right" data-l10n-id="sk-settings">Settings</div>
+      <div id="softkey-left" data-l10n-id="softkey-left-player">Player</div>
+      <div id="softkey-center" data-l10n-id="softkey-center-select">SELECT</div>
+      <div id="softkey-right" data-l10n-id="softkey-right-settings">Settings</div>
     </footer>
     <script src="js/libs/l10n.js" charset="utf-8"></script>
     <script src="js/libs/native-toast.js"></script>

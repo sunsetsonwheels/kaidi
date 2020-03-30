@@ -110,6 +110,7 @@ function wsStart () {
   ws = new ReconnectingWebSocket('ws://' + kodiInfo.ip + ':9090/jsonrpc')
   ws.onopen = () => {
     console.log(LOG_PREFIX + 'ReconnectingWebSocket has successfully connected to Kodi!')
+    changeWorkerStatus('opened')
   }
   ws.onmessage = (e) => {
     console.log(LOG_PREFIX + 'Received message from Kodi: ' + JSON.stringify(e.data))
@@ -158,7 +159,6 @@ self.onmessage = (e) => {
             } else {
               console.log(LOG_PREFIX + 'ReconnectingWebSocket is already present!')
             }
-            changeWorkerStatus('opened')
             // notif.spawnNotification('We're live!', 'Hello from Kaidi webworker!')
           } catch (err) {
             throw new Error('kodiInfo is missing in message. Initilization of worker failed! (Error: ' + err + ')')
