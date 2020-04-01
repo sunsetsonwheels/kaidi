@@ -12,43 +12,42 @@
     <link rel="stylesheet" href="css/global/pagenav.css">
     <link rel="stylesheet" href="css/global/meter.css">
     <link rel="stylesheet" href="css/global/volume.css">
-    <link rel="stylesheet" href="css/global/throbber.css">
     <link rel="stylesheet" href="css/global/options.css">
     <link rel="stylesheet" href="css/player.css">
   </head>
   <body class="page-transition-blur-in">
     <header class="status-bar"></header>
-    <div id="volume-hud-greyout" class="volume-hud-transition-hide">
+    <section id="volume-hud-greyout" class="volume-hud-greyout volume-hud-transition-hide">
       <div class="volume-hud-container">
         <div class="volume-hud-label" data-l10n-id="volume-hud-label">Volume</div>
         <meter min="0" max="100" class="meter-bar" id="meter-volume"></meter>
       </div>
-    </div>
+    </section>
     <section class="content">
-      <div class="player-playing-info">
-        <div id="player-playing-info-title" data-l10n-id="player-playing-info-title-none">No title</div>
-        <div id="player-playing-info-artists" data-l10n-id="player-playing-info-artists-none">No artist</div>
+      <div class="playing-info-container">
+        <div id="title" class="playing-info-title" data-l10n-id="title-none">No title</div>
+        <div id="artists" class="playing-info-artists" data-l10n-id="artists-none">No artist</div>
       </div>
-      <div id="throbber">
-        <div class="double-bounce1"></div>
-        <div class="double-bounce2"></div>
+      <img id="thumbnail" class="playing-info-thumbnail" src="icons/kaidi_112.png">
+      <div id="throbber" class="playing-throbber">
+        <div class="playing-throbber-double-bounce1"></div>
+        <div class="playing-throbber-double-bounce2"></div>
       </div>
-      <img id="player-playing-info-thumbnail" src="icons/kaidi_112.png">
-      <div id="player-playing-playback">
-        <img src="icons/shuffle-grey_24.png" id="player-playing-playback-shuffle">
-        <img src="icons/repeat-grey_24.png" id="player-playing-playback-repeat">
-        <div id="player-playing-playback-duration-text">0:00/0:00</div>
-        <meter min='0' max='100' class="meter-bar" id="player-playing-playback-duration-meter"></meter>
+      <div id="playing-status" class="playing-status-container">
+        <img id="shuffle" class="playing-status-indicators" src="icons/shuffle-grey_24.png">
+        <img id="repeat" class="playing-status-indicators" src="icons/repeat-grey_24.png">
+        <div id="duration-text" class="playing-status-duration">0:00/0:00</div>
+        <meter min='0' max='100' class="meter-bar" id="duration-meter"></meter>
       </div> 
     </section>
-    <section id="player-options-menu-container" class="options-menu-container">
-      <section class="options-menu">
-        <h2 data-l10n-id="player-options-title" class="options-title">Playback</h2>
-        <div id="player-options-list" class="options">
-          <div tabindex="-1" id="player-options-list-repeat" class="navigable" data-l10n-id="player-options-list-repeat-off">Repeat off</div>
-          <div tabindex="-1" id="player-options-list-shuffle" class="navigable" data-l10n-id="player-options-list-shuffle-off">Shuffle off</div>
+    <section id="options-container" class="options-menu-container">
+      <div class="options-menu">
+        <h2 class="options-menu-title" data-l10n-id="options-menu-title">Playback</h2>
+        <div id="options-list" class="options-menu-list">
+          <div tabindex="-1" id="options-list-repeat" class="navigable" data-l10n-id="options-list-repeat-off">Repeat off</div>
+          <div tabindex="-1" id="options-list-shuffle" class="navigable" data-l10n-id="options-list-shuffle-off">Shuffle off</div>
         </div>
-      </section>
+      </div>
     </section>
     <footer class="softkeys-bar">
       <div id="softkey-left" data-l10n-id="softkey-left-none"></div>

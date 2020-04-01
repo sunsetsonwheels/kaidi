@@ -15,28 +15,25 @@ class KodiHomeController extends KodiMethods {
     //
     super()
     this.isControlOptionsMenuOpen = false
-    this.homeOptionsMenuElements = {
-      container: document.getElementById('home-options-menu-container'),
-      list: {
-        root: document.getElementById('home-options-list'),
-        inputText: document.getElementById('home-options-list-input'),
-        goHome: document.getElementById('home-options-list-home'),
-        exitKaidi: document.getElementById('home-options-list-exit')
-      }
-    }
     this.kodiRegisterEventListener('Input.OnInputRequested', this.promptInputText)
-    this.homeOptionsMenuElements.list.inputText.onclick = () => {
+    document.getElementById('options-list-input').onclick = () => {
       this.closeControlOptionsMenu()
       this.promptInputText()
     }
-    this.homeOptionsMenuElements.list.goHome.onclick = () => {
+    document.getElementById('options-list-home').onclick = () => {
       this.closeControlOptionsMenu()
       this.inputWrapper('Home')
     }
-    this.homeOptionsMenuElements.list.exitKaidi.onclick = () => {
+    document.getElementById('options-list-exit').onclick = () => {
       this.closeControlOptionsMenu()
-      newLocalizedConfirm('text-exit', 'Exit Kaidi Remote?').then(() => {
-        window.close()
+      navigator.mozL10n.formatValue('text-exit').then((localizedText) => {
+        if (confirm(localizedText)) {
+          window.close()
+        }
+      }).catch(() => {
+        if (confirm('Exit Kaidi Remote?')) {
+          window.close()
+        }
       })
     }
   }
@@ -52,11 +49,22 @@ class KodiHomeController extends KodiMethods {
   }
 
   promptInputText () {
-    newLocalizedPrompt('text-input', 'Input text').then((inputtedText) => {
-      this.inputWrapper('SendText', {
-        text: inputtedText,
-        done: true
-      })
+    navigator.mozL10n.formatValue('text-input').then((localizedText) => {
+      var inputtedText = prompt(localizedText + ':')
+      if (inputtedText) {
+        this.inputWrapper('SendText', {
+          text: inputtedText,
+          done: true
+        })
+      }
+    }).catch(() => {
+      var inputtedText = prompt('Input text:')
+      if (inputtedText) {
+        this.inputWrapper('SendText', {
+          text: inputtedText,
+          done: true
+        })
+      }
     })
   }
 
@@ -70,17 +78,17 @@ class KodiHomeController extends KodiMethods {
 
   openControlOptionsMenu () {
     if (!this.isControlOptionsMenuOpen) {
-      this.homeOptionsMenuElements.container.style.display = 'initial'
+      document.getElementById('options-container').style.display = 'initial'
       updateSoftkeysLocalization('close', 'toggle', 'none')
-      naviBoard.setNavigation(this.homeOptionsMenuElements.list.root.id)
+      naviBoard.setNavigation('options-list')
       this.isControlOptionsMenuOpen = true
     }
   }
 
   closeControlOptionsMenu () {
     if (this.isControlOptionsMenuOpen) {
-      naviBoard.destroyNavigation(this.homeOptionsMenuElements.list.root.id)
-      this.homeOptionsMenuElements.container.style.display = 'none'
+      naviBoard.destroyNavigation('options-list')
+      document.getElementById('options-container').style.display = 'none'
       updateSoftkeysLocalization('player', 'select', 'settings')
       this.isControlOptionsMenuOpen = false
     }
@@ -91,7 +99,7 @@ document.addEventListener('DOMContentLoaded', () => {
   switchTheme()
   arrivedAtPage()
   if (settings.get('ip') == null || settings.get('port') == null) {
-    navigator.mozL10n.formatValue('welcome-text', { newline: '\n\n' }).then((text) => {
+    navigator.mozL10n.formatValue('text-welcome', { newline: '\n\n' }).then((text) => {
       alert(text)
       gotoPage('settings')
     }).catch(() => {

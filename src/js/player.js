@@ -1,39 +1,42 @@
-//
-// /app/js/player.js
-//
-// This file handles the tasks required for the operation of player.html
-//
-// (C) jkelol111 and contributors 2020. Licensed under GPLv3 license.
-//
+/**
+ * /js/player.js
+ * @file This file handles the tasks required for the operation of player.html
+ * @author jkelol111 & contributors <jkelol111@gmail.com>
+ * @copyright (C) jkelol111 and contributors 2018-present. Licensed under GPLv3 license.
+ */
 
 'use strict'
 
 /**
- * The error to be triggered if the supplied data from Kodi does not align with any of the handleable values
- * @class {TypeError} KodiPlayerTypeError
- * @arg {string} arg - The name of the argument.
- * @arg {string} expected - The list of the accepted values.
- * @arg {string} got - The invalid value of the argument supplied.
+ * Class representing TypeError extention for Kodi-related TypeErrors.
+ * @class
+ * @extends TypeError
  */
 
 class KodiPlayerTypeError extends TypeError {
+  /**
+   * Creates a KodiPlayerTypeError (The supplied data from Kodi does not align with any of the handleable values.)
+   * @arg {string} arg - The name of the argument.
+   * @arg {string} expected - The list of the accepted values.
+   * @arg {string} got - The invalid value of the argument supplied.
+   */
   constructor (arg, expected, got) {
     super('The supplied argument "' + arg + '" is not of expected values(s) "' + expected + '", got "' + got + '".')
     this.name = 'KodiTypeError'
   }
 }
 
-//
-// Class KodiPlayerController (inherits: KodiMethods <-- KodiRPC)
-//
-// The class that basically controls the player view.
-//
+/**
+ * CLass controlling player.html and handles Kodi player related events and tasks.
+ * @class
+ * @extends KodiMethods
+ */
 
 class KodiPlayerController extends KodiMethods {
   constructor () {
-    //
-    // Initialize the KodiMethod class here.
-    //
+    /**
+     * Initialize the KodiMethod class here.
+     */
 
     super()
 
@@ -51,33 +54,7 @@ class KodiPlayerController extends KodiMethods {
     this.isPlaybackOptionsOpen = false
     this.timerInterval = null
 
-    //
-    // Variables Object playerPlayingInfoElements, Object playerPlayingPlaybackElements, Object playerOptionMenuElements
-    //
-    // Names of the HTML elements that are commonly used throughout this script.
-    //
-
-    this.playerPlayingInfoElements = {
-      title: document.getElementById('player-playing-info-title'),
-      artists: document.getElementById('player-playing-info-artists'),
-      thumbnail: document.getElementById('player-playing-info-thumbnail')
-    }
-    this.playerPlayingPlaybackElements = {
-      throbber: document.getElementById('throbber'),
-      container: document.getElementById('player-playing-playback'),
-      repeat: document.getElementById('player-playing-playback-repeat'),
-      shuffle: document.getElementById('player-playing-playback-shuffle'),
-      playbackDuration: document.getElementById('player-playing-playback-duration-text'),
-      playbackMeter: document.getElementById('player-playing-playback-duration-meter')
-    }
-    this.playerOptionsMenuElements = {
-      container: document.getElementById('player-options-menu-container'),
-      list: document.getElementById('player-options-list'),
-      repeat: document.getElementById('player-options-list-repeat'),
-      shuffle: document.getElementById('player-options-list-shuffle')
-    }
-
-    this.playerOptionsMenuElements.repeat.onclick = () => {
+    document.getElementById('options-list-repeat').onclick = () => {
       this.getKodiActivePlayers().then((response) => {
         this.playerWrapper('SetRepeat', {
           repeat: 'cycle',
@@ -88,13 +65,12 @@ class KodiPlayerController extends KodiMethods {
       })
     }
 
-    this.playerOptionsMenuElements.shuffle.onclick = () => {
+    document.getElementById('options-list-shuffle').onclick = () => {
       this.getKodiActivePlayers().then((response) => {
         this.playerWrapper('SetShuffle', {
           shuffle: 'toggle',
           playerid: response
         }).then((response2) => {
-          console.log(JSON.stringify(response2))
           this.closePlaybackOptionsMenu()
         })
       })
@@ -136,10 +112,12 @@ class KodiPlayerController extends KodiMethods {
         this.updatePlayerRepeat(response2.repeat)
         this.updatePlayerShuffle(response2.shuffled)
         this.updatePlayerPlayPause(response2.speed)
-        this.playerPlayingPlaybackElements.throbber.style.display = 'none'
+        document.getElementById('throbber').style.display = 'none'
+      }).catch(() => {
+        this.blankPlayer()
       })
     }).catch(() => {
-      newLocalizedToast('toast-playerinactive', 'No player active.', 'south', 3000, 'warning')
+      newLocalizedToast('toast-player-inactive', 'No player active.', 'south', 3000, 'warning')
       this.blankPlayer()
     })
 
@@ -148,10 +126,8 @@ class KodiPlayerController extends KodiMethods {
     //
 
     this.kodiRegisterEventListener('Player.OnPlay', (message) => {
-      this.playerPlayingPlaybackElements.throbber.style.display = 'initial'
-      if (typeof this.timerInterval === 'function') {
-        clearInterval(this.timerInterval)
-      }
+      document.getElementById('throbber').style.display = 'initial'
+      clearInterval(this.timerInterval)
       this.getKodiActivePlayers().then((response) => {
         this.playerWrapper('GetItem', {
           properties: ['title', 'artist', 'thumbnail'],
@@ -168,7 +144,7 @@ class KodiPlayerController extends KodiMethods {
           }
           this.updatePlayerInfo(playerInfoObject)
           this.updatePlayerThumbnail(response2.item.thumbnail)
-          this.playerPlayingPlaybackElements.throbber.style.display = 'none'
+          document.getElementById('throbber').style.display = 'none'
         })
       })
       this.updatePlayerPlayPause(message.data.player.speed)
@@ -210,6 +186,7 @@ class KodiPlayerController extends KodiMethods {
         resolve(response)
       }).catch((err) => {
         this.methodErrorOut(err)
+        reject(err)
       })
     })
   }
@@ -236,11 +213,11 @@ class KodiPlayerController extends KodiMethods {
 
   blankPlayer () {
     updateSoftkeysLocalization('none', 'none', 'none')
-    changeElementLocalization(this.playerPlayingInfoElements.title, 'none')
-    changeElementLocalization(this.playerPlayingInfoElements.artists, 'none')
-    this.playerPlayingPlaybackElements.container.style.visibility = 'hidden'
-    this.playerPlayingInfoElements.thumbnail.src = '/icons/kaidi_112.png'
-    this.playerPlayingPlaybackElements.throbber.style.display = 'none'
+    changeElementLocalization(document.getElementById('title'), 'none')
+    changeElementLocalization(document.getElementById('artists'), 'none')
+    document.getElementById('playing-status').style.visibility = 'hidden'
+    document.getElementById('thumbnail').src = '/icons/kaidi_112.png'
+    document.getElementById('throbber').style.display = 'none'
     clearInterval(this.timerInterval)
     this.isPlaying = false
   }
@@ -261,19 +238,8 @@ class KodiPlayerController extends KodiMethods {
           properties: ['percentage', 'time', 'totaltime'],
           playerid: response
         }).then((response2) => {
-          try {
-            const TIME_IN = response2.time
-            const TIME_OUT = response2.totaltime
-            if (TIME_IN === TIME_OUT) {
-              clearInterval(this.timerInterval)
-              this.blankPlayer()
-            } else {
-              this.playerPlayingPlaybackElements.playbackDuration.innerText = response2.time.hours + ':' + ('0' + response2.time.minutes).slice(-2) + ':' + ('0' + response2.time.seconds).slice(-2) + '/' + response2.totaltime.hours + ':' + ('0' + response2.totaltime.minutes).slice(-2) + ':' + ('0' + response2.totaltime.seconds).slice(-2)
-              this.playerPlayingPlaybackElements.playbackMeter.value = response2.percentage
-            }
-          } catch (err) {
-            console.error(err)
-          }
+          document.getElementById('duration-text').innerText = response2.time.hours + ':' + ('0' + response2.time.minutes).slice(-2) + ':' + ('0' + response2.time.seconds).slice(-2) + '/' + response2.totaltime.hours + ':' + ('0' + response2.totaltime.minutes).slice(-2) + ':' + ('0' + response2.totaltime.seconds).slice(-2)
+          document.getElementById('duration-meter').value = response2.percentage
         })
       })
     }
@@ -287,32 +253,32 @@ class KodiPlayerController extends KodiMethods {
 
   updatePlayerInfo (playerInfoObject) {
     if (typeof playerInfoObject.title === 'string') {
-      removeElementLocalization(this.playerPlayingInfoElements.title)
+      removeElementLocalization(document.getElementById('title'))
       if (playerInfoObject.title !== '') {
-        this.playerPlayingInfoElements.title.innerText = playerInfoObject.title
+        document.getElementById('title').innerText = playerInfoObject.title
       } else {
-        changeElementLocalization(this.playerPlayingInfoElements.title, 'none')
+        changeElementLocalization(document.getElementById('title'), 'none')
       }
     } else {
-      changeElementLocalization(this.playerPlayingInfoElements.title, 'unavailable')
+      changeElementLocalization(document.getElementById('title'), 'unavailable')
     }
     if (typeof playerInfoObject.artists === 'object') {
-      removeElementLocalization(this.playerPlayingInfoElements.artists)
-      if (playerInfoObject.artists !== []) {
+      removeElementLocalization(document.getElementById('artists'))
+      if (playerInfoObject.artists.length > 0) {
         var displayedArtists = ''
         for (var artist of playerInfoObject.artists) {
-          if (displayedArtists != '') {
+          if (displayedArtists !== '') {
             displayedArtists += ', ' + artist
           } else {
             displayedArtists += artist
           }
         }
-        this.playerPlayingInfoElements.artists.innerText = displayedArtists
+        document.getElementById('artists').innerText = displayedArtists
       } else {
-        changeElementLocalization(this.playerPlayingInfoElements.artists, 'none')
+        changeElementLocalization(document.getElementById('artists'), 'none')
       }
     } else {
-      changeElementLocalization(this.playerPlayingInfoElements.artists, 'unavailable')
+      changeElementLocalization(document.getElementById('artists'), 'unavailable')
     }
   }
 
@@ -327,7 +293,7 @@ class KodiPlayerController extends KodiMethods {
       path: thumbnailUri
     }).then((response) => {
       // Not sure if this is right but whatever. I'm coding this at 1:15am.
-      this.playerPlayingInfoElements.thumbnail.src = 'http://' + this.kodiIP + ':' + this.kodiPort + '/' + response.details.path
+      document.getElementById('thumbnail').src = 'http://' + this.kodiIP + ':' + this.kodiPort + '/' + response.details.path
     })
   }
 
@@ -341,20 +307,23 @@ class KodiPlayerController extends KodiMethods {
     switch (playerSpeed) {
       case 0:
         this.isPlaying = false
-        this.playerPlayingPlaybackElements.container.style.visibility = 'hidden'
+        document.getElementById('playing-status').style.visibility = 'hidden'
         clearInterval(this.timerInterval)
+        this.timerInterval = null
         updateSoftkeysLocalization('none', 'play', 'none')
         break
       case 1:
         this.isPlaying = true
-        this.playerPlayingPlaybackElements.container.style.visibility = 'initial'
-        this.timerInterval = setInterval(this.tickTimer.bind(this), 1000)
+        document.getElementById('playing-status').style.visibility = 'initial'
+        this.tickTimer()
+        this.timerInterval = setInterval(this.tickTimer.bind(this), 2000)
         updateSoftkeysLocalization('playback', 'pause', 'none')
         break
       default:
         console.log('PlayerSpeed is not a valid handlable value: ' + playerSpeed)
         break
     }
+    console.log('Ticker value: ' + this.timerInterval)
   }
 
   //
@@ -366,24 +335,24 @@ class KodiPlayerController extends KodiMethods {
   updatePlayerRepeat (repeatStatus) {
     switch (repeatStatus) {
       case 'off':
-        this.playerPlayingPlaybackElements.repeat.src = 'icons/repeat-grey_24.png'
+        document.getElementById('repeat').src = 'icons/repeat-grey_24.png'
         break
       case 'one':
       case 'all':
-        this.playerPlayingPlaybackElements.repeat.src = 'icons/repeat_24.png'
+        document.getElementById('repeat').src = 'icons/repeat_24.png'
         break
       default:
         throw new KodiPlayerTypeError('repeatStatus', 'off, one, all', repeatStatus)
     }
     switch (repeatStatus) {
       case 'off':
-        changeElementLocalization(this.playerOptionsMenuElements.repeat, 'all')
+        changeElementLocalization(document.getElementById('options-list-repeat'), 'all')
         break
       case 'all':
-        changeElementLocalization(this.playerOptionsMenuElements.repeat, 'one')
+        changeElementLocalization(document.getElementById('options-list-repeat'), 'one')
         break
       case 'one':
-        changeElementLocalization(this.playerOptionsMenuElements.repeat, 'off')
+        changeElementLocalization(document.getElementById('options-list-repeat'), 'off')
         break
       default:
         throw new KodiPlayerTypeError('repeatStatus', 'off, one, all', repeatStatus)
@@ -399,12 +368,12 @@ class KodiPlayerController extends KodiMethods {
   updatePlayerShuffle (shuffleStatus) {
     switch (shuffleStatus) {
       case true:
-        this.playerPlayingPlaybackElements.shuffle.src = 'icons/shuffle_24.png'
-        changeElementLocalization(this.playerOptionsMenuElements.shuffle, 'off')
+        document.getElementById('shuffle').src = 'icons/shuffle_24.png'
+        changeElementLocalization(document.getElementById('options-list-shuffle'), 'off')
         break
       case false:
-        this.playerPlayingPlaybackElements.shuffle.src = 'icons/shuffle-grey_24.png'
-        changeElementLocalization(this.playerOptionsMenuElements.shuffle, 'on')
+        document.getElementById('shuffle').src = 'icons/shuffle-grey_24.png'
+        changeElementLocalization(document.getElementById('options-list-shuffle'), 'on')
         break
       default:
         throw new KodiPlayerTypeError('shuffleStatus', 'off, on', shuffleStatus)
@@ -420,9 +389,9 @@ class KodiPlayerController extends KodiMethods {
 
   openPlaybackOptionsMenu () {
     if (!this.isPlaybackOptionsOpen) {
-      this.playerOptionsMenuElements.container.style.display = 'initial'
+      document.getElementById('options-container').style.display = 'initial'
       updateSoftkeysLocalization('none', 'toggle', 'none')
-      naviBoard.setNavigation(this.playerOptionsMenuElements.list.id)
+      naviBoard.setNavigation(document.getElementById('options-list').id)
       this.isPlaybackOptionsOpen = true
     }
   }
@@ -436,8 +405,8 @@ class KodiPlayerController extends KodiMethods {
 
   closePlaybackOptionsMenu () {
     if (this.isPlaybackOptionsOpen) {
-      naviBoard.destroyNavigation(this.playerOptionsMenuElements.list.id)
-      this.playerOptionsMenuElements.container.style.display = 'none'
+      naviBoard.destroyNavigation(document.getElementById('options-list').id)
+      document.getElementById('options-container').style.display = 'none'
       this.playerWrapper('GetActivePlayers').then((response) => {
         if (response[0]) {
           if (this.isPlaying) {

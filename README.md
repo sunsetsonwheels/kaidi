@@ -29,7 +29,9 @@
 
 **Building the app:**
 
-To be added. For now just know we will use Gulp to minify the app and package into `./dist`.
+Run `npm install` to install dependencies, and `gulp` to generate a deployable minified app from the source.
+
+OmniSD builder to be added. For now just know we will use Gulp to minify the app and package into `./dist/deploy`.
 
 **You found a bug?**
 

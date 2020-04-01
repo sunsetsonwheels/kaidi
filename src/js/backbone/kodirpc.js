@@ -128,7 +128,7 @@ class KodiMethods extends KodiRPC {
   }
 
   methodErrorOut (err) {
-    newLocalizedToast('kodi-request-failed', 'Kodi request failed!', 'south', 3000, 'error')
+    newLocalizedToast('toast-kodi-request-failed', 'Kodi request failed!', 'south', 3000, 'error')
     console.error(err)
     throw new KodiMethodsError(err)
   }
@@ -136,12 +136,12 @@ class KodiMethods extends KodiRPC {
   ping () {
     this.kodiXmlHttpRequest('JSONRPC.Ping').then((response) => {
       if (response === 'pong') {
-        newLocalizedToast('kodi-connection-established-text', 'Connected to Kodi!', 'south', 2000, 'success')
+        newLocalizedToast('toast-kodi-connection-established-text', 'Connected to Kodi!', 'south', 2000, 'success')
       } else {
-        newLocalizedToast('kodi-connection-unsure-text', 'Connection to Kodi unsure!', 'south', 2000, 'success')
+        newLocalizedToast('toast-kodi-connection-unsure-text', 'Connection to Kodi unsure!', 'south', 2000, 'success')
       }
     }).catch((err) => {
-      this.errorOut(err)
+      this.methodErrorOut(err)
     })
   }
 
@@ -158,12 +158,12 @@ class KodiMethods extends KodiRPC {
         this.kodiXmlHttpRequest('Application.GetProperties', {
           properties: ['volume']
         }).then((response) => {
-          this.volumeElements.meter.value = response.volume
-          this.volumeElements.greyout.classList.remove('volume-hud-transition-hide')
-          this.volumeElements.greyout.classList.add('volume-hud-transition-appear')
+          document.getElementById('meter-volume').value = response.volume
+          document.getElementById('volume-hud-greyout').classList.remove('volume-hud-transition-hide')
+          document.getElementById('volume-hud-greyout').classList.add('volume-hud-transition-appear')
           setTimeout(() => {
-            this.volumeElements.greyout.classList.remove('volume-hud-transition-appear')
-            this.volumeElements.greyout.classList.add('volume-hud-transition-hide')
+            document.getElementById('volume-hud-greyout').classList.remove('volume-hud-transition-appear')
+            document.getElementById('volume-hud-greyout').classList.add('volume-hud-transition-hide')
           }, 1500)
         }).catch((err) => {
           this.errorOut(err)

@@ -16,7 +16,7 @@
   bottom: 0;
 }
 
-.options-menu .options-title {
+.options-menu .options-menu-title {
   margin: 0;
   color: #323232;
   font-size: 17px;
@@ -27,13 +27,13 @@
   line-height: 28px;
 }
 
-.options {
+.options-menu-list {
   margin: 0;
   padding: 0;
   overflow: hidden;
 }
 
-.options div {
+.options-menu-list div {
   height: 50px;
   line-height: 50px;
   padding-left: 10px;
@@ -41,7 +41,7 @@
   font-family: "Open Sans"
 }
 
-.options div:focus {
+.options-menu-list div:focus {
   outline: 0;
   color: #fff;
   background-color: var(--theme-color);

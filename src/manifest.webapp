@@ -29,5 +29,11 @@
   "installs_allowed_from": [
     "*"
   ],
-  "default_locale": "en"
+  "default_locale": "en",
+  "locales": {
+    "vi": {
+      "name": "Điều khiển Kaidi (Beta)",
+      "description": "Một ứng dụng điều khiển Kodi cho KaiOS."
+    }
+  }
 }

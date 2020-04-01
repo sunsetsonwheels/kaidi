@@ -2,25 +2,6 @@ var KAIDI_VERSION = null
 
 class KodiSettingsController {
   constructor () {
-    this.settingsElements = {
-      ip: document.getElementById('setting-ip'),
-      port: document.getElementById('setting-port'),
-      theme: document.getElementById('setting-theme'),
-      notify: document.getElementById('setting-notify'),
-      ads: document.getElementById('setting-ads'),
-      donate: document.getElementById('setting-donate'),
-      version: document.getElementById('setting-version')
-    }
-    this.settingsOptionsMenuElements = {
-      container: document.getElementById('settings-options-menu-container'),
-      list: {
-        root: document.getElementById('settings-options-list'),
-        donate: {
-          paypal: document.getElementById('settings-options-list-paypal'),
-          buymeacoffee: document.getElementById('settings-options-list-buymeacoffee')
-        }
-      }
-    }
 
     this.isDonateOptionsMenuOpen = false
 
@@ -28,94 +9,117 @@ class KodiSettingsController {
     if (settings.get('port') == null) settings.set('port', '8080')
     if (settings.get('notify') == null) settings.set('notify', 'true')
 
-    this.settingsElements.ip.innerText = settings.get('ip')
-    this.settingsElements.port.innerText = settings.get('port')
-    this.settingsElements.theme.value = settings.get('theme')
-    this.settingsElements.theme.onchange = (e) => {
+    document.getElementById('ip').innerText = settings.get('ip')
+    document.getElementById('ip').onfocus = () => {
+      this.setKodiIPAndPort('ip')
+    }
+    document.getElementById('ip').onblur = () => {
+      naviBoard.getActiveElement().focus()
+    }
+    document.getElementById('port').innerText = settings.get('port')
+    document.getElementById('port').onfocus = () => {
+      this.setKodiIPAndPort('port')
+    }
+    document.getElementById('port').onblur = () => {
+      naviBoard.getActiveElement().focus()
+    }
+    document.getElementById('theme').value = settings.get('theme')
+    document.getElementById('theme').onchange = (e) => {
       if (this.setSelectSettings('theme', e.target.value)) switchTheme()
     }
-    this.settingsElements.notify.value = settings.get('notify')
-    this.settingsElements.notify.onchange = (e) => {
+    document.getElementById('theme').onblur = () => {
+      naviBoard.getActiveElement().focus()
+    }
+    document.getElementById('notify').value = settings.get('notify')
+    document.getElementById('notify').onchange = (e) => {
       this.setSelectSettings('notify', e.target.value)
     }
-    this.settingsElements.ads.value = settings.get('ads')
-    this.settingsElements.ads.onchange = (e) => {
+    document.getElementById('notify').onblur = () => {
+      naviBoard.getActiveElement().focus()
+    }
+    document.getElementById('ads').value = settings.get('ads')
+    document.getElementById('ads').onchange = (e) => {
       if (e.target.value === 'false') {
         navigator.mozL10n.formatValue('text-donate', {
           newline: '\n\n'
-        }).then((text) => {
-          alert(text)
+        }).then((localizedText) => {
+          alert(localizedText)
         }).catch(() => {
           alert('Please donate to us at:\n\n- https://paypal.me/jkelol111\n\n- https://buymeacoffee.com/jkelol111')
         })
       }
       this.setSelectSettings('ads', e.target.value)
     }
+    document.getElementById('ads').onblur = () => {
+      naviBoard.getActiveElement().focus()
+    }
+    //
+    // Get the Kodi version
+    //
     fetch('/manifest.webapp')
       .then(responseRaw => responseRaw.text())
       .then(responseText => JSON.parse(responseText).version)
       .then(version => {
         KAIDI_VERSION = version
-        navigator.mozL10n.formatValue('setting-version-prefix').then((str) => {
-          this.settingsElements.version.innerText = str + ' ' + version
+        navigator.mozL10n.formatValue('version-secondary').then((str) => {
+          document.getElementById('version').innerText = str + ' ' + version
         }).catch(() => {
-          this.settingsElements.version.innerText = 'version ' + version
+          document.getElementById('version').innerText = 'version ' + version
         })
       })
-    this.settingsElements.version.onfocus = () => {
+    document.getElementById('donate').onfocus = () => {
+      this.openDonateOptionsMenu()
+    }
+    document.getElementById('donate').onblur = () => {
+      naviBoard.getActiveElement().focus()
+    }
+    document.getElementById('version').onfocus = () => {
       navigator.mozL10n.formatValue('text-about', {
         version: KAIDI_VERSION,
         newline: '\n\n'
       }).then((localizedText) => {
         alert(localizedText)
       }).catch(() => {
-        alert('Kaidi Remote version ' + KAIDI_VERSION)
+        alert('Kaidi Remote version' + KAIDI_VERSION)
       })
     }
-    this.settingsElements.ip.onfocus = () => {
-      this.setKodiIPAndPort('ip')
+    document.getElementById('version').onblur = () => {
+      naviBoard.getActiveElement().focus()
     }
-    this.settingsElements.port.onfocus = () => {
-      this.setKodiIPAndPort('port')
-    }
-    this.settingsElements.donate.onfocus = () => {
-      this.openDonateOptionsMenu()
-    }
-    this.settingsOptionsMenuElements.list.donate.paypal.onclick = () => {
-      this.closeDonateOptionsMenu()
+    document.getElementById('options-list-paypal').onclick = () => {
       window.open('https://paypal.me/jkelol111')
-    }
-    this.settingsOptionsMenuElements.list.donate.buymeacoffee.onclick = () => {
       this.closeDonateOptionsMenu()
-      window.open('https://buymeacoffee.com/jkelol111')
     }
-    for (var settingsElement in this.settingsElements) {
-      this.settingsElements[settingsElement].onblur = () => {
-        naviBoard.getActiveElement().focus()
-      }
+    document.getElementById('options-list-buymeacoffee').onclick = () => {
+      window.open('https://buymeacoffee.com/jkelol111')
+      this.closeDonateOptionsMenu()
     }
     naviBoard.setNavigation('settings-content')
   }
 
   showSettingChangeSuccess () {
-    newLocalizedToast('setting-change-succeed', 'Setting changed successfully!', 'north', 2000, 'success')
+    newLocalizedToast('toast-setting-change-succeed', 'Setting changed successfully!', 'north', 2000, 'success')
   }
 
   showSettingChangeFailed () {
-    newLocalizedToast('setting-change-failed', 'Setting change failed!', 'north', 2000, 'error')
+    newLocalizedToast('toast-setting-change-failed', 'Setting change failed!', 'north', 2000, 'error')
   }
 
   setKodiIPAndPort (setting) {
-    newLocalizedPrompt('setting-' + setting + '-title', 'Kodi ' + setting).then((answer) => {
-      try {
-        settings.set(setting, answer)
+    navigator.mozL10n.formatValue(setting + '-title').then((localizedText) => {
+      var input = prompt(localizedText + ':')
+      if (input) {
+        settings.set(setting, input)
         this.showSettingChangeSuccess()
-        this.settingsElements[setting].innerText = settings.get(setting)
-      } catch (err) {
-        this.showSettingChangeFailed()
+        document.getElementById(setting).innerText = settings.get(setting)
       }
     }).catch(() => {
-      this.showSettingChangeFailed()
+      var input = prompt('Kodi' + setting + ':')
+      if (input) {
+        settings.set(setting, input)
+        this.showSettingChangeSuccess()
+        document.getElementById(setting).innerText = settings.get(setting)
+      }
     })
   }
 
@@ -131,20 +135,34 @@ class KodiSettingsController {
     }
   }
 
+  confirmResetSettings () {
+    navigator.mozL10n.formatValue('text-confirm-reset-settings').then((localizedText) => {
+      if (confirm(localizedText)) {
+        settings.reset()
+        window.close()
+      }
+    }).catch(() => {
+      if (confirm('Reset all app settings? The app will close.')) {
+        settings.reset()
+        window.close()
+      }
+    })
+  }
+
   openDonateOptionsMenu () {
     if (!this.isDonateOptionsMenuOpen) {
       naviBoard.destroyNavigation('settings-content')
-      this.settingsOptionsMenuElements.container.style.display = 'initial'
+      document.getElementById('options-container').style.display = 'initial'
       updateSoftkeysLocalization('close', 'donate', 'none')
-      naviBoard.setNavigation(this.settingsOptionsMenuElements.list.root.id)
+      naviBoard.setNavigation('options-list')
       this.isDonateOptionsMenuOpen = true
     }
   }
 
   closeDonateOptionsMenu () {
     if (this.isDonateOptionsMenuOpen) {
-      naviBoard.destroyNavigation(this.settingsOptionsMenuElements.list.root.id)
-      this.settingsOptionsMenuElements.container.style.display = 'none'
+      naviBoard.destroyNavigation('options-list')
+      document.getElementById('options-container').style.display = 'none'
       updateSoftkeysLocalization('back', 'donate', 'reset')
       naviBoard.setNavigation('settings-content')
       this.isDonateOptionsMenuOpen = false
@@ -167,9 +185,7 @@ document.addEventListener('DOMContentLoaded', () => {
         break
       case 'SoftRight':
         if (!setting.isDonateOptionsMenuOpen) {
-          newLocalizedConfirm('text-confirm-reset-settings', 'Reset the app settings? You will lose all of the app settings! The app will close.').then(() => {
-            settings.reset()
-          })
+          setting.confirmResetSettings()
         }
         break
       case 'Enter':
@@ -179,18 +195,12 @@ document.addEventListener('DOMContentLoaded', () => {
           naviBoard.getActiveElement().click()
         }
         break
-      case 'Up':
-      case 'Down':
-        if (!setting.isDonateOptionsMenuOpen) {
-          naviBoard.getActiveElement().scrollIntoView(true)
-        }
-        break
     }
     switch (naviBoard.getActiveElement().children[1].id) {
-      case 'setting-donate':
+      case 'donate':
         updateSoftkeysLocalization('back', 'donate', 'reset')
         break
-      case 'setting-version':
+      case 'version':
         updateSoftkeysLocalization('back', 'about', 'reset')
         break
       default:

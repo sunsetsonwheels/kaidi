@@ -1,20 +1,26 @@
 :root {
   --z-index-player-thumbnail: 5;
+  --z-index-throbber: 15;
 }
 
-.player-playing-info, #player-playing-playback {
-  background-color: rgba(184,184,184,0.7);
+.playing-info-container, .playing-status-container {
+  background-color: rgba(184,184,184,0.8);
   z-index: var(--z-index-status-bars);
   width: 100%;
   max-height: 50%;
   position: fixed;
 }
 
-.player-playing-info {
+.playing-info-container {
   top: 27px;
 }
 
-#player-playing-info-title, #player-playing-info-artists {
+.playing-status-container {
+  bottom: 30px;
+  visibility: hidden;
+}
+
+.playing-info-title, .playing-info-artists {
   margin: 6px;
   text-overflow: ellipsis;
   word-wrap: break-word;
@@ -22,17 +28,17 @@
   overflow: hidden;
 }
 
-#player-playing-info-title {
+.playing-info-title {
   font-weight: 700;
   font-size: 18px;
 }
 
-#player-playing-info-artist {
+.playing-info-artists {
   font-weight: 400;
-  font-size: 12px;
+  font-size: 16px;
 }
 
-#player-playing-info-thumbnail {
+.playing-info-thumbnail {
   width: 100%;
   height: calc(100% - 57px);
   z-index: var(--z-index-player-thumbnail);
@@ -41,22 +47,50 @@
   bottom: 30px;
 }
 
-#player-playing-playback {
-  bottom: 30px;
-  visibility: hidden;
-}
-
-#player-playing-playback-shuffle, #player-playing-playback-repeat, #player-playing-playback-duration-text {
+.playing-status-indicators, .playing-status-duration {
   padding-top: 4px;
 }
 
-#player-playing-playback-shuffle, #player-playing-playback-repeat {
+.playing-status-indicators {
   float: left;
   padding-left: 6px;
 }
 
-#player-playing-playback-duration-text {
+.playing-status-duration {
   float: right;
   text-align: right;
   padding-right: 6px;
+}
+
+.playing-throbber {
+  width: 40px;
+  height: 40px;
+  position: fixed;
+  margin-top: 50%;
+  margin-left: calc(50% - 20px);
+  z-index: var(--z-index-throbber);
+}
+
+.playing-throbber-double-bounce1, .playing-throbber-double-bounce2 {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background-color: var(--theme-color);
+  opacity: 0.6;
+  position: absolute;
+  top: 0;
+  left: 0;
+  animation: playing-throbber-bounce 2.0s infinite ease-in-out;
+}
+
+.playing-throbber-double-bounce2 {
+  animation-delay: -1.0s;
+}
+
+@keyframes playing-throbber-bounce {
+  0%, 100% { 
+    transform: scale(0.0);
+  } 50% { 
+    transform: scale(1.0);
+  }
 }
