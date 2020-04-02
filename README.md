@@ -1,28 +1,20 @@
-<p align="center">
-  <img align="center" src="https://github.com/jkelol111/kaidi/raw/master/docs/icons/kaidi_112.png">
-  <br>
-  <h1 align="center">Kaidi Remote (Beta)</h1>
-  <h3 align="center">The Kodi remote app for KaiOS</h3>
-</p>
+![kaidi-beta-logo](/docs/icons/kaidi_112.png)
 
-<p align="center">
-  <i align="center">Control your Kodi from a "dumb phone", because why not?</i>
-  <br>
-  <span align="center">Supports KaiOS 2.5 and above</span>
-  <br>
-  <span align="center">Tested with Kodi Krypton and above</span>
-  <br>
-  <a href="https://www.google.com/url?q=https%3A%2F%2Fsites.google.com%2Fview%2Fbananahackers%2Fhome&sa=D&sntz=1&usg=AFQjCNEtvVwlme7uKDuqfJaXLKBnLWNHTg">BananaHackers page</a> |
-  <a href="https://github.com/jkelol111/kaidi/issues">Issue tracker</a> |
-  <a href="https://github.com/jkelol111/kaidi/releases">Download now</a><br>
-  <b>PROJECT STATE: Beta (version 0.4.8)</b>
-</p>
+# Kaidi Remote (Beta)
+
+### The Kodi remote app for KaiOS (for now...)
+
+| Supported KaiOS version | Supported Kodi version |
+|:-----------------------:|:----------------------:|
+|       >= KaiOS 2.5      |     >= Kodi Krypton    |
+
+**PROJECT STATE: Beta (version 0.4.8)**
 
 ## Key features:
 
-! [kaidi-home-screen] (/docs/screenshots/kaidi-home-screen.png)
-! [kaidi-player-screen] (/docs/screenshots/kaidi-playing-screen.png)
-! [kaidi-settings-screen] (/docs/screenshots/kaidi-settings-screen.png)
+![kaidi-home-screen](/docs/screenshots/kaidi-home-screen.png)
+![kaidi-player-screen](/docs/screenshots/kaidi-playing-screen.png)
+![kaidi-settings-screen](/docs/screenshots/kaidi-settings-screen.png)
 
 - Basic Kodi interface navigation (Up/Down/Left/Right/Context Menu/Home control).
 
