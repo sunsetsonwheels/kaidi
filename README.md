@@ -20,11 +20,9 @@
 
 ## Key features:
 
-<p align="center">
-  <img align="center" src="https://github.com/jkelol111/kaidi/raw/master/docs/screenshots/kaidi-home-screen.png">
-  <img align="center" src="https://github.com/jkelol111/kaidi/raw/master/docs/screenshots/kaidi-playing-screen.png">
-  <img align="center" src="https://github.com/jkelol111/kaidi/raw/master/docs/screenshots/kaidi-settings-screen.png">
-</p>
+<img align="center" src="https://github.com/jkelol111/kaidi/raw/master/docs/screenshots/kaidi-home-screen.png">
+<img align="center" src="https://github.com/jkelol111/kaidi/raw/master/docs/screenshots/kaidi-playing-screen.png">
+<img align="center" src="https://github.com/jkelol111/kaidi/raw/master/docs/screenshots/kaidi-settings-screen.png">
 
 - Basic Kodi interface navigation (Up/Down/Left/Right/Context Menu/Home control).
 
