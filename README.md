@@ -1,5 +1,5 @@
 <p align="center">
-  <img align="center" src="https://jkelol111.github.com/kaidi/icons/kaidi_112.png">
+  <img align="center" src="https://github.com/jkelol111/kaidi/raw/master/docs/icons/kaidi_112.png">
   <br>
   <h1 align="center">Kaidi Remote (Beta)</h1>
   <h3 align="center">The Kodi remote app for KaiOS</h3>
@@ -21,9 +21,9 @@
 ## Key features:
 
 <p align="center">
-  <img align="center" src="https://jkelol111.github.com/kaidi/screenshots/kaidi-home-screen.png">
-  <img align="center" src="https://jkelol111.github.com/kaidi/screenshots/kaidi-player-screen.png">
-  <img align="center" src="https://jkelol111.github.com/kaidi/screenshots/kaidi-settings-screen.png">
+  <img align="center" src="https://github.com/jkelol111/kaidi/raw/master/docs/screenshots/kaidi-home-screen.png">
+  <img align="center" src="https://github.com/jkelol111/kaidi/raw/master/docs/screenshots/kaidi-playing-screen.png">
+  <img align="center" src="https://github.com/jkelol111/kaidi/raw/master/docs/screenshots/kaidi-settings-screen.png">
 </p>
 
 - Basic Kodi interface navigation (Up/Down/Left/Right/Context Menu/Home control).
@@ -48,12 +48,14 @@ The app can be run directly from `src` for testing and debugging purposes, just 
 
 - Run `gulp` (or `npm run_script build`) to generate a deployable minified app from the source to `./dist/deploy` (contains bare `application.zip` for KaiStore submission too). This will also generate an OmniSD-compatible package @ `.dist/omnisd/kaidi-*version number*-omnisd.zip`.
 
-**You found a bug?**
+## You found a bug?
 
 Please submit the bug to the [issues tracker](https://github.com/jkelol111/kaidi/issues).
 
-**Want to help out?**
+## Want to help out?
 
 Feel free to fork this repo and add your improvements, then create a pull request.
+
+We are especially looking for improvements to the player, as well as added localizations.
 
 We now enforce [Standard JS](https://standardjs.com/) since 27/3/2020. Some files might not have been modified to reflect this change yet, but please do practice Standard JS (use ESLint, installable if you run `npm install` to install our dev-dependencies) if you ever submit your pull requests/modifications for review. This doesn't mean we will reject your pull request, but for large changes, bad Standard JS compliance will lead to rejected pull requests.
