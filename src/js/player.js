@@ -1,117 +1,104 @@
-/**
- * /js/player.js
- * @file This file handles the tasks required for the operation of player.html
- * @author jkelol111 & contributors <jkelol111@gmail.com>
- * @copyright (C) jkelol111 and contributors 2018-present. Licensed under GPLv3 license.
- */
+/*
 
+/js/player.js
+
+This file handles the tasks required for the operation of player.html
+
+(C) jkelol111 and contributors 2018-present. Licensed under GPLv3 license.
+
+*/
+
+// We're strict here because my Asian mom told me so /s.
 'use strict'
 
-/**
- * Class representing TypeError extention for Kodi-related TypeErrors.
- * @class
- * @extends TypeError
- */
+/*
+
+Class KodiPlayerTypeError <-- TypeError
+
+This class represents the error:
+'The supplied data from Kodi does not align with any of the handleable values.'
+
+Class constructor arguments:
+- String arg: Name of the argument triggering this error.
+- String expected: List of the applicable values of the argument.
+- String got: The value of the argument triggering the error.
+
+*/
 
 class KodiPlayerTypeError extends TypeError {
-  /**
-   * Creates a KodiPlayerTypeError (The supplied data from Kodi does not align with any of the handleable values.)
-   * @arg {string} arg - The name of the argument.
-   * @arg {string} expected - The list of the accepted values.
-   * @arg {string} got - The invalid value of the argument supplied.
-   */
   constructor (arg, expected, got) {
     super('The supplied argument "' + arg + '" is not of expected values(s) "' + expected + '", got "' + got + '".')
     this.name = 'KodiTypeError'
   }
 }
 
-/**
- * CLass controlling player.html and handles Kodi player related events and tasks.
- * @class
- * @extends KodiMethods
- */
+/*
+
+tasktimer TaskTimer
+
+TaskTimer for use with Kodi timer.
+
+*/
+
+const { TaskTimer } = tasktimer
+
+/*
+
+Class KodiPlayerController <-- KodiMethods <-- KodiRPC
+
+CLass controlling player.html and handles Kodi player related events and tasks.
+
+*/
 
 class KodiPlayerController extends KodiMethods {
   constructor () {
-    /**
-     * Initialize the KodiMethod class here.
-     */
-
+    // Inititalize the KodiMethods parent class.
     super()
 
-    //
-    // Variable Boolean isPlaying, Boolean isPlaybackOptionsOpen, Function/null tickInterval
-    //
-    // isPlaying: Shows whether the player is playing or not, so we can act appropiately.
-    //
-    // isPlaybackOptionsOpen: Shows whether the playback options menu is open
-    //
-    // tickInterval: setTimeout() function if the player is playing, null if not.
-    //
+    /*
+    Boolean isPlaying: Shows whether the player is playing or not, so we can act appropiately.
+
+    Boolean isPlaybackOptionsOpen: Shows whether the playback options menu is open.
+    */
 
     this.isPlaying = false
     this.isPlaybackOptionsOpen = false
-    this.timerInterval = null
 
-    document.getElementById('options-list-repeat').onclick = () => {
-      this.getKodiActivePlayers().then((response) => {
-        this.playerWrapper('SetRepeat', {
-          repeat: 'cycle',
-          playerid: response
-        }).then((response2) => {
-          this.closePlaybackOptionsMenu()
-        })
-      })
-    }
+    /*
+    Initializes the player view for the first time. Only if a player is active
+    when this function is called will the app start sending information requests
+    to Kodi for populating the UI.
 
-    document.getElementById('options-list-shuffle').onclick = () => {
-      this.getKodiActivePlayers().then((response) => {
-        this.playerWrapper('SetShuffle', {
-          shuffle: 'toggle',
-          playerid: response
-        }).then((response2) => {
-          this.closePlaybackOptionsMenu()
-        })
-      })
-    }
+    From here onwards, we will rely on the events Kodi supplies us with (registered above),
+    to reduce the number of requests we have to make.
+    */
 
-    //
-    // Initializes the player view for the first time. Only if a player is active
-    // when this function is called will the app start sending information requests
-    // to Kodi for populating the UI.
-    //
-    // From here onwards, we will rely on the events Kodi supplies us with (registered above),
-    // to reduce the number of requests we have to make.
-    //
-
-    this.getKodiActivePlayers().then((response) => {
+    this.getKodiActivePlayers().then((activePlayer) => {
       this.playerWrapper('GetItem', {
         properties: ['title', 'artist', 'thumbnail'],
-        playerid: response
-      }).then((response2) => {
-        var playerInfoObject = {
-          title: null,
-          artists: null
+        playerid: activePlayer
+      }).then((response) => {
+        var playerInfoObject = {}
+        if (response.item.title) {
+          playerInfoObject.title = response.item.title
+        } else if (response.item.label) {
+          playerInfoObject.title = response.item.label
         }
-        if (response2.item.title) {
-          playerInfoObject.title = response2.item.title
-        } else if (response2.item.label) {
-          playerInfoObject.title = response2.item.label
+        if (response.item.artist) {
+          playerInfoObject.artists = response.item.artist
         }
-        if (response2.item.artist) {
-          playerInfoObject.artists = response2.item.artist
+        if (response.item.thumbnail) {
+          playerInfoObject.thumbnail = response.item.thumbnail
         }
         this.updatePlayerInfo(playerInfoObject)
-        this.updatePlayerThumbnail(response2.item.thumbnail)
       })
       this.playerWrapper('GetProperties', {
         properties: ['speed', 'repeat', 'shuffled'],
-        playerid: response
-      }).then((response2) => {
-        this.updatePlayerRepeat(response2.repeat)
-        this.updatePlayerShuffle(response2.shuffled)
-        this.updatePlayerPlayPause(response2.speed)
+        playerid: activePlayer
+      }).then((response) => {
+        this.updatePlayerRepeat(response.repeat)
+        this.updatePlayerShuffle(response.shuffled)
+        this.updatePlayerPlayPause(response.speed)
         document.getElementById('throbber').style.display = 'none'
       }).catch(() => {
         this.blankPlayer()
@@ -121,29 +108,42 @@ class KodiPlayerController extends KodiMethods {
       this.blankPlayer()
     })
 
-    //
-    // Various Kodi event listeners wired up here...
-    //
+    /*
+
+    Various Kodi event listeners are wired up in here:
+    - Player.OnPlay: When Kodi starts playing something new.
+    - Player.OnPause: When Kodi's player is paused.
+    - Player.OnResume: When Kodi's player is resumed.
+    - Player.OnStop: When Kodi's player is stopped (no longer playing something).
+    - Player.OnPropertyChanged: When Kodi's repeat/shuffled status changes.
+
+    NOTE: Kodi has a bug where where sometimes events aren't sent. There are remedies in
+          this app to combat this; however, maybe I should report it to the Kodi
+          developers sooner of later.
+
+    */
 
     this.kodiRegisterEventListener('Player.OnPlay', (message) => {
+      this.blankPlayer()
       document.getElementById('throbber').style.display = 'initial'
-      clearInterval(this.timerInterval)
-      this.getKodiActivePlayers().then((response) => {
+      this.getKodiActivePlayers().then((activePlayer) => {
         this.playerWrapper('GetItem', {
           properties: ['title', 'artist', 'thumbnail'],
-          playerid: response
-        }).then((response2) => {
+          playerid: activePlayer
+        }).then((response) => {
           var playerInfoObject = {}
-          if (response2.item.title) {
-            playerInfoObject.title = response2.item.title
-          } else if (response2.item.label) {
-            playerInfoObject.title = response2.item.label
+          if (response.item.title) {
+            playerInfoObject.title = response.item.title
+          } else if (response.item.label) {
+            playerInfoObject.title = response.item.label
           }
-          if (response2.item.artist) {
-            playerInfoObject.artists = response2.item.artist
+          if (response.item.artist) {
+            playerInfoObject.artists = response.item.artist
+          }
+          if (response.item.thumbnail) {
+            playerInfoObject.thumbnail = response.item.thumbnail
           }
           this.updatePlayerInfo(playerInfoObject)
-          this.updatePlayerThumbnail(response2.item.thumbnail)
           document.getElementById('throbber').style.display = 'none'
         })
       })
@@ -158,7 +158,7 @@ class KodiPlayerController extends KodiMethods {
       this.updatePlayerPlayPause(message.data.player.speed)
     })
 
-    this.kodiRegisterEventListener('Player.OnStop', (message) => {
+    this.kodiRegisterEventListener('Player.OnStop', () => {
       this.updatePlayerPlayPause(0)
       this.blankPlayer()
     })
@@ -166,19 +166,90 @@ class KodiPlayerController extends KodiMethods {
     this.kodiRegisterEventListener('Player.OnPropertyChanged', (message) => {
       if ('repeat' in message.data.property) {
         this.updatePlayerRepeat(message.data.property.repeat)
-        console.log('Repeat changed to: ' + message.data.property.repeat)
       } else if ('shuffled' in message.data.property) {
         this.updatePlayerShuffle(message.data.property.shuffled)
-        console.log('Shuffle changed to: ' + message.data.property.shuffle)
       }
     })
+
+    //
+    // Kodi info ticking timer (in testing)
+    //
+
+    this.timer = new TaskTimer(2000)
+    this.timer.on('tick', () => {
+      if (document.visibilityState === 'visible') {
+        this.getKodiActivePlayers().then((activePlayer) => {
+          this.playerWrapper('GetProperties', {
+            properties: ['percentage', 'time', 'totaltime'],
+            playerid: activePlayer
+          }).then((response) => {
+            document.getElementById('duration-text').innerText = response.time.hours + ':' + ('0' + response.time.minutes).slice(-2) + ':' + ('0' + response.time.seconds).slice(-2) + '/' + response.totaltime.hours + ':' + ('0' + response.totaltime.minutes).slice(-2) + ':' + ('0' + response.totaltime.seconds).slice(-2)
+            document.getElementById('duration-meter').value = response.percentage
+          })
+        })
+      }
+    })
+
+    /*
+
+    Playback option menu list element event listeners are wired up in here:
+
+    NOTE: Kodi has a bug where where sometimes events aren't sent. There are remedies in
+          this app to combat this; however, maybe I should report it to the Kodi
+          developers sooner of later.
+
+    */
+
+    document.getElementById('options-list-repeat').onclick = () => {
+      this.getKodiActivePlayers().then((activePlayer) => {
+        this.playerWrapper('SetRepeat', {
+          repeat: 'cycle',
+          playerid: activePlayer
+        }).then(() => {
+          this.closePlaybackOptionsMenu()
+          // Patch for Kodi sometimes not firing events.
+          this.getKodiActivePlayers().then((activePlayer) => {
+            this.playerWrapper('GetProperties', {
+              properties: ['repeat'],
+              playerid: activePlayer
+            }).then((response) => {
+              this.updatePlayerRepeat(response.repeat)
+            })
+          })
+        })
+      })
+    }
+
+    document.getElementById('options-list-shuffle').onclick = () => {
+      this.getKodiActivePlayers().then((activePlayer) => {
+        this.playerWrapper('SetShuffle', {
+          shuffle: 'toggle',
+          playerid: activePlayer
+        }).then(() => {
+          this.closePlaybackOptionsMenu()
+          // Patch for Kodi sometimes not firing events.
+          this.getKodiActivePlayers().then((activePlayer) => {
+            this.playerWrapper('GetProperties', {
+              properties: ['shuffled'],
+              playerid: activePlayer
+            }).then((response) => {
+              this.updatePlayerRepeat(response.shuffled)
+            })
+          })
+        })
+      })
+    }
   }
 
-  //
-  // Function playerWrapper(String subcommand, Object/undefined params)
-  //
-  // Wraps Player.* Kodi methods in an easily consumable manner (avoids repetition).
-  //
+  /*
+
+  Function playerWrapper(String subcommand, Object/undefined params)
+
+  Wraps Player.* Kodi methods in an easily consumable manner (avoids repetition).
+
+  Returns: Promise (resolve: Object, reject Error)
+
+  */
 
   playerWrapper (subcommand, params = undefined) {
     return new Promise((resolve, reject) => {
@@ -190,6 +261,16 @@ class KodiPlayerController extends KodiMethods {
       })
     })
   }
+
+  /*
+
+  Function getKodiActivePlayers()
+
+  Wraps Player.GetActivePlayer method in an easily consumable manner (avoids repetition).
+
+  Returns Promise (resolve: Number, reject: Error)
+
+  */
 
   getKodiActivePlayers () {
     return new Promise((resolve, reject) => {
@@ -203,13 +284,15 @@ class KodiPlayerController extends KodiMethods {
     })
   }
 
-  //
-  // Function blankPlayer()
-  //
-  // Empties the player, returns it to not playing state.
-  //
-  // To be executed after ticker completes, Player.OnStop
-  //
+  /*
+
+  Function blankPlayer()
+
+  Empties the player, returns it to not playing state
+
+  To be executed on Player.OnStop, or when no player is active.
+
+  */
 
   blankPlayer () {
     updateSoftkeysLocalization('none', 'none', 'none')
@@ -218,38 +301,17 @@ class KodiPlayerController extends KodiMethods {
     document.getElementById('playing-status').style.visibility = 'hidden'
     document.getElementById('thumbnail').src = '/icons/kaidi_112.png'
     document.getElementById('throbber').style.display = 'none'
-    clearInterval(this.timerInterval)
+    this.timer.stop()
     this.isPlaying = false
   }
 
-  //
-  // Function tickTimer()
-  //
-  // The old-implementation from Kaidi Remote (Alpha) rewriten with KodiRPC in mind.
-  //
-  // Contacts Kodi for the time every one second. This is the default behaviour before
-  // we have the new local ticking function sorted.
-  //
+  /*
 
-  tickTimer () {
-    if (document.visibilityState === 'visible') {
-      this.getKodiActivePlayers().then((response) => {
-        this.playerWrapper('GetProperties', {
-          properties: ['percentage', 'time', 'totaltime'],
-          playerid: response
-        }).then((response2) => {
-          document.getElementById('duration-text').innerText = response2.time.hours + ':' + ('0' + response2.time.minutes).slice(-2) + ':' + ('0' + response2.time.seconds).slice(-2) + '/' + response2.totaltime.hours + ':' + ('0' + response2.totaltime.minutes).slice(-2) + ':' + ('0' + response2.totaltime.seconds).slice(-2)
-          document.getElementById('duration-meter').value = response2.percentage
-        })
-      })
-    }
-  }
+  Function updatePlayerInfo(Object playerInfoObject)
 
-  //
-  // Function updatePlayerInfo(String title, String artists)
-  //
-  // Update the player info (title and artists).
-  //
+  Update the player info (title, artists and thumbnail).
+
+  */
 
   updatePlayerInfo (playerInfoObject) {
     if (typeof playerInfoObject.title === 'string') {
@@ -280,57 +342,49 @@ class KodiPlayerController extends KodiMethods {
     } else {
       changeElementLocalization(document.getElementById('artists'), 'unavailable')
     }
+    if (typeof playerInfoObject.thumbnail === 'string') {
+      this.kodiXmlHttpRequest('Files.PrepareDownload', {
+        path: playerInfoObject.thumbnail
+      }).then((response) => {
+        document.getElementById('thumbnail').src = 'http://' + this.kodiIP + ':' + this.kodiPort + '/' + response.details.path
+      })
+    }
   }
 
-  //
-  // Function updatePlayerThumbnail(String thumbnailUri)
-  //
-  // Gets and updates the player thumbnail from Kodi.
-  //
+  /*
 
-  updatePlayerThumbnail (thumbnailUri) {
-    this.kodiXmlHttpRequest('Files.PrepareDownload', {
-      path: thumbnailUri
-    }).then((response) => {
-      // Not sure if this is right but whatever. I'm coding this at 1:15am.
-      document.getElementById('thumbnail').src = 'http://' + this.kodiIP + ':' + this.kodiPort + '/' + response.details.path
-    })
-  }
+  Function updatePlayerPlayPause(Number playerSpeed)
 
-  //
-  // Function updatePlayerPlayPause(Number playerSpeed)
-  //
-  // Update the Play/Pause controls and status of this Player view.
-  //
+  Update the Play/Pause controls and status of this player.
+
+  */
 
   updatePlayerPlayPause (playerSpeed) {
+    this.timer.stop()
     switch (playerSpeed) {
       case 0:
         this.isPlaying = false
         document.getElementById('playing-status').style.visibility = 'hidden'
-        clearInterval(this.timerInterval)
-        this.timerInterval = null
         updateSoftkeysLocalization('none', 'play', 'none')
         break
       case 1:
         this.isPlaying = true
         document.getElementById('playing-status').style.visibility = 'initial'
-        this.tickTimer()
-        this.timerInterval = setInterval(this.tickTimer.bind(this), 2000)
+        this.timer.start()
         updateSoftkeysLocalization('playback', 'pause', 'none')
         break
       default:
-        console.log('PlayerSpeed is not a valid handlable value: ' + playerSpeed)
-        break
+        throw new KodiPlayerTypeError('playerSpeed', '0, 1', playerSpeed)
     }
-    console.log('Ticker value: ' + this.timerInterval)
   }
 
-  //
-  // Function updatePlayerRepeat(String repeatStatus)
-  //
-  // Update the Repeat controls and status of this Player view.
-  //
+  /*
+
+  Function updatePlayerRepeat(String repeatStatus)
+
+  Update the Repeat controls and status of this player.
+
+  */
 
   updatePlayerRepeat (repeatStatus) {
     switch (repeatStatus) {
@@ -359,11 +413,13 @@ class KodiPlayerController extends KodiMethods {
     }
   }
 
-  //
-  // Function updatePlayerShuffle(String shuffleStatus)
-  //
-  // Update the Shuffle controls and status of this Player view.
-  //
+  /*
+
+  Function updatePlayerShuffle(String shuffleStatus)
+
+  Update the Shuffle controls and status of this player.
+
+  */
 
   updatePlayerShuffle (shuffleStatus) {
     switch (shuffleStatus) {
@@ -380,12 +436,14 @@ class KodiPlayerController extends KodiMethods {
     }
   }
 
-  //
-  // Function openPlaybackOptionsMenu()
-  //
-  // If the player is playing, and the options menu isn't opened yet will
-  // this function be called in the keydown event listener.
-  //
+  /*
+
+  Function openPlaybackOptionsMenu()
+
+  If the player is playing, and the options menu isn't opened yet will
+  this function is called in the keydown event listener.
+
+  */
 
   openPlaybackOptionsMenu () {
     if (!this.isPlaybackOptionsOpen) {
@@ -396,12 +454,14 @@ class KodiPlayerController extends KodiMethods {
     }
   }
 
-  //
-  // Function closePlaybackOptionsMenu()
-  //
-  // If the options menu is opened, close it. This function be called in the
-  // keydown event listener.
-  //
+  /*
+
+  Function closePlaybackOptionsMenu()
+
+  If the options menu is opened, close it. This function is called in the
+  keydown event listener.
+
+  */
 
   closePlaybackOptionsMenu () {
     if (this.isPlaybackOptionsOpen) {
@@ -422,20 +482,92 @@ class KodiPlayerController extends KodiMethods {
     }
   }
 
-  //
-  // Function togglePlayPause()
-  //
-  // Toggles Kodi's Play/Pause state
-  //
+  /*
+
+  Function togglePlayPause()
+
+  Toggles Kodi's Play/Pause state
+
+  */
 
   togglePlayPause () {
-    this.getKodiActivePlayers().then((response) => {
+    this.getKodiActivePlayers().then((activePlayer) => {
       this.playerWrapper('PlayPause', {
         play: 'toggle',
-        playerid: response
+        playerid: activePlayer
       }).then((response2) => {
+        // Patch for Kodi sometimes not firing events.
         this.updatePlayerPlayPause(response2.speed)
-        console.log('PlayPause' + JSON.stringify(response2))
+      })
+    })
+  }
+
+  /*
+
+  Function goForward()
+
+  Skips one item ahead in the Kodi playlist.
+
+  */
+
+  goForward () {
+    this.getKodiActivePlayers().then((activePlayer) => {
+      this.playerWrapper('GoTo', {
+        to: 'next',
+        playerid: activePlayer
+      })
+    })
+  }
+
+  /*
+
+  Function seekForward()
+
+  Seeks the player forward by a small margin. Hooked up to keyup event, if
+  the time difference is >= 40, this function will be invoked.
+
+  */
+
+  seekForward () {
+    this.getKodiActivePlayers().then((activePlayer) => {
+      this.playerWrapper('Seek', {
+        value: 'smallforward',
+        playerid: activePlayer
+      })
+    })
+  }
+
+  /*
+
+  Function goBackward()
+
+  Goes back one item ahead in the Kodi playlist.
+
+  */
+
+  goBackward () {
+    this.getKodiActivePlayers().then((activePlayer) => {
+      this.playerWrapper('GoTo', {
+        to: 'previous',
+        playerid: activePlayer
+      })
+    })
+  }
+
+  /*
+
+  Function seekBackward()
+
+  Seeks the player backwards by a small margin. Hooked up to keyup event, if
+  the time difference is >= 40, this function will be invoked.
+
+  */
+
+  seekBackward () {
+    this.getKodiActivePlayers().then((activePlayer) => {
+      this.playerWrapper('Seek', {
+        value: 'smallbackward',
+        playerid: activePlayer
       })
     })
   }
@@ -445,10 +577,38 @@ document.addEventListener('DOMContentLoaded', () => {
   switchTheme()
   arrivedAtPage()
   var player = new KodiPlayerController()
+  var beginKeydown = 0
+  window.onkeyup = (e) => {
+    if (player.isPlaying) {
+      console.log((new Date().getTime()) - beginKeydown)
+      if ((new Date().getTime()) - beginKeydown >= 40) {
+        switch (e.key) {
+          case 'ArrowLeft':
+            player.seekBackward()
+            break
+          case 'ArrowRight':
+            player.seekForward()
+            break
+        }
+      } else {
+        switch (e.key) {
+          case 'ArrowLeft':
+            player.goBackward()
+            break
+          case 'ArrowRight':
+            player.goForward()
+            break
+        }
+      }
+      beginKeydown = 0
+    }
+  }
   window.onkeydown = (e) => {
     switch (e.key) {
       case 'SoftLeft':
-        player.openPlaybackOptionsMenu()
+        if (player.isPlaying) {
+          player.openPlaybackOptionsMenu()
+        }
         break
       case 'Backspace':
         e.preventDefault()
@@ -468,21 +628,15 @@ document.addEventListener('DOMContentLoaded', () => {
           player.volumeWrapper('decrement')
         }
         break
+      case 'ArrowRight':
       case 'ArrowLeft':
-        if (player.isPlaying) {
-          //TODO: port code from 0.4.7.3
-        }
+        beginKeydown = (new Date()).getTime()
         break
       case 'Enter':
         if (player.isPlaybackOptionsOpen) {
           naviBoard.getActiveElement().click()
         } else {
           player.togglePlayPause()
-        }
-        break
-      case 'ArrowRight':
-        if (player.isPlaying) {
-          //TODO: port code from 0.4.7.3
         }
         break
     }

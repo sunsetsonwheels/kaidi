@@ -1,6 +1,5 @@
 <p align="center">
-  <img align="center" src="https://i.imgur.com/c01KzM4.png">
-  <img align="center" src="https://i.imgur.com/jiQ1FTX.png">
+  <img align="center" src="https://jkelol111.github.com/kaidi/docs/icons/kaidi_112.png">
   <br>
   <h1 align="center">Kaidi Remote (Beta)</h1>
   <h3 align="center">The Kodi remote app for KaiOS</h3>
@@ -19,19 +18,35 @@
   <b>PROJECT STATE: Beta (version 0.4.8)</b>
 </p>
 
-**Key features:**
+## Key features:
 
-- Basic Up/Down/Left/Right/Volume Up/Volume Down/Context Menu control/Info control
+<p align="center">
+  <img align="center" src="https://jkelol111.github.com/kaidi/docs/screenshots/kaidi-home-screen.png">
+  <img align="center" src="https://jkelol111.github.com/kaidi/docs/screenshots/kaidi-player-screen.png">
+  <img align="center" src="https://jkelol111.github.com/kaidi/docs/screenshots/kaidi-settings-screen.png">
+</p>
 
-- A Kodi player control (Play/Pause/Set shuffle/Set repeat/Next/Previous/Wind forward/Wind backward)
+- Basic Kodi interface navigation (Up/Down/Left/Right/Context Menu/Home control).
 
-- Notifications of now playing track (available when app is running/screen off)
+- Kodi volume controls (increment, decrement, mute).
 
-**Building the app:**
+- A Kodi player control (Play/Pause/Set shuffle/Set repeat/Next/Previous/Wind forward/Wind backward).
 
-Run `npm install` to install dependencies, and `gulp` to generate a deployable minified app from the source.
+- Notifications of now playing track (available if app is in background/screen off).
 
-OmniSD builder to be added. For now just know we will use Gulp to minify the app and package into `./dist/deploy`.
+- Written in vanilla HTML/CSS/JS, no framework used, so we are quick ⏩.
+
+## Building the app:
+
+**To run:**
+
+The app can be run directly from `src` for testing and debugging purposes, just point WebIDE/gDeploy/make-kaios-install to it and install.
+
+**To build:**
+
+- Run `npm install` to install dependencies.
+
+- Run `gulp` (or `npm run_script build`) to generate a deployable minified app from the source to `./dist/deploy` (contains bare `application.zip` for KaiStore submission too). This will also generate an OmniSD-compatible package @ `.dist/omnisd/kaidi-*version number*-omnisd.zip`.
 
 **You found a bug?**
 

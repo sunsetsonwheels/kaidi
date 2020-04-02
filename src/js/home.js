@@ -1,21 +1,32 @@
-//
-// /app/js/player.js
-//
-// This file handles the tasks required for the operation of player.html
-//
-// (C) jkelol111 and contributors 2020. Licensed under GPLv3 license.
-//
+/*
 
+/js/backbone/kodirpc.js
+
+This file is reponsible for the communcation with the Kodi device.
+
+(C) jkelol111 and contributors 2020. Licensed under the GPLv3 license.
+
+*/
+
+// We're strict here because my Asian mom told me so /s.
 'use strict'
+
+/*
+
+Class KodiPlayerController <-- KodiMethods <-- KodiRPC
+
+CLass controlling home.html and handles Kodi control related events and tasks.
+
+*/
 
 class KodiHomeController extends KodiMethods {
   constructor () {
-    //
-    // Initialize the KodiMethod class here.
-    //
+    // Inititalize the KodiMethods parent class.
     super()
     this.isControlOptionsMenuOpen = false
-    this.kodiRegisterEventListener('Input.OnInputRequested', this.promptInputText)
+    this.kodiRegisterEventListener('Input.OnInputRequested', () => {
+      this.promptInputText()
+    })
     document.getElementById('options-list-input').onclick = () => {
       this.closeControlOptionsMenu()
       this.promptInputText()

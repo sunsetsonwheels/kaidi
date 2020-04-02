@@ -5,6 +5,8 @@ const rm = require('del')
 const minifyJS = require('gulp-terser')
 const minifyCSS = require('gulp-clean-css')
 const minifyHTML = require('gulp-htmlmin')
+const zip = require('gulp-zip')
+const KAIDI_VERSION = require('./package.json').version
 
 const SOURCE_FOLDER = 'src/'
 const BUILD_FOLDER = 'dist/'
@@ -38,7 +40,7 @@ const FPATHS = {
     dest: DEPLOY_BUILD_FOLDER
   },
   omnisd_manifests: {
-    src: ['src/metadata.json', 'src/update.webapp'],
+    src: [SOURCE_FOLDER + 'metadata.json', SOURCE_FOLDER + 'update.webapp'],
     dest: OMNISD_BUILD_FOLDER + 'tmp/'
   }
 }
@@ -49,32 +51,81 @@ function onErr (err) {
   process.exit(-1)
 }
 
-function jsTask() {
-  return src(FPATHS.js.src).pipe(plumber({errorHandler: onErr})).pipe(minifyJS()).pipe(plumber.stop()).pipe(dest(FPATHS.js.dest))
+function jsTask () {
+  return src(FPATHS.js.src)
+    .pipe(plumber({ errorHandler: onErr }))
+    .pipe(minifyJS()).pipe(plumber.stop())
+    .pipe(dest(FPATHS.js.dest))
 }
 
 function jsMinTask () {
-  return src(FPATHS.js.src_min).pipe(plumber({errorHandler: onErr})).pipe(plumber.stop()).pipe(dest(FPATHS.js.dest))
+  return src(FPATHS.js.src_min)
+    .pipe(plumber({ errorHandler: onErr }))
+    .pipe(plumber.stop())
+    .pipe(dest(FPATHS.js.dest))
 }
 
 function cssTask () {
-  return src(FPATHS.css.src).pipe(plumber({ errorHandler: onErr })).pipe(minifyCSS()).pipe(plumber.stop()).pipe(dest(FPATHS.css.dest))
+  return src(FPATHS.css.src)
+    .pipe(plumber({ errorHandler: onErr }))
+    .pipe(minifyCSS()).pipe(plumber.stop())
+    .pipe(dest(FPATHS.css.dest))
 }
 
 function htmlTask () {
-  return src(FPATHS.html.src).pipe(plumber({ errorHandler: onErr })).pipe(minifyHTML()).pipe(plumber.stop()).pipe(dest(FPATHS.html.dest))
+  return src(FPATHS.html.src)
+    .pipe(plumber({ errorHandler: onErr }))
+    .pipe(minifyHTML())
+    .pipe(plumber.stop())
+    .pipe(dest(FPATHS.html.dest))
 }
 
 function localeTask () {
-  return src(FPATHS.locales.src).pipe(plumber({errorHandler: onErr})).pipe(plumber.stop()).pipe(dest(FPATHS.locales.dest))
+  return src(FPATHS.locales.src)
+    .pipe(plumber({ errorHandler: onErr }))
+    .pipe(plumber.stop())
+    .pipe(dest(FPATHS.locales.dest))
 }
 
 function iconsTask () {
-  return src(FPATHS.icons.src).pipe(plumber({ errorHandler: onErr })).pipe(plumber.stop()).pipe(dest(FPATHS.icons.dest))
+  return src(FPATHS.icons.src)
+    .pipe(plumber({ errorHandler: onErr }))
+    .pipe(plumber.stop())
+    .pipe(dest(FPATHS.icons.dest))
 }
 
 function manifestTask () {
-  return src(FPATHS.manifest.src).pipe(plumber({ errorHandler: onErr })).pipe(plumber.stop()).pipe(dest(FPATHS.manifest.dest))
+  return src(FPATHS.manifest.src)
+    .pipe(plumber({ errorHandler: onErr }))
+    .pipe(plumber.stop())
+    .pipe(dest(FPATHS.manifest.dest))
+}
+
+function zipDeployTask () {
+  return src(DEPLOY_BUILD_FOLDER + '*')
+    .pipe(plumber({ errorHandler: onErr }))
+    .pipe(zip('application.zip'))
+    .pipe(plumber.stop())
+    .pipe(dest(DEPLOY_BUILD_FOLDER))
+}
+
+function cpOmniSDManifestsTask () {
+  return src(FPATHS.omnisd_manifests.src)
+    .pipe(plumber({ errorHandler: onErr }))
+    .pipe(plumber.stop())
+    .pipe(dest(FPATHS.omnisd_manifests.dest))
+}
+
+function zipOmniSDTask () {
+  return src([DEPLOY_BUILD_FOLDER + 'application.zip', OMNISD_BUILD_FOLDER + 'tmp/*'])
+    .pipe(plumber({ errorHandler: onErr }))
+    .pipe(zip('kaidi-' + KAIDI_VERSION + '-omnisd.zip'))
+    .pipe(plumber.stop())
+    .pipe(dest(OMNISD_BUILD_FOLDER))
+}
+
+function postOmniSDTask () {
+  return rm(OMNISD_BUILD_FOLDER + 'tmp')
 }
 
 function cleanBuildAll () {
@@ -95,4 +146,4 @@ exports.clean = cleanBuildAll
 exports.clean_deploy = cleanBuildDeploy
 exports.clean_omnisd = cleanBuildOmniSD
 
-exports.default = series(cleanBuildAll, DEFAULT_BUILD_TASKS)
+exports.default = series(cleanBuildAll, DEFAULT_BUILD_TASKS, parallel(zipDeployTask, cpOmniSDManifestsTask), zipOmniSDTask, postOmniSDTask)

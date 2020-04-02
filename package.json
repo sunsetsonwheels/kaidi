@@ -36,7 +36,6 @@
     "gulp-htmlmin": "^5.0.1",
     "gulp-plumber": "^1.2.1",
     "gulp-terser": "^1.2.0",
-    "gulp-zip": "^5.0.1",
-    "jsdoc": "^3.6.3"
+    "gulp-zip": "^5.0.1"
   }
 }

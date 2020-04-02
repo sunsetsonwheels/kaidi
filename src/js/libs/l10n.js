@@ -1,11 +1,3 @@
-/*
-
-!!! WARNING !!!
-
-The L10n.js library is deprecated.
-For any new code use L20n.js located in ./shared/js/intl/l20n.js
-
-*/
 (function(window, undefined) {
   'use strict';
 
@@ -1557,7 +1549,7 @@ For any new code use L20n.js located in ./shared/js/intl/l20n.js
 
 
 
-  var rtlList = ['ar', 'he', 'fa', 'ps', 'ar-x-psbidi', 'ur'];
+  var rtlList = ['ar', 'he', 'fa', 'ps', 'ar-x-psbidi', 'ur', 'ks'];
   var nodeObserver = null;
   var pendingElements = null;
 
@@ -2206,4 +2198,4 @@ For any new code use L20n.js located in ./shared/js/intl/l20n.js
     });
   });
 
-})(this);
+})(window);

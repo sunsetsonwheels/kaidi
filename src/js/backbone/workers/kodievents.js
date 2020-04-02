@@ -153,7 +153,7 @@ self.onmessage = (e) => {
         } else {
           try {
             kodiInfo = e.data.kodiInfo
-            isKodiNotificationsEnabled = e.data.kodiNotifications
+            isKodiNotificationsEnabled = (e.data.kodiNotifications === 'true')
             if (!ws || ws === null) {
               wsStart()
             } else {

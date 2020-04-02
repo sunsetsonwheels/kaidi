@@ -29,7 +29,10 @@
   "installs_allowed_from": [
     "*"
   ],
-  "default_locale": "en",
+  "dependencies": {
+		"ads-sdk": "1.3.0"
+	},
+  "default_locale": "en-US",
   "locales": {
     "vi": {
       "name": "Điều khiển Kaidi (Beta)",

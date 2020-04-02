@@ -4,7 +4,8 @@
     <meta charset="utf-8">
     <title>Kaidi Home</title>
     <meta name="viewport" content="width=device-width,user-scalable=no">
-    <link rel="manifest" href="manifest.webapp">
+    <meta name="defaultLanguage" content="en-US" />
+    <meta name="availableLanguages" content="en-US, vi" />
     <link rel="localization" href="locales/{locale}/global.properties">
     <link rel="localization" href="locales/{locale}/home.properties">
     <link rel="stylesheet" href="css/global/window.css">
@@ -17,6 +18,12 @@
   </head>
   <body class="page-transition-blur-in">
     <header class="status-bar"></header>
+    <section id="volume-hud-greyout" class="volume-hud-greyout volume-hud-transition-hide">
+      <div class="volume-hud-container">
+        <div class="volume-hud-label" data-l10n-id="volume-hud-label">Volume</div>
+        <meter min="0" max="100" class="meter-bar" id="meter-volume"></meter>
+      </div>
+    </section>
     <section class="content">
       <h3 class="home-label" data-l10n-id="control-dpad">▲ ▼ ◀ ▶: Arrow keys</h3>
       <h3 class="home-label" data-l10n-id="control-ans">Answer call key: Back</h3>
@@ -26,12 +33,6 @@
       <h3 class="home-label" data-l10n-id="control-8">8. Volume down</h3>
       <h3 class="home-label" data-l10n-id="control-6">6. Toggle mute</h3>
       <h3 class="home-label-blurred" data-l10n-id="control-#">#. More controls</h3>
-    </section>
-    <section id="volume-hud-greyout" class="volume-hud-transition-hide">
-      <div class="volume-hud-container">
-        <div class="volume-hud-label" data-l10n-id="volume-hud-label">Volume</div>
-        <meter min="0" max="100" class="meter-bar" id="meter-volume"></meter>
-      </div>
     </section>
     <section id="options-container" class="options-menu-container">
       <section class="options-menu">

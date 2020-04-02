@@ -26,7 +26,7 @@ document.addEventListener('DOMContentLoaded', () => {
   var isAdsEnabled = settings.get('ads')
   if (isAdsEnabled === 'true') {
     getKaiAd({
-      publisher: 'c0dc495b-883a-4f7a-ac41-6e6cd754d52f',
+      publisher: '4c1c949f-8463-4551-aa6b-c1b8c1c14edc',
       app: 'Kaidi Remote (Beta)',
       slot: window.location.hash,
       timeout: 2000,
