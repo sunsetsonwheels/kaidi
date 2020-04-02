@@ -20,9 +20,9 @@
 
 **This list contains the translations contributed:**
 
-- en_US/en: [jkelol111]('https://github.com/jkelol111')
+- en_US/en: https://github.com/jkelol111 (jkelol111 (Nam))
 
-- vi: [fap4ever]('https://github.com/fap4ever') (Duc Manh)
+- vi: https://github.com/fap4ever (Duc Manh)
 
 If there were any missing attributions, please let us know via a GitHub issue.
 

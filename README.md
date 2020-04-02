@@ -1,5 +1,5 @@
 <p align="center">
-  <img align="center" src="https://jkelol111.github.com/kaidi/docs/icons/kaidi_112.png">
+  <img align="center" src="https://jkelol111.github.com/kaidi/icons/kaidi_112.png">
   <br>
   <h1 align="center">Kaidi Remote (Beta)</h1>
   <h3 align="center">The Kodi remote app for KaiOS</h3>
@@ -21,9 +21,9 @@
 ## Key features:
 
 <p align="center">
-  <img align="center" src="https://jkelol111.github.com/kaidi/docs/screenshots/kaidi-home-screen.png">
-  <img align="center" src="https://jkelol111.github.com/kaidi/docs/screenshots/kaidi-player-screen.png">
-  <img align="center" src="https://jkelol111.github.com/kaidi/docs/screenshots/kaidi-settings-screen.png">
+  <img align="center" src="https://jkelol111.github.com/kaidi/screenshots/kaidi-home-screen.png">
+  <img align="center" src="https://jkelol111.github.com/kaidi/screenshots/kaidi-player-screen.png">
+  <img align="center" src="https://jkelol111.github.com/kaidi/screenshots/kaidi-settings-screen.png">
 </p>
 
 - Basic Kodi interface navigation (Up/Down/Left/Right/Context Menu/Home control).
