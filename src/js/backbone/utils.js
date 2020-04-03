@@ -1,14 +1,27 @@
-//
-// /app/js/backbone/utils.js
-//
-// Contains utility functions used throughout the app
-//
-// (C) jkelol111 and contributors 2020. Licensed under The Unlicense.
-//
+/*
 
+/js/backbone/utils.js
+
+This file contains common functions used throughout the app.
+
+(C) jkelol111 and contributors 2020. Licensed under the GPLv3 license.
+
+*/
+
+// We're strict here because my Asian mom told me so /s.
 'use strict'
 
+// String KAIDI_ORIGIN: the origin of the app.
+// I can fetch it from the manifest but it is a waste of time.
 const KAIDI_ORIGIN = 'beta.kaidi'
+
+/*
+
+Class SettingsManager
+
+Modify Kaidi settings with localStorage with a shorter syntax.
+
+*/
 
 class SettingsManager {
   set (key, value) {
@@ -24,8 +37,16 @@ class SettingsManager {
   }
 }
 
+// Creates a SettingsManager for use throughout the app.
 var settings = new SettingsManager()
 
+/*
+
+Function newLocalizedToast (String localizationKey, String noLocalizationPlaceholder, String toastPosition, Number toastTimerout, String toastType)
+
+Creates a new nativeToast with the localized text or the non-available substitute.
+
+*/
 function newLocalizedToast (localizationKey, noLocalizationPlaceholder, toastPosition, toastTimeout, toastType) {
   navigator.mozL10n.formatValue(localizationKey).then((localizedText) => {
     nativeToast({
@@ -44,6 +65,16 @@ function newLocalizedToast (localizationKey, noLocalizationPlaceholder, toastPos
   })
 }
 
+/*
+
+Function changeElementLocalization (HTMLElement htmlElement, String localizationKey)
+
+Localizes the text content of the provided HTMLElement with the localizationKey using one of these two methods:
+- Use the app-standardized localization schema (HTMLElement.id + localizationKey).
+- Use the localizationKey directly because app-standardized localization is not available.
+
+*/
+
 function changeElementLocalization (htmlElement, localizationKey) {
   try {
     navigator.mozL10n.setAttributes(htmlElement, htmlElement.id + '-' + localizationKey)
@@ -52,15 +83,39 @@ function changeElementLocalization (htmlElement, localizationKey) {
   }
 }
 
+/*
+
+Function removeElementLocalization (HTMLElement htmlElement)
+
+Removes the localization attribute of the given HTMLElement so we can write text directly into the HTMLElement.
+
+*/
+
 function removeElementLocalization (htmlElement) {
   htmlElement.removeAttribute('data-l10n-id')
 }
+
+/*
+
+Function updateSoftkeysLocalization (String localizationKeyLeft, String localizationKeyCenter, String localizationKeyRight)
+
+Localizes the softkey button labels.
+
+*/
 
 function updateSoftkeysLocalization (localizationKeyLeft, localizationKeyCenter, localizationKeyRight) {
   changeElementLocalization(document.getElementById('softkey-left'), localizationKeyLeft)
   changeElementLocalization(document.getElementById('softkey-center'), localizationKeyCenter)
   changeElementLocalization(document.getElementById('softkey-right'), localizationKeyRight)
 }
+
+/*
+
+Function gotoPage (String page)
+
+Navigates to the given page with ads or none, depending on settings.
+
+*/
 
 function gotoPage (page) {
   document.body.classList.add('page-transition-blur-in')
@@ -93,10 +148,26 @@ function gotoPage (page) {
   }, 680)
 }
 
+/*
+
+Function arrivedAtPage ()
+
+Remove the 'blur' on the page when page navigation has completed successfully.
+
+*/
+
 function arrivedAtPage () {
   document.body.classList.remove('page-transition-blur-in')
   document.body.classList.add('page-transition-blur-out')
 }
+
+/*
+
+Function switchTheme ()
+
+Switches to the set theme, or applies a default theme if there is no theme set in the settings.
+
+*/
 
 function switchTheme () {
   const currentSelectedTheme = settings.get('theme')

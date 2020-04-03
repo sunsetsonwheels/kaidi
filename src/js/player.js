@@ -617,6 +617,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (player.isPlaybackOptionsOpen) {
           player.closePlaybackOptionsMenu()
         } else {
+          player.kodiCloseEventWorker()
           gotoPage('home')
         }
         break

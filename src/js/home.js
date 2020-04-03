@@ -169,6 +169,7 @@ document.addEventListener('DOMContentLoaded', () => {
     switch (e.key) {
       case 'SoftLeft':
         if (!home.isControlOptionsMenuOpen) {
+          home.kodiCloseEventWorker()
           gotoPage('player')
         } else {
           home.closeControlOptionsMenu()
@@ -176,6 +177,7 @@ document.addEventListener('DOMContentLoaded', () => {
         break
       case 'SoftRight':
         if (!home.isControlOptionsMenuOpen) {
+          home.kodiCloseEventWorker()
           gotoPage('settings')
         }
         break

@@ -15,19 +15,19 @@
 
 importScripts('/js/libs/reconnecting-websocket-iife.min.js')
 
-//
-// Class NotificationFactory
-//
-// NotificationFactory for Kodi event worker.
-// Stripped localization because we cannot access l10n from Web Worker context.
-//
-
 class NotificationPermissionDeniedError extends Error {
   constructor (notificationContent) {
     super('Cannot send notification with content "' + JSON.stringify(notificationContent) + '" since notification permission was denied.')
     this.name = 'NotificationPermissionDeniedError'
   }
 }
+
+//
+// Class NotificationFactory
+//
+// NotificationFactory for Kodi event worker.
+// Stripped localization because we cannot access l10n from Web Worker context.
+//
 
 class NotificationFactory {
   constructor (notificationID) {

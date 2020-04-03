@@ -181,6 +181,23 @@ class KodiRPC {
       throw new Error('This KodiRPC instance has not been started with a worker. Event-listening will not work.')
     }
   }
+
+  /*
+
+  Function kodiCloseEventListener ()
+
+  Closes the WebSocket connection with Kodi. It won't be start again in the current KodiRPC
+  instance.
+
+  WebSockets are usually closed before the page is transitioned for a clean exit.
+
+  */
+
+  kodiCloseEventWorker () {
+    this.eventWorker.postMessage({
+      command: 'close'
+    })
+  }
 }
 
 /*
