@@ -23,10 +23,13 @@ class KodiHomeController extends KodiMethods {
   constructor () {
     // Inititalize the KodiMethods parent class.
     super()
+    // Boolean isControlOptionsMenuOpen: Shows whether tha additional control menu is opened.
     this.isControlOptionsMenuOpen = false
+    // The Kodi event listener opens the text input prompt on Kodi's request.
     this.kodiRegisterEventListener('Input.OnInputRequested', () => {
       this.promptInputText()
     })
+    // More options menu list element event listeners are wired up in here:
     document.getElementById('options-list-input').onclick = () => {
       this.closeControlOptionsMenu()
       this.promptInputText()
@@ -49,6 +52,16 @@ class KodiHomeController extends KodiMethods {
     }
   }
 
+  /*
+
+  Function inputWrapper(String subcommand, Object/undefined params)
+
+  Wraps Input.* Kodi methods in an easily consumable manner (avoids repetition).
+
+  Returns: Promise (resolve: Object, reject Error)
+
+  */
+
   inputWrapper (subcommand, params = undefined) {
     return new Promise((resolve, reject) => {
       this.kodiXmlHttpRequest('Input.' + subcommand, params).then((response) => {
@@ -58,6 +71,14 @@ class KodiHomeController extends KodiMethods {
       })
     })
   }
+
+  /*
+
+  Function promptInputText()
+
+  Prompts for text input and sends text back to Kodi
+
+  */
 
   promptInputText () {
     navigator.mozL10n.formatValue('text-input').then((localizedText) => {
@@ -79,6 +100,14 @@ class KodiHomeController extends KodiMethods {
     })
   }
 
+  /*
+
+  Function toggleFullScreen()
+
+  Toggles full screen view in Kodi.
+
+  */
+
   toggleFullScreen () {
     this.kodiXmlHttpRequest('GUI.SetFullscreen', {
       fullscreen: 'toggle'
@@ -86,6 +115,14 @@ class KodiHomeController extends KodiMethods {
       this.methodErrorOut(err)
     })
   }
+
+  /*
+
+  Function openControlOptionsMenu()
+
+  Opens the additional control options menu if it isn't opened yet.
+
+  */
 
   openControlOptionsMenu () {
     if (!this.isControlOptionsMenuOpen) {
@@ -95,6 +132,14 @@ class KodiHomeController extends KodiMethods {
       this.isControlOptionsMenuOpen = true
     }
   }
+
+  /*
+
+  Function closeControlOptionsMenu()
+
+  Closes the additional control options menu if it is already opened.
+
+  */
 
   closeControlOptionsMenu () {
     if (this.isControlOptionsMenuOpen) {
@@ -109,6 +154,7 @@ class KodiHomeController extends KodiMethods {
 document.addEventListener('DOMContentLoaded', () => {
   switchTheme()
   arrivedAtPage()
+  // Check if the app settings is corrupted or the app is launched for the first time.
   if (settings.get('ip') == null || settings.get('port') == null) {
     navigator.mozL10n.formatValue('text-welcome', { newline: '\n\n' }).then((text) => {
       alert(text)
@@ -201,7 +247,3 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 })
-
-window.onerror = (err) => {
-  console.debug(err)
-}

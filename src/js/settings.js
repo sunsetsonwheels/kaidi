@@ -1,14 +1,40 @@
+/*
+
+/js/settings.js
+
+This file handles the tasks required for the operation of settings.html
+
+(C) jkelol111 and contributors 2018-present. Licensed under GPLv3 license.
+
+*/
+
+/*
+
+String/null KAIDI_VERSION: the version from the app manifest. null if we cannot fetch
+the app manifest.
+
+*/
 var KAIDI_VERSION = null
+
+/*
+
+Class KodiSettingsController
+
+CLass controlling settings.html and handles app setting management tasks.
+
+*/
 
 class KodiSettingsController {
   constructor () {
-
+    // Boolean isDonateOptionsMenuOpen: Shows whether the donate options menu is open.
     this.isDonateOptionsMenuOpen = false
 
+    // Sets the initial values of basic configuration if it isn't.
     if (settings.get('ip') == null) settings.set('ip', '192.168.0.123')
     if (settings.get('port') == null) settings.set('port', '8080')
     if (settings.get('notify') == null) settings.set('notify', 'true')
 
+    // Event listeners for the settings elements.
     document.getElementById('ip').innerText = settings.get('ip')
     document.getElementById('ip').onfocus = () => {
       this.setKodiIPAndPort('ip')
@@ -40,6 +66,7 @@ class KodiSettingsController {
     document.getElementById('ads').value = settings.get('ads')
     document.getElementById('ads').onchange = (e) => {
       if (e.target.value === 'false') {
+        // Beg for a donation if ads are disabled. Nag once and forget. /s
         navigator.mozL10n.formatValue('text-donate', {
           newline: '\n\n'
         }).then((localizedText) => {
@@ -53,20 +80,6 @@ class KodiSettingsController {
     document.getElementById('ads').onblur = () => {
       naviBoard.getActiveElement().focus()
     }
-    //
-    // Get the Kodi version
-    //
-    fetch('/manifest.webapp')
-      .then(responseRaw => responseRaw.text())
-      .then(responseText => JSON.parse(responseText).version)
-      .then(version => {
-        KAIDI_VERSION = version
-        navigator.mozL10n.formatValue('version-secondary').then((str) => {
-          document.getElementById('version').innerText = str + ' ' + version
-        }).catch(() => {
-          document.getElementById('version').innerText = 'version ' + version
-        })
-      })
     document.getElementById('donate').onfocus = () => {
       this.openDonateOptionsMenu()
     }
@@ -86,6 +99,19 @@ class KodiSettingsController {
     document.getElementById('version').onblur = () => {
       naviBoard.getActiveElement().focus()
     }
+    // Gets the app version from the manifest and stores it into KAIDI_VERSION.
+    fetch('/manifest.webapp')
+      .then(responseRaw => responseRaw.text())
+      .then(responseText => JSON.parse(responseText).version)
+      .then(version => {
+        KAIDI_VERSION = version
+        navigator.mozL10n.formatValue('version-secondary').then((str) => {
+          document.getElementById('version').innerText = str + ' ' + version
+        }).catch(() => {
+          document.getElementById('version').innerText = 'version ' + version
+        })
+      })
+    // Event listeners for the donaet options menu elements.
     document.getElementById('options-list-paypal').onclick = () => {
       window.open('https://paypal.me/jkelol111')
       this.closeDonateOptionsMenu()
@@ -94,16 +120,38 @@ class KodiSettingsController {
       window.open('https://buymeacoffee.com/jkelol111')
       this.closeDonateOptionsMenu()
     }
+    // Everything has started nicely, T - 0 time!
     naviBoard.setNavigation('settings-content')
   }
 
+  /*
+
+  Function showSettingChangeSuccess ()
+  Shows a toast message when a setting is changed successfully.
+
+  */
   showSettingChangeSuccess () {
     newLocalizedToast('toast-setting-change-succeed', 'Setting changed successfully!', 'north', 2000, 'success')
   }
 
+  /*
+
+  Function showSettingChangeFailed ()
+  Shows a toast message when a setting changed failed.
+
+  */
+
   showSettingChangeFailed () {
     newLocalizedToast('toast-setting-change-failed', 'Setting change failed!', 'north', 2000, 'error')
   }
+
+  /*
+
+  Function setKodiIPAndPort (String setting)
+
+  Opens a prompt and saves the IP or port of Kodi upon focus on the respective setting elements
+
+  */
 
   setKodiIPAndPort (setting) {
     navigator.mozL10n.formatValue(setting + '-title').then((localizedText) => {
@@ -123,6 +171,14 @@ class KodiSettingsController {
     })
   }
 
+  /*
+
+  Function setKodiIPAndPort (String setting)
+
+  Opens a prompt and saves the IP or port of Kodi upon focus on the respective setting elements
+
+  */
+
   setSelectSettings (setting, value) {
     try {
       settings.set(setting, value)
@@ -134,6 +190,14 @@ class KodiSettingsController {
       return false
     }
   }
+
+  /*
+
+  Function confirmResetSettings ()
+
+  Opens a confirm dialog, and if agreed to, resets the app's settings and closes the app.
+
+  */
 
   confirmResetSettings () {
     navigator.mozL10n.formatValue('text-confirm-reset-settings').then((localizedText) => {
@@ -149,6 +213,14 @@ class KodiSettingsController {
     })
   }
 
+  /*
+
+  Function openDonateOptionsMenu()
+
+  Opens the donate options menu if it isn't opened yet.
+
+  */
+
   openDonateOptionsMenu () {
     if (!this.isDonateOptionsMenuOpen) {
       naviBoard.destroyNavigation('settings-content')
@@ -158,6 +230,14 @@ class KodiSettingsController {
       this.isDonateOptionsMenuOpen = true
     }
   }
+
+  /*
+
+  Function closeDonateOptionsMenu()
+
+  Closes the donate options menu if it is already opened.
+
+  */
 
   closeDonateOptionsMenu () {
     if (this.isDonateOptionsMenuOpen) {
@@ -188,6 +268,18 @@ document.addEventListener('DOMContentLoaded', () => {
           setting.confirmResetSettings()
         }
         break
+      case 'ArrowUp':
+        naviBoard.getActiveElement().scrollIntoView({
+          behavior: 'smooth',
+          block: 'start'
+        })
+        break
+      case 'ArrowDown':
+        naviBoard.getActiveElement().scrollIntoView({
+          behavior: 'smooth',
+          block: 'end'
+        })
+        break
       case 'Enter':
         if (!setting.isDonateOptionsMenuOpen) {
           naviBoard.getActiveElement().children[1].focus()
@@ -196,6 +288,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         break
     }
+    // Changes the center softkey label on some special setting elements.
     switch (naviBoard.getActiveElement().children[1].id) {
       case 'donate':
         updateSoftkeysLocalization('back', 'donate', 'reset')

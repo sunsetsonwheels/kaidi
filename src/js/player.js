@@ -171,9 +171,11 @@ class KodiPlayerController extends KodiMethods {
       }
     })
 
-    //
-    // Kodi info ticking timer (in testing)
-    //
+    /*
+    Kodi info ticking timer (in testing)
+
+    (We have to poll the time because Kodi JSON-RPC interface still doesn't have a time change event).
+    */
 
     this.timer = new TaskTimer(2000)
     this.timer.on('tick', () => {
@@ -581,7 +583,7 @@ document.addEventListener('DOMContentLoaded', () => {
   window.onkeyup = (e) => {
     if (player.isPlaying) {
       console.log((new Date().getTime()) - beginKeydown)
-      if ((new Date().getTime()) - beginKeydown >= 40) {
+      if ((new Date().getTime()) - beginKeydown >= 150) {
         switch (e.key) {
           case 'ArrowLeft':
             player.seekBackward()

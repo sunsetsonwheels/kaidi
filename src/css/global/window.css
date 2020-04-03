@@ -12,12 +12,6 @@
   font-family: "Open Sans";
 }
 
-meter::-moz-meter-bar {
-  -moz-appearance: none;
-  background: none;
-  background-color: var(--theme-color);
-}
-
 .status-bar {
   position: fixed;
   top: 0px;
@@ -57,6 +51,7 @@ meter::-moz-meter-bar {
   width: 100%;
   height: calc(100% - 57px);
   overflow: auto;
+  scroll-behavior: smooth;
 }
 
 .theme-softkeys-dark {

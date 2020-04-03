@@ -2,13 +2,11 @@
 
 # Kaidi Remote (Beta)
 
-### The Kodi remote app for KaiOS (for now...)
+#### The Kodi remote app for KaiOS (for now...)
 
-| Supported KaiOS version | Supported Kodi version |
-|:-----------------------:|:----------------------:|
-|       >= KaiOS 2.5      |     >= Kodi Krypton    |
-
-**PROJECT STATE: Beta (version 0.4.8)**
+|           Current app versions          | Supported KaiOS versions |              Supported Kodi versions             |
+|:---------------------------------------:|:------------------------:|:------------------------------------------------:|
+| - 0.4.8 (Beta)<br><br>- 0.4.7.3 (Alpha) |       >= KaiOS 2.5       | >= Kodi Krypton (17.x)<br><br>>= JSON-RPC API v8 |
 
 ## Key features:
 
@@ -49,3 +47,5 @@ Feel free to fork this repo and add your improvements, then create a pull reques
 We are especially looking for improvements to the player, as well as added localizations.
 
 We now enforce [Standard JS](https://standardjs.com/) since 27/3/2020. Some files might not have been modified to reflect this change yet, but please do practice Standard JS (use ESLint, installable if you run `npm install` to install our dev-dependencies) if you ever submit your pull requests/modifications for review. This doesn't mean we will reject your pull request, but for large changes, bad Standard JS compliance will lead to rejected pull requests.
+
+[![JavaScript Style Guide](https://cdn.rawgit.com/standard/standard/master/badge.svg)](https://github.com/standard/standard)

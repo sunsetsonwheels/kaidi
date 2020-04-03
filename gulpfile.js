@@ -106,7 +106,7 @@ function zipDeployTask () {
     .pipe(plumber({ errorHandler: onErr }))
     .pipe(zip('application.zip'))
     .pipe(plumber.stop())
-    .pipe(dest(DEPLOY_BUILD_FOLDER))
+    .pipe(dest(BUILD_FOLDER))
 }
 
 function cpOmniSDManifestsTask () {
@@ -117,7 +117,7 @@ function cpOmniSDManifestsTask () {
 }
 
 function zipOmniSDTask () {
-  return src([DEPLOY_BUILD_FOLDER + 'application.zip', OMNISD_BUILD_FOLDER + 'tmp/*'])
+  return src([BUILD_FOLDER + 'application.zip', OMNISD_BUILD_FOLDER + 'tmp/*'])
     .pipe(plumber({ errorHandler: onErr }))
     .pipe(zip('kaidi-' + KAIDI_VERSION + '-omnisd.zip'))
     .pipe(plumber.stop())
