@@ -102,7 +102,7 @@ function manifestTask () {
 }
 
 function zipDeployTask () {
-  return src(DEPLOY_BUILD_FOLDER + '*')
+  return src(DEPLOY_BUILD_FOLDER + '**/*')
     .pipe(plumber({ errorHandler: onErr }))
     .pipe(zip('application.zip'))
     .pipe(plumber.stop())
