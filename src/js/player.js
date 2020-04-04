@@ -618,7 +618,10 @@ document.addEventListener('DOMContentLoaded', () => {
           player.closePlaybackOptionsMenu()
         } else {
           player.kodiCloseEventWorker()
-          gotoPage('home')
+          // Tiny wait so the worker can close, if it doesn't close in time, we force it.
+          setTimeout(() => {
+            gotoPage('home')
+          }, 100)
         }
         break
       case 'ArrowUp':

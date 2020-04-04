@@ -236,7 +236,7 @@ class KodiMethods extends KodiRPC {
 
   /*
 
-  Function methodErrorOut(Error err)
+  Function methodErrorOut (Error err)
 
   The standard 'exception' encountered error helper function.
 
@@ -250,7 +250,7 @@ class KodiMethods extends KodiRPC {
 
   /*
 
-  Function ping()
+  Function ping ()
 
   Pings Kodi for a response, confirming that Kodi is indeed awake.
   */
@@ -270,7 +270,7 @@ class KodiMethods extends KodiRPC {
 
   /*
 
-  Function volumeWrapper(String direction, Object params)
+  Function volumeWrapper (String direction, Object params)
 
   Controls the volume and displays/hides the volume HUD.
 

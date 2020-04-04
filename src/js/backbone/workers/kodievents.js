@@ -166,9 +166,13 @@ self.onmessage = (e) => {
         }
         break
       case 'close':
-        ws.close()
-        ws = null
-        changeWorkerStatus('closed')
+        if (workerStatus !== 'closed') {
+          ws.close()
+          ws = null
+          changeWorkerStatus('closed')
+        } else {
+          console.log(LOG_PREFIX + 'The worker seems closed? (workerStatus: ' + workerStatus + ').')
+        }
         break
       default:
         console.log(LOG_PREFIX + 'Unprogrammed command received: ' + e.data.command)

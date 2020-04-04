@@ -270,13 +270,11 @@ document.addEventListener('DOMContentLoaded', () => {
         break
       case 'ArrowUp':
         naviBoard.getActiveElement().scrollIntoView({
-          behavior: 'smooth',
           block: 'start'
         })
         break
       case 'ArrowDown':
         naviBoard.getActiveElement().scrollIntoView({
-          behavior: 'smooth',
           block: 'end'
         })
         break

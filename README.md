@@ -51,9 +51,7 @@ Feel free to fork this repo and add your improvements, then create a pull reques
 
 We are especially looking for improvements to the player, as well as added localizations.
 
-We now enforce [Standard JS](https://standardjs.com/) since 27/3/2020. Some files might not have been modified to reflect this change yet, but please do practice Standard JS (use ESLint, installable if you run `npm install` to install our dev-dependencies) if you ever submit your pull requests/modifications for review. This doesn't mean we will reject your pull request, but for large changes, bad Standard JS compliance will lead to rejected pull requests.
-
-[![JavaScript Style Guide](https://cdn.rawgit.com/standard/standard/master/badge.svg)](https://github.com/standard/standard)
+We now enforce [![JavaScript Style Guide](https://cdn.rawgit.com/standard/standard/master/badge.svg)](https://github.com/standard/standard) since 27/3/2020. Some files might not have been modified to reflect this change yet, but please do practice Standard JS (use ESLint, installable if you run `npm install` to install our dev-dependencies) if you ever submit your pull requests/modifications for review. This doesn't mean we will reject your pull request, but for large changes, bad Standard JS compliance will lead to rejected pull requests.
 
 ## License
 
@@ -63,7 +61,7 @@ This project is licensed under the GPLv3 license. A copy is included in `/LICENS
 
 ## Thank you!
 
-... to all the people over at the BananaHackers and r/KaiOS community, as well as Stack Overflow and my friends for translating my apps.
+... to all the people over at the BananaHackers and [r/KaiOS](https://reddit.com/r/kaios) community, as well as Stack Overflow and my friends for translating my apps.
 
 A full list of credits are available in `/CREDITS.md` of this Git repository.
 

@@ -54,7 +54,7 @@ class KodiHomeController extends KodiMethods {
 
   /*
 
-  Function inputWrapper(String subcommand, Object/undefined params)
+  Function inputWrapper (String subcommand, Object/undefined params)
 
   Wraps Input.* Kodi methods in an easily consumable manner (avoids repetition).
 
@@ -74,7 +74,7 @@ class KodiHomeController extends KodiMethods {
 
   /*
 
-  Function promptInputText()
+  Function promptInputText ()
 
   Prompts for text input and sends text back to Kodi
 
@@ -102,7 +102,7 @@ class KodiHomeController extends KodiMethods {
 
   /*
 
-  Function toggleFullScreen()
+  Function toggleFullScreen ()
 
   Toggles full screen view in Kodi.
 
@@ -118,7 +118,7 @@ class KodiHomeController extends KodiMethods {
 
   /*
 
-  Function openControlOptionsMenu()
+  Function openControlOptionsMenu ()
 
   Opens the additional control options menu if it isn't opened yet.
 
@@ -135,7 +135,7 @@ class KodiHomeController extends KodiMethods {
 
   /*
 
-  Function closeControlOptionsMenu()
+  Function closeControlOptionsMenu ()
 
   Closes the additional control options menu if it is already opened.
 
@@ -170,7 +170,10 @@ document.addEventListener('DOMContentLoaded', () => {
       case 'SoftLeft':
         if (!home.isControlOptionsMenuOpen) {
           home.kodiCloseEventWorker()
-          gotoPage('player')
+          // Tiny wait so the worker can close, if it doesn't close in time, we force it.
+          setTimeout(() => {
+            gotoPage('player')
+          }, 100)
         } else {
           home.closeControlOptionsMenu()
         }
