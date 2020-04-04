@@ -40,7 +40,7 @@ const FPATHS = {
     dest: DEPLOY_BUILD_FOLDER
   },
   omnisd_manifests: {
-    src: [SOURCE_FOLDER + 'metadata.json', SOURCE_FOLDER + 'update.webapp'],
+    src: SOURCE_FOLDER + 'metadata.json',
     dest: OMNISD_BUILD_FOLDER + 'tmp/'
   }
 }
