@@ -43,7 +43,6 @@ class NotificationFactory {
       })
       n.onclick = () => {
         n.close.bind(n)
-        window.open('app://kaidi.jkelol111.me')
       }
     } else {
       throw new NotificationPermissionDeniedError({

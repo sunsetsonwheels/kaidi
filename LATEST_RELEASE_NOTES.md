@@ -2,7 +2,7 @@
 
 *New features:*
 
-- Updated manifest: Last-ditch effort to see what's wrong with the KaiStore release.
+- Updated manifest (again): Last-ditch effort to see what's wrong with the KaiStore release.
 
 *Bugs:*
 
@@ -14,7 +14,7 @@
 
 *Using OmniSD:*
 
-1. Download the file `kaidi-1.0.4-beta-omnisd.zip` to your SD card.
+1. Download the file `kaidi-1.0.5-stable-omnisd.zip` to your SD card.
 
 2. Open OmniSD and install.
 
