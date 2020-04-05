@@ -1,10 +1,10 @@
 {
-  "version": "1.0.2",
+  "version": "1.0.3",
   "name": "Kaidi Remote",
   "description": "The Kodi remote app for KaiOS.",
   "launch_path": "/ad.html#home",
   "orientation": "default",
-  "theme_color": "#1BC1C4",
+  "theme_color": "#ffffff",
   "origin": "app://kaidi.jkelol111.me",
   "icons": {
     "56": "/icons/kaidi_56.png",

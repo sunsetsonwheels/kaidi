@@ -2,7 +2,7 @@
 
 *New features:*
 
-- Downgraded KaiAds SDK.
+- Changed icons for better contrast.
 
 *Bugs:*
 

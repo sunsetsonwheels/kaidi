@@ -4,7 +4,7 @@
 
 **This list contains the resources used in this app that are taken from (may be adapted) from the following open source projects, in no particular order:**
 
-- App icons by Icons8: https://icons8.com/icons/set/remote-control
+- App icons by Icons8: https://icons8.com/icons/set/tv
 
 - KaiUI UI components for KaiOS by nadim1992: https://github.com/nadim1992/KaiUI
 
