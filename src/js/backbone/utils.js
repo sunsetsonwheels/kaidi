@@ -13,7 +13,7 @@ This file contains common functions used throughout the app.
 
 // String KAIDI_ORIGIN: the origin of the app.
 // I can fetch it from the manifest but it is a waste of time.
-const KAIDI_ORIGIN = 'beta.kaidi'
+const KAIDI_ORIGIN = 'kaidi'
 
 /*
 

@@ -1,6 +1,6 @@
 ![kaidi-beta-logo](/docs/icons/kaidi_112.png)
 
-# Kaidi Remote (Beta)
+# Kaidi Remote
 
 ### The Kodi remote app for KaiOS (for now...)
 
@@ -11,7 +11,7 @@
 
 |           Current app versions          | Supported KaiOS versions |              Supported Kodi versions             |
 |:---------------------------------------:|:------------------------:|:------------------------------------------------:|
-| - 0.4.8 (Beta)<br><br>- 0.4.7.3 (Alpha) |       >= KaiOS 2.5       | >= Kodi Krypton (17.x)<br><br>>= JSON-RPC API v8 |
+| - 1.0.0 (Stable)<br><br>- 0.4.7.3 (Alpha) |       >= KaiOS 2.5       | >= Kodi Krypton (17.x)<br><br>>= JSON-RPC API v8 |
 
 ## Key features
 

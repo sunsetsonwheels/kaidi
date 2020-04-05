@@ -13,6 +13,8 @@ const BUILD_FOLDER = 'dist/'
 const DEPLOY_BUILD_FOLDER = BUILD_FOLDER + 'deploy/'
 const OMNISD_BUILD_FOLDER = BUILD_FOLDER + 'omnisd/'
 
+const BUILD_TARGET = 'stable'
+
 const FPATHS = {
   js: {
     src: SOURCE_FOLDER + 'js/**/*.js',
@@ -119,7 +121,7 @@ function cpOmniSDManifestsTask () {
 function zipOmniSDTask () {
   return src([BUILD_FOLDER + 'application.zip', OMNISD_BUILD_FOLDER + 'tmp/*'])
     .pipe(plumber({ errorHandler: onErr }))
-    .pipe(zip('kaidi-' + KAIDI_VERSION + '-beta-omnisd.zip'))
+    .pipe(zip('kaidi-' + KAIDI_VERSION + '-' + BUILD_TARGET + '-omnisd.zip'))
     .pipe(plumber.stop())
     .pipe(dest(OMNISD_BUILD_FOLDER))
 }
