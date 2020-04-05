@@ -20,6 +20,9 @@
       "description": "Required for to send notifications/toasts."
     }
   },
+  "chrome": {
+    "statusbar": "overlap"
+  },
   "locales": {
     "en-US": {
       "name": "Kaidi Remote",
