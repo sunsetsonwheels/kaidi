@@ -1,6 +1,6 @@
 {
   "name": "kaidi",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A Kodi remote app for KaiOS.",
   "scripts": {
     "clean": "gulp clean",

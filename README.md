@@ -11,7 +11,7 @@
 
 |           Current app versions          | Supported KaiOS versions |              Supported Kodi versions             |
 |:---------------------------------------:|:------------------------:|:------------------------------------------------:|
-| - 1.0.0 (Stable)<br><br>- 0.4.7.3 (Alpha) |       >= KaiOS 2.5       | >= Kodi Krypton (17.x)<br><br>>= JSON-RPC API v8 |
+| - 1.0.0 (Stable, was 0.4.8 Beta)<br><br>- 0.4.7.3 (Alpha) |       >= KaiOS 2.5       | >= Kodi Krypton (17.x)<br><br>>= JSON-RPC API v8 |
 
 ## Key features
 

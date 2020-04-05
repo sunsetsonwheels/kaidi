@@ -1,7 +1,7 @@
 {
-  "version": "1.0.0",
+  "version": "1.0.1",
   "name": "Kaidi Remote",
-  "description": "A Kodi remote app for KaiOS.",
+  "description": "The Kodi remote app for KaiOS.",
   "launch_path": "/ad.html#home",
   "orientation": "default",
   "theme_color": "#1BC1C4",
@@ -26,21 +26,27 @@
       "description": "Required for to send notifications/toasts."
     }
   },
+  "locales": {
+    "en-US": {
+      "name": "Kaidi Remote",
+      "subtitle": "The Kodi Remote app for KaiOS.",
+      "description": "The Kodi remote app for KaiOS."
+    },
+    "vi": {
+      "name": "Điều khiển Kaidi",
+      "subtitle": "Ứng dụng điều khiển Kodi cho KaiOS.",
+      "description": "Ứng dụng điều khiển Kodi cho KaiOS."
+    }
+  },
+  "default_locale": "en-US",
   "dependencies": {
-		"ads-sdk": "1.3.0"
+	  "ads-sdk": "1.3.0"
 	},
   "installs_allowed_from": [
     "*"
   ],
-  "default_locale": "en-US",
-  "locales": {
-    "en-US": {
-      "name": "Kaidi Remote (Beta)",
-      "description": "A Kodi remote app for KaiOS."
-    },
-    "vi": {
-      "name": "Điều khiển Kaidi (Beta)",
-      "description": "Một ứng dụng điều khiển Kodi cho KaiOS."
-    }
-  }
+  "categories": [
+    "utilities",
+    "entertainment"
+  ]
 }

@@ -2,9 +2,7 @@
 
 *New features:*
 
-- App versioning: Changed to semantic versioning for use with KaiStore.
-
-- Dropped beta tag: To avoid having a separate Kaidi Remote (Beta) and Kaidi Remote in the KaiStore in the future. The app itself is pretty much stable already.
+- Updated manifest with additional values for KaiStore.
 
 *Bugs:*
 
@@ -16,7 +14,7 @@
 
 *Using OmniSD:*
 
-1. Download the file `kaidi-1.0.0-beta-omnisd.zip` to your SD card.
+1. Download the file `kaidi-1.0.1-beta-omnisd.zip` to your SD card.
 
 2. Open OmniSD and install.
 
