@@ -2,7 +2,7 @@
 
 *New features:*
 
-- Changed icons for better contrast.
+- New icon: Changed icons for better contrast.
 
 *Bugs:*
 
@@ -14,7 +14,7 @@
 
 *Using OmniSD:*
 
-1. Download the file `kaidi-1.0.2-beta-omnisd.zip` to your SD card.
+1. Download the file `kaidi-1.0.3-beta-omnisd.zip` to your SD card.
 
 2. Open OmniSD and install.
 
