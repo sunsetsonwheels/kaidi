@@ -1,21 +1,15 @@
 {
-  "version": "1.0.3",
+  "version": "1.0.4",
   "name": "Kaidi Remote",
   "description": "The Kodi remote app for KaiOS.",
-  "launch_path": "/ad.html#home",
-  "orientation": "default",
-  "theme_color": "#ffffff",
-  "origin": "app://kaidi.jkelol111.me",
+  "launch_path": "/ads.html",
   "icons": {
     "56": "/icons/kaidi_56.png",
     "112": "/icons/kaidi_112.png"
   },
-  "chrome": {
-    "statusbar": "overlap"
-  },
   "developer": {
-    "name": "jkelol111 & contributors",
-    "url": "http://github.com/jkelol111"
+    "name": "jkelol111",
+    "url": "https://jkelol111.github.io"
   },
   "type": "privileged",
   "permissions": {
@@ -29,21 +23,14 @@
   "locales": {
     "en-US": {
       "name": "Kaidi Remote",
-      "subtitle": "The Kodi Remote app for KaiOS.",
-      "description": "The Kodi remote app for KaiOS."
+      "subtitle": "The Kodi remote app for KaiOS.",
+      "description": "Control your Kodi device using your KaiOS phone. Open-sourced at https://github.com/jkelol111/kaidi"
     },
     "vi-VN": {
       "name": "Điều khiển Kaidi",
       "subtitle": "Ứng dụng điều khiển Kodi cho KaiOS.",
-      "description": "Ứng dụng điều khiển Kodi cho KaiOS."
+      "description": "Điều khiển thiết bị Kodi bắng điện thoại chạy HĐH KaiOS. Phần mềm mở nguồn tại https://github.com/jkelol111/kaidi"
     }
   },
-  "default_locale": "en-US",
-  "installs_allowed_from": [
-    "*"
-  ],
-  "categories": [
-    "utilities",
-    "entertainment"
-  ]
+  "default_locale": "en-US"
 }

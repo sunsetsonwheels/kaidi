@@ -16,7 +16,7 @@ function handleLocationChange () {
       window.location.assign('/settings.html')
       break
     default:
-      window.alert('[handleLocationChange] Specified hash invalid. You will be redirected home.')
+      console.log('[handleLocationChange] Specified hash invalid. You will be redirected home.')
       window.location.assign('/home.html')
       break
   }

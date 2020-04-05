@@ -1,6 +1,6 @@
 {
   "name": "kaidi",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "A Kodi remote app for KaiOS.",
   "scripts": {
     "clean": "gulp clean",
@@ -16,7 +16,7 @@
     "remote",
     "kaiui"
   ],
-  "author": "jkelol111 & contributors",
+  "author": "jkelol111",
   "license": "GPL-3.0-or-later",
   "bugs": {
     "url": "https://github.com/jkelol111/kaidi/issues"
