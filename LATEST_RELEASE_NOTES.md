@@ -2,6 +2,8 @@
 
 *New features:*
 
+- Changed app origin for stable release: from `kaidi.jkelol111.me` to `jkelol111.github.io`.
+- Upgraded KaiAds SDK: downgrading it didn't solve the problem, might as well use the latest.
 - Updated manifest (again): Last-ditch effort to see what's wrong with the KaiStore release.
 
 *Bugs:*
@@ -14,13 +16,13 @@
 
 *Using OmniSD:*
 
-1. Download the file `kaidi-1.0.5-stable-omnisd.zip` to your SD card.
+1. Download the file `kaidi-1.0.6-stable-omnisd.zip` to your SD card.
 
 2. Open OmniSD and install.
 
 *Using WebIDE:*
 
-** You will need to have `node` installed to build the app.**
+**You will need to have `node` installed to build the app.**
 
 1. Download the source code zip above and extract it somewhere.
 

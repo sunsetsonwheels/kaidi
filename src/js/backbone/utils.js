@@ -120,25 +120,25 @@ Navigates to the given page with ads or none, depending on settings.
 function gotoPage (page) {
   document.body.classList.add('page-transition-blur-in')
   document.body.classList.remove('page-transition-blur-out')
-  const adsEnabled = settings.get('ads')
+  const adsEnabled = (settings.get('ads') === 'true')
   setTimeout(() => {
     switch (page) {
       case 'home':
-        if (adsEnabled === 'true') {
+        if (adsEnabled) {
           window.location.assign('/ad.html#home')
         } else {
           window.location.assign('/home.html')
         }
         break
       case 'settings':
-        if (adsEnabled === 'true') {
+        if (adsEnabled) {
           window.location.assign('/ad.html#settings')
         } else {
           window.location.assign('/settings.html')
         }
         break
       case 'player':
-        if (adsEnabled === 'true') {
+        if (adsEnabled) {
           window.location.assign('/ad.html#player')
         } else {
           window.location.assign('/player.html')
