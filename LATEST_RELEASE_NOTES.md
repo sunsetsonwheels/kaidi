@@ -2,9 +2,8 @@
 
 *New features:*
 
-- Changed app origin for stable release: from `kaidi.jkelol111.me` to `jkelol111.github.io`.
-- Upgraded KaiAds SDK: downgrading it didn't solve the problem, might as well use the latest.
-- Updated manifest (again): Last-ditch effort to see what's wrong with the KaiStore release.
+- Dark theme for options menus: previously, options menus  weren't themed. Now they are.
+- Replaced custom native-toast with kaios-toaster: I created my own native-toast 'fork' called [kaios-toaster](https://github.com/jkelol111/kaios-toaster). It supports displaying multiline toast messages, and looks uniform with KaiOS.
 
 *Bugs:*
 
@@ -16,7 +15,7 @@
 
 *Using OmniSD:*
 
-1. Download the file `kaidi-1.0.6-stable-omnisd.zip` to your SD card.
+1. Download the file `kaidi-1.0.7-stable-omnisd.zip` to your SD card.
 
 2. Open OmniSD and install.
 

@@ -12,8 +12,6 @@
 
 - `l10n.js` by Mozilla, adapted by kaios-design: https://github.com/kaios-design/gaia-l10n
 
-- `native-toast` by egoist: https://github.com/egoist/native-toast
-
 - `reconnecting-websocket` by pladaria: https://github.com/pladaria/reconnecting-websocket
 
 - `TaskTimer` by onury: https://github.com/onury/tasktimer

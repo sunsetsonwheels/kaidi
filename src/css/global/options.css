@@ -12,19 +12,27 @@
   width: 100%;
   max-height: 80%;
   position: absolute;
-  overflow: hidden;
+  overflow: auto;
   bottom: 0;
 }
 
-.options-menu .options-menu-title {
+.options-menu-title {
   margin: 0;
-  color: #323232;
   font-size: 17px;
   font-weight: 400;
   text-align: center;
-  background-color: #d8d8d8;
   height: 28px;
   line-height: 28px;
+}
+
+.theme-options-menu-title-light {
+  background-color: #d8d8d8;
+  color: #323232;
+}
+
+.theme-options-menu-title-dark {
+  background-color: #272727;
+  color: #ffffff
 }
 
 .options-menu-list {
@@ -33,12 +41,20 @@
   overflow: hidden;
 }
 
+.theme-options-menu-list-light {
+  background-color: #ffffff;
+  color: #000000;
+}
+
+.theme-options-menu-list-dark {
+  background-color: #363636;
+  color: #ffffff;
+}
+
 .options-menu-list div {
   height: 50px;
   line-height: 50px;
   padding-left: 10px;
-  background-color: #fff;
-  font-family: "Open Sans"
 }
 
 .options-menu-list div:focus {

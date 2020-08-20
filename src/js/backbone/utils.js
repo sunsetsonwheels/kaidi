@@ -49,14 +49,14 @@ Creates a new nativeToast with the localized text or the non-available substitut
 */
 function newLocalizedToast (localizationKey, noLocalizationPlaceholder, toastPosition, toastTimeout, toastType) {
   navigator.mozL10n.formatValue(localizationKey).then((localizedText) => {
-    nativeToast({
+    kaiosToaster({
       message: localizedText,
       position: toastPosition,
       timeout: toastTimeout,
       type: toastType
     })
   }).catch(() => {
-    nativeToast({
+    kaiosToaster({
       message: noLocalizationPlaceholder,
       position: toastPosition,
       timeout: toastTimeout,
@@ -178,6 +178,8 @@ function switchTheme () {
   var softkeyBars = document.querySelectorAll('.softkeys-bar')
   var separatorElements = document.querySelectorAll('.separator')
   var settingsElements = document.querySelectorAll('.settings-entry')
+  var optionMenuElements = document.querySelectorAll('.options-menu')
+  // var optionMenuTitleElements = document.querySelectorAll('.option-menu-title')
   switch (currentSelectedTheme) {
     case 'light':
       for (var contentElement of contentElements) {
@@ -198,6 +200,12 @@ function switchTheme () {
         settingsElement.children[1].classList.remove('theme-settings-dark')
         settingsElement.children[1].classList.add('theme-settings-light')
       }
+      for (var optionMenuElement of optionMenuElements) {
+        optionMenuElement.children[0].classList.remove('theme-options-menu-title-dark')
+        optionMenuElement.children[0].classList.add('theme-options-menu-title-light')
+        optionMenuElement.children[1].classList.remove('theme-options-menu-list-dark')
+        optionMenuElement.children[1].classList.add('theme-options-menu-list-light')
+      }
       break
     case 'dark':
       for (var contentElement of contentElements) {
@@ -217,6 +225,12 @@ function switchTheme () {
         settingsElement.classList.add('theme-settings-dark')
         settingsElement.children[1].classList.remove('theme-settings-light')
         settingsElement.children[1].classList.add('theme-settings-dark')
+      }
+      for (var optionMenuElement of optionMenuElements) {
+        optionMenuElement.children[0].classList.remove('theme-options-menu-title-light')
+        optionMenuElement.children[0].classList.add('theme-options-menu-title-dark')
+        optionMenuElement.children[1].classList.remove('theme-options-menu-list-light')
+        optionMenuElement.children[1].classList.add('theme-options-menu-list-dark')
       }
       break
     default:

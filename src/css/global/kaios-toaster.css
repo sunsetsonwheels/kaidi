@@ -1,10 +1,11 @@
-.native-toast {
+.kaios-toast {
   position: fixed;
-  background-color: #d3d3d3;
+  background-color: #363636;
   width: 100%;
-  line-height: 36px;
-  color: #363636;
+  min-height: 36px;
+  color: #ffffff;
   text-align: center;
+  word-wrap: break-word;
   opacity: 0;
   z-index: 99999;
   transition: opacity 0.25s, top 0.25s, bottom 0.25s, -webkit-transform 0.25s;
@@ -13,45 +14,40 @@
   box-sizing: border-box;
   max-width: 18rem;
 }
-.native-toast-north {
+
+.kaios-toast-content {
+  padding: 8px
+}
+
+.kaios-toast-north {
   left: 50%;
   transform: translateX(-50%);
   top: -54px;
 }
-.native-toast-north.native-toast-shown {
+.kaios-toast-north.kaios-toast-shown {
   opacity: 1;
   top: 27px;
 }
 
-.native-toast-south {
+.kaios-toast-south {
   left: 50%;
   transform: translateX(-50%);
   bottom: -30px;
 }
-.native-toast-south.native-toast-shown {
+.kaios-toast-south.kaios-toast-shown {
   opacity: 1;
   bottom: 30px;
 }
 
-.native-toast-center {
-  left: 50%;
-  transform: translate(-50%, -50%);
-  bottom: -50px;
-}
-.native-toast-center.native-toast-shown {
-  opacity: 1;
-  bottom: 50%;
-}
-
-.native-toast-error {
+.kaios-toast-error {
   background-color: #ff3d3d;
   color: #fff;
 }
-.native-toast-success {
+.kaios-toast-success {
   background-color: #62a465;
   color: #fff;
 }
-.native-toast-warning {
+.kaios-toast-warning {
   background-color: #ffb618;
   color: #fff;
 }
