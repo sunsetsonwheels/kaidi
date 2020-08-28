@@ -9,3 +9,8 @@
   transition-property: opacity;
   transition-duration: 0.7s;
 }
+
+.page-transitions-disable {
+  transition-duration: 0s;
+  transition-property: none;
+}

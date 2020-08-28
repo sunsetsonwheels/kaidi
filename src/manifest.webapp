@@ -32,12 +32,12 @@
     "en-US": {
       "name": "Kaidi Remote",
       "subtitle": "The Kodi remote app for KaiOS.",
-      "description": "Control your Kodi device using your KaiOS phone. Open-sourced at https://github.com/jkelol111/kaidi (version: 1.0.6)"
+      "description": "Control your Kodi device using your KaiOS phone. Open-sourced at https://github.com/jkelol111/kaidi"
     },
     "vi-VN": {
       "name": "Điều khiển Kaidi",
       "subtitle": "Ứng dụng điều khiển Kodi cho KaiOS.",
-      "description": "Điều khiển thiết bị Kodi bắng điện thoại chạy HĐH KaiOS. Phần mềm mở nguồn tại https://github.com/jkelol111/kaidi (phiên bản: 1.0.6)"
+      "description": "Điều khiển thiết bị Kodi bắng điện thoại chạy HĐH KaiOS. Phần mềm mở nguồn tại https://github.com/jkelol111/kaidi"
     }
   },
   "default_locale": "en-US"

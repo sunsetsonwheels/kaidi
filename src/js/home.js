@@ -152,6 +152,9 @@ class KodiHomeController extends KodiMethods {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
+  // Set some values for first operation (or if they got removed somehow).
+  if (settings.get('animations') === null) settings.set('animations', 'true')
+  if (settings.get('theme') === null) settings.set('theme', 'light')
   switchTheme()
   arrivedAtPage()
   // Check if the app settings is corrupted or the app is launched for the first time.

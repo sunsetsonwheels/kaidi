@@ -56,6 +56,15 @@ class KodiSettingsController {
     document.getElementById('theme').onblur = () => {
       naviBoard.getActiveElement().focus()
     }
+
+    document.getElementById('animations').value = settings.get('animations')
+    document.getElementById('animations').onchange = (e) => {
+      this.setSelectSettings('animations', e.target.value)
+    }
+    document.getElementById('animations').onblur = () => {
+      naviBoard.getActiveElement().focus()
+    }
+
     document.getElementById('notify').value = settings.get('notify')
     document.getElementById('notify').onchange = (e) => {
       this.setSelectSettings('notify', e.target.value)

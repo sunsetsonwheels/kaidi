@@ -118,32 +118,37 @@ Navigates to the given page with ads or none, depending on settings.
 */
 
 function gotoPage (page) {
+  if (settings.get('animations') === 'false') {
+    document.body.classList.add('page-transitions-disable')
+  }
   document.body.classList.add('page-transition-blur-in')
   document.body.classList.remove('page-transition-blur-out')
-  const adsEnabled = (settings.get('ads') === 'true')
+
   setTimeout(() => {
-    switch (page) {
-      case 'home':
-        if (adsEnabled) {
+    if (settings.get('ads') === 'true') {
+      switch (page) {
+        case 'home':
           window.location.assign('/ad.html#home')
-        } else {
-          window.location.assign('/home.html')
-        }
-        break
-      case 'settings':
-        if (adsEnabled) {
+          break
+        case 'settings':
           window.location.assign('/ad.html#settings')
-        } else {
-          window.location.assign('/settings.html')
-        }
-        break
-      case 'player':
-        if (adsEnabled) {
+          break
+        case 'player':
           window.location.assign('/ad.html#player')
-        } else {
+          break
+      }
+    } else {
+      switch (page) {
+        case 'home':
+          window.location.assign('/home.html')
+          break
+        case 'settings':
+          window.location.assign('/settings.html')
+          break
+        case 'player':
           window.location.assign('/player.html')
-        }
-        break
+          break
+      }
     }
   }, 680)
 }
@@ -157,6 +162,9 @@ Remove the 'blur' on the page when page navigation has completed successfully.
 */
 
 function arrivedAtPage () {
+  if (settings.get('animations') === 'false') {
+    document.body.classList.add('page-transitions-disable')
+  }
   document.body.classList.remove('page-transition-blur-in')
   document.body.classList.add('page-transition-blur-out')
 }
@@ -170,17 +178,12 @@ Switches to the set theme, or applies a default theme if there is no theme set i
 */
 
 function switchTheme () {
-  const currentSelectedTheme = settings.get('theme')
-  if (currentSelectedTheme == null) {
-    settings.set('theme', 'light')
-  }
   var contentElements = document.querySelectorAll('.content')
   var softkeyBars = document.querySelectorAll('.softkeys-bar')
   var separatorElements = document.querySelectorAll('.separator')
   var settingsElements = document.querySelectorAll('.settings-entry')
   var optionMenuElements = document.querySelectorAll('.options-menu')
-  // var optionMenuTitleElements = document.querySelectorAll('.option-menu-title')
-  switch (currentSelectedTheme) {
+  switch (settings.get('theme')) {
     case 'light':
       for (var contentElement of contentElements) {
         contentElement.classList.remove('theme-content-dark')

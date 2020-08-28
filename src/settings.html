@@ -29,7 +29,7 @@
         <h2 class="settings-entry-label" data-l10n-id="port-title">Kodi port</h2>
         <button id="port">x.x.x.x</button>
       </section>
-      <div class="separator" data-l10n-id="separator-appearance">Kodi information</div>
+      <div class="separator" data-l10n-id="separator-appearance">Appearance</div>
       <section class="settings-entry navigable">
         <h2 class="settings-entry-label" data-l10n-id="theme-title">App theme</h2>
         <select id="theme">
@@ -37,12 +37,19 @@
           <option data-l10n-id="theme-option-dark" value="dark">Dark</option>
         </select>
       </section>
-      <div class="separator" data-l10n-id="separator-functionality"></div>
+      <section class="settings-entry navigable">
+        <h2 class="settings-entry-label" data-l10n-id="animations-title">App animations</h2>
+        <select id="animations">
+          <option data-l10n-id="animations-options-full" value="true">Full</option>
+          <option data-l10n-id="animations-options-reduce" value="false">Reduce</option>
+        </select>
+      </section>
+      <div class="separator" data-l10n-id="separator-functionality">Functionality</div>
       <section class="settings-entry navigable">
         <h2 class="settings-entry-label" data-l10n-id="playernotify-title">Kodi player notifications</h2>
         <select id="notify">
-          <option data-l10n-id="playernotify-option-on" value="true">On</option>
-          <option data-l10n-id="playernotify-option-off" value="false">Off</option>
+          <option data-l10n-id="toggle-options-on" value="true">On</option>
+          <option data-l10n-id="toggle-options-off" value="false">Off</option>
         </select>
       </section>
       <div class="separator" data-l10n-id="separator-monetization">Monetization & about</div>
