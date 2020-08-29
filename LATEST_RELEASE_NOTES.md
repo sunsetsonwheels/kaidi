@@ -2,8 +2,7 @@
 
 *New features:*
 
-- Dark theme for options menus: previously, options menus  weren't themed. Now they are.
-- Replaced custom native-toast with kaios-toaster: I created my own native-toast 'fork' called [kaios-toaster](https://github.com/jkelol111/kaios-toaster). It supports displaying multiline toast messages, and looks uniform with KaiOS.
+- Added reduce motion option: for people who are sensitive to motion, the option to lessen the transitions that happen between app pages have been added.
 
 *Bugs:*
 
@@ -15,7 +14,7 @@
 
 *Using OmniSD:*
 
-1. Download the file `kaidi-1.0.7-stable-omnisd.zip` to your SD card.
+1. Download the file `kaidi-1.0.8-stable-omnisd.zip` to your SD card.
 
 2. Open OmniSD and install.
 
