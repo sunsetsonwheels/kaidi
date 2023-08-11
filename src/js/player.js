@@ -533,7 +533,7 @@ class KodiPlayerController extends KodiMethods {
   seekForward () {
     this.getKodiActivePlayers().then((activePlayer) => {
       this.playerWrapper('Seek', {
-        value: 'smallforward',
+        value: { step: 'smallforward' },
         playerid: activePlayer
       })
     })
@@ -568,7 +568,7 @@ class KodiPlayerController extends KodiMethods {
   seekBackward () {
     this.getKodiActivePlayers().then((activePlayer) => {
       this.playerWrapper('Seek', {
-        value: 'smallbackward',
+        value: { step: 'smallbackward' },
         playerid: activePlayer
       })
     })
