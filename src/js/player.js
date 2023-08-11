@@ -367,13 +367,13 @@ class KodiPlayerController extends KodiMethods {
       case 0:
         this.isPlaying = false
         document.getElementById('playing-status').style.visibility = 'hidden'
-        updateSoftkeysLocalization('none', 'play', 'none')
+        updateSoftkeysLocalization('previous', 'play', 'next')
         break
       case 1:
         this.isPlaying = true
         document.getElementById('playing-status').style.visibility = 'initial'
         this.timer.start()
-        updateSoftkeysLocalization('playback', 'pause', 'none')
+        updateSoftkeysLocalization('previous', 'pause', 'next')
         break
       default:
         throw new KodiPlayerTypeError('playerSpeed', '0, 1', playerSpeed)
@@ -579,35 +579,10 @@ document.addEventListener('DOMContentLoaded', () => {
   switchTheme()
   arrivedAtPage()
   var player = new KodiPlayerController()
-  var beginKeydown = 0
-  window.onkeyup = (e) => {
-    if (player.isPlaying) {
-      console.log((new Date().getTime()) - beginKeydown)
-      if ((new Date().getTime()) - beginKeydown >= 150) {
-        switch (e.key) {
-          case 'ArrowLeft':
-            player.seekBackward()
-            break
-          case 'ArrowRight':
-            player.seekForward()
-            break
-        }
-      } else {
-        switch (e.key) {
-          case 'ArrowLeft':
-            player.goBackward()
-            break
-          case 'ArrowRight':
-            player.goForward()
-            break
-        }
-      }
-      beginKeydown = 0
-    }
-  }
+  var interval = null
   window.onkeydown = (e) => {
     switch (e.key) {
-      case 'SoftLeft':
+      case 'Call':
         if (player.isPlaying) {
           player.openPlaybackOptionsMenu()
         }
@@ -635,8 +610,22 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         break
       case 'ArrowRight':
+        if (!interval) {
+          player.seekForward()
+          interval = setInterval(() => player.seekForward(), 250)
+        }
+        break
       case 'ArrowLeft':
-        beginKeydown = (new Date()).getTime()
+        if (!interval) {
+          player.seekBackward()
+          interval = setInterval(() => player.seekBackward(), 250)
+        }
+        break
+      case 'SoftRight':
+        player.goForward()
+        break
+      case 'SoftLeft':
+        player.goBackward()
         break
       case 'Enter':
         if (player.isPlaybackOptionsOpen) {
@@ -647,6 +636,10 @@ document.addEventListener('DOMContentLoaded', () => {
         break
     }
   }
+  window.addEventListener('keyup', () => {
+    clearInterval(interval)
+    interval = null
+  })
 })
 
 window.onerror = (e) => {
