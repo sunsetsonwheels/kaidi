@@ -4,7 +4,7 @@
 
 This file is reponsible for the communcation with the Kodi device.
 
-(C) jkelol111 and contributors 2020. Licensed under the GPLv3 license.
+(C) jkelol111 and contributors 2020, 2023. Licensed under the GPLv3 license.
 
 */
 
@@ -67,6 +67,13 @@ class KodiRPC {
     this.startWorker = startWorker
     this.kodiIP = settings.get('ip')
     this.kodiPort = settings.get('port')
+    this.kodiUseAuthentication = settings.get('authentication') === 'true'
+    this.kodiUseSSL = settings.get('ssl') === 'true'
+    this.kodiUsername = settings.get('username')
+    this.kodiPassword = settings.get('password')
+    this.kodiBaseURL = 'http' + (this.kodiUseSSL ? 's' : '') + '://' +
+      (this.kodiUseAuthentication ? this.kodiUsername + ':' + this.kodiPassword + '@' : '' ) + this.kodiIP + ':' + this.kodiPort
+
     // Starts the worker if startWorker is true.
     if (this.startWorker) {
       this.listeningKodiEvents = {}
@@ -90,8 +97,15 @@ class KodiRPC {
       this.eventWorker.postMessage({
         command: 'init',
         kodiInfo: {
+          // Only ip actually seems to be used, since websockets don't use the rest
+          // Other info might be needed if Kodi gets auth support for websockets at some point
           ip: this.kodiIP,
-          port: this.kodiPort
+          port: this.kodiPort,
+          useAuthentication: this.kodiUseAuthentication,
+          username: this.kodiUsername,
+          password: this.kodiPassword,
+          useSSL: this.kodiUseSSL,
+          kodiBaseURL: this.kodiBaseURL
         },
         kodiNotifications: settings.get('notify')
       })
@@ -113,7 +127,7 @@ class KodiRPC {
     var request = new XMLHttpRequest({ mozSystem: true })
     // Timeout so the app feels 'quicker'.
     request.timeout = 2000
-    request.open('POST', 'http://' + this.kodiIP + ':' + this.kodiPort + '/jsonrpc', true)
+    request.open('POST', this.kodiBaseURL + '/jsonrpc', true)
     request.setRequestHeader('Content-Type', 'application/json')
     return new Promise((resolve, reject) => {
       request.onreadystatechange = () => {

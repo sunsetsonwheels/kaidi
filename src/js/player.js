@@ -348,7 +348,7 @@ class KodiPlayerController extends KodiMethods {
       this.kodiXmlHttpRequest('Files.PrepareDownload', {
         path: playerInfoObject.thumbnail
       }).then((response) => {
-        document.getElementById('thumbnail').src = 'http://' + this.kodiIP + ':' + this.kodiPort + '/' + response.details.path
+        document.getElementById('thumbnail').src = this.kodiBaseURL + '/' + response.details.path
       })
     }
   }

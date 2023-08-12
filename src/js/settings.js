@@ -32,21 +32,59 @@ class KodiSettingsController {
     // Sets the initial values of basic configuration if it isn't.
     if (settings.get('ip') == null) settings.set('ip', '192.168.0.123')
     if (settings.get('port') == null) settings.set('port', '8080')
+    if (settings.get('authentication') == null) settings.set('authentication', 'false')
+    if (settings.get('username') == null) settings.set('username', 'kodi')
+    if (settings.get('port') == null) settings.set('password', '')
+    if (settings.get('ssl') == null) settings.set('ssl', 'false')
     if (settings.get('notify') == null) settings.set('notify', 'true')
 
     // Event listeners for the settings elements.
     document.getElementById('ip').innerText = settings.get('ip')
     document.getElementById('ip').onfocus = () => {
-      this.setKodiIPAndPort('ip')
+      this.setKodiConnectionSettings('ip')
     }
     document.getElementById('ip').onblur = () => {
       naviBoard.getActiveElement().focus()
     }
     document.getElementById('port').innerText = settings.get('port')
     document.getElementById('port').onfocus = () => {
-      this.setKodiIPAndPort('port')
+      this.setKodiConnectionSettings('port')
     }
     document.getElementById('port').onblur = () => {
+      naviBoard.getActiveElement().focus()
+    }
+    document.getElementById('authentication').value = settings.get('authentication')
+    document.getElementById('authentication').onchange = (e) => {
+      this.setSelectSettings('authentication', e.target.value)
+      this.setAuthenticationSettingsVisibility()
+      // Refresh navigation after showing/hiding username and password.
+      // Needs to be called twice to always preserve focus (naviboard bug?)
+      naviBoard.refreshNavigation('settings-content', 'destroy')
+      naviBoard.refreshNavigation('settings-content', 'destroy')
+    }
+    document.getElementById('authentication').onblur = () => {
+      naviBoard.getActiveElement().focus()
+    }
+    this.setAuthenticationSettingsVisibility()
+    document.getElementById('username').innerText = settings.get('username')
+    document.getElementById('username').onfocus = () => {
+      this.setKodiConnectionSettings('username')
+    }
+    document.getElementById('username').onblur = () => {
+      naviBoard.getActiveElement().focus()
+    }
+    document.getElementById('password').innerText = settings.get('password')
+    document.getElementById('password').onfocus = () => {
+      this.setKodiConnectionSettings('password')
+    }
+    document.getElementById('password').onblur = () => {
+      naviBoard.getActiveElement().focus()
+    }
+    document.getElementById('ssl').value = settings.get('ssl')
+    document.getElementById('ssl').onchange = (e) => {
+      this.setSelectSettings('ssl', e.target.value)
+    }
+    document.getElementById('ssl').onblur = () => {
       naviBoard.getActiveElement().focus()
     }
     document.getElementById('theme').value = settings.get('theme')
@@ -156,13 +194,14 @@ class KodiSettingsController {
 
   /*
 
-  Function setKodiIPAndPort (String setting)
+  Function setKodiConnectionSettings (String setting)
 
-  Opens a prompt and saves the IP or port of Kodi upon focus on the respective setting elements
+  Opens a prompt and saves the IP, port, username or password of Kodi upon focus on the
+  respective setting elements
 
   */
 
-  setKodiIPAndPort (setting) {
+  setKodiConnectionSettings (setting) {
     navigator.mozL10n.formatValue(setting + '-title').then((localizedText) => {
       var input = prompt(localizedText + ':')
       if (input) {
@@ -182,9 +221,9 @@ class KodiSettingsController {
 
   /*
 
-  Function setKodiIPAndPort (String setting)
+  Function setSelectSettings (String setting, String value)
 
-  Opens a prompt and saves the IP or port of Kodi upon focus on the respective setting elements
+  Saves the value of a setting. Used with the <select> kind of settings.
 
   */
 
@@ -197,6 +236,29 @@ class KodiSettingsController {
       this.showSettingChangeFailed()
       console.error(err)
       return false
+    }
+  }
+
+  /*
+
+  Function setAuthenticationSettingsVisibility ()
+
+  Sets the visibility of the username and password settings based on whether
+  authentication is enabled.
+
+  */
+
+  setAuthenticationSettingsVisibility () {
+    if (settings.get('authentication') === 'true') {
+      document.getElementById('settings-entry-username').classList.remove('hidden')
+      document.getElementById('settings-entry-username').classList.add('settings-entry', 'navigable')
+      document.getElementById('settings-entry-password').classList.remove('hidden')
+      document.getElementById('settings-entry-password').classList.add('settings-entry', 'navigable')
+    } else {
+      document.getElementById('settings-entry-username').classList.remove('settings-entry', 'navigable')
+      document.getElementById('settings-entry-username').classList.add('hidden')
+      document.getElementById('settings-entry-password').classList.remove('settings-entry', 'navigable')
+      document.getElementById('settings-entry-password').classList.add('hidden')
     }
   }
 
