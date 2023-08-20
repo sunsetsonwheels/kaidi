@@ -283,7 +283,6 @@ class KodiPlayerController extends KodiMethods {
     document.getElementById('playing-status').style.visibility = 'hidden'
     document.getElementById('thumbnail').src = '/icons/kaidi_112.png'
     document.getElementById('throbber').style.display = 'none'
-    this.timer.stop()
     this.isPlaying = false
   }
 
@@ -344,7 +343,6 @@ class KodiPlayerController extends KodiMethods {
   */
 
   updatePlayerPlayPause (playerSpeed) {
-    this.timer.stop()
     document.getElementById('playing-status').style.visibility = 'initial'
     this.isPlayingOrPaused = true
     switch (playerSpeed) {
@@ -354,7 +352,6 @@ class KodiPlayerController extends KodiMethods {
         break
       case 1:
         this.isPlaying = true
-        this.timer.start()
         updateSoftkeysLocalization('previous', 'pause', 'next')
         break
       default:
