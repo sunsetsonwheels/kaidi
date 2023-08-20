@@ -179,17 +179,8 @@ class KodiPlayerController extends KodiMethods {
 
     this.timer = new TaskTimer(2000)
     this.timer.on('tick', () => {
-      if (document.visibilityState === 'visible') {
-        this.getKodiActivePlayers().then((activePlayer) => {
-          this.playerWrapper('GetProperties', {
-            properties: ['percentage', 'time', 'totaltime'],
-            playerid: activePlayer
-          }).then((response) => {
-            document.getElementById('duration-text').innerText = response.time.hours + ':' + ('0' + response.time.minutes).slice(-2) + ':' + ('0' + response.time.seconds).slice(-2) + '/' + response.totaltime.hours + ':' + ('0' + response.totaltime.minutes).slice(-2) + ':' + ('0' + response.totaltime.seconds).slice(-2)
-            document.getElementById('duration-meter').value = response.percentage
-          })
-        })
-      }
+      if (document.visibilityState === 'visible')
+        this.refreshProperties()
     })
 
     /*
@@ -447,6 +438,28 @@ class KodiPlayerController extends KodiMethods {
       default:
         throw new KodiPlayerTypeError('shuffleStatus', 'off, on', shuffleStatus)
     }
+  }
+
+  /*
+
+  Function refreshProperties()
+
+  Gets some properties from Kodi and updates them in the UI.
+  Called every 2 seconds.
+
+  */
+
+  refreshProperties ()
+  {
+    this.getKodiActivePlayers().then((activePlayer) => {
+      this.playerWrapper('GetProperties', {
+        properties: ['percentage', 'time', 'totaltime'],
+        playerid: activePlayer
+      }).then((response) => {
+        document.getElementById('duration-text').innerText = response.time.hours + ':' + ('0' + response.time.minutes).slice(-2) + ':' + ('0' + response.time.seconds).slice(-2) + '/' + response.totaltime.hours + ':' + ('0' + response.totaltime.minutes).slice(-2) + ':' + ('0' + response.totaltime.seconds).slice(-2)
+        document.getElementById('duration-meter').value = response.percentage
+      })
+    })
   }
 
   /*
