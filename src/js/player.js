@@ -154,6 +154,12 @@ class KodiPlayerController extends KodiMethods {
       if (document.visibilityState === 'visible')
         this.refreshProperties()
     })
+    document.addEventListener('visibilitychange', event => {
+      if (document.visibilityState !== 'visible')
+        this.timer.stop()
+      else if (this.isPlaying)
+        this.timer.start()
+    })
 
     /*
 
