@@ -452,13 +452,51 @@ class KodiPlayerController extends KodiMethods {
   refreshProperties ()
   {
     this.getKodiActivePlayers().then((activePlayer) => {
-      this.playerWrapper('GetProperties', {
-        properties: ['percentage', 'time', 'totaltime'],
-        playerid: activePlayer
-      }).then((response) => {
-        document.getElementById('duration-text').innerText = response.time.hours + ':' + ('0' + response.time.minutes).slice(-2) + ':' + ('0' + response.time.seconds).slice(-2) + '/' + response.totaltime.hours + ':' + ('0' + response.totaltime.minutes).slice(-2) + ':' + ('0' + response.totaltime.seconds).slice(-2)
-        document.getElementById('duration-meter').value = response.percentage
+      this.kodiXmlHttpRequest([
+        [ 'Player.GetProperties', {
+          properties: ['percentage', 'time', 'totaltime',
+            'speed', 'repeat', 'shuffled'],
+          playerid: activePlayer
+        }],
+        [ 'Player.GetItem', {
+          properties: ['title', 'artist', 'thumbnail'],
+          playerid: activePlayer
+        }]
+      ]).catch((err) => {
+        this.methodErrorOut(err)
+        reject(err)
       })
+      .then((response) => {
+        if (response[0].result) {
+          const properties = response[0].result
+          document.getElementById('duration-text').innerText = properties.time.hours + ':' + ('0' + properties.time.minutes).slice(-2) + ':' + ('0' + properties.time.seconds).slice(-2) + '/' + properties.totaltime.hours + ':' + ('0' + properties.totaltime.minutes).slice(-2) + ':' + ('0' + properties.totaltime.seconds).slice(-2)
+          document.getElementById('duration-meter').value = properties.percentage
+
+          this.updatePlayerRepeat(properties.repeat)
+          this.updatePlayerShuffle(properties.shuffled)
+          this.updatePlayerPlayPause(properties.speed)
+        }
+
+        if (response[1].result) {
+          const item = response[1].result.item
+          var playerInfoObject = {}
+          if (item.title) {
+            playerInfoObject.title = item.title
+          } else if (item.label) {
+            playerInfoObject.title = item.label
+          }
+          if (item.artist) {
+            playerInfoObject.artists = item.artist
+          }
+          if (item.thumbnail) {
+            playerInfoObject.thumbnail = item.thumbnail
+          }
+          this.updatePlayerInfo(playerInfoObject)
+        }
+      })
+    }).catch(() => {
+      newLocalizedToast('toast-player-inactive', 'No player active.', 'south', 3000, 'warning')
+      this.blankPlayer()
     })
   }
 
