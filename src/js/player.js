@@ -58,10 +58,13 @@ class KodiPlayerController extends KodiMethods {
     /*
     Boolean isPlaying: Shows whether the player is playing or not, so we can act appropiately.
 
+    Boolean isPlayingOrPaused: Shows whether there is an active player at all.
+
     Boolean isPlaybackOptionsOpen: Shows whether the playback options menu is open.
     */
 
     this.isPlaying = false
+    this.isPlayingOrPaused = false
     this.isPlaybackOptionsOpen = false
 
     /*
@@ -73,40 +76,10 @@ class KodiPlayerController extends KodiMethods {
     to reduce the number of requests we have to make.
     */
 
-    this.getKodiActivePlayers().then((activePlayer) => {
-      this.playerWrapper('GetItem', {
-        properties: ['title', 'artist', 'thumbnail'],
-        playerid: activePlayer
-      }).then((response) => {
-        var playerInfoObject = {}
-        if (response.item.title) {
-          playerInfoObject.title = response.item.title
-        } else if (response.item.label) {
-          playerInfoObject.title = response.item.label
-        }
-        if (response.item.artist) {
-          playerInfoObject.artists = response.item.artist
-        }
-        if (response.item.thumbnail) {
-          playerInfoObject.thumbnail = response.item.thumbnail
-        }
-        this.updatePlayerInfo(playerInfoObject)
-      })
-      this.playerWrapper('GetProperties', {
-        properties: ['speed', 'repeat', 'shuffled'],
-        playerid: activePlayer
-      }).then((response) => {
-        this.updatePlayerRepeat(response.repeat)
-        this.updatePlayerShuffle(response.shuffled)
-        this.updatePlayerPlayPause(response.speed)
+    this.refreshProperties()
+      .then(() => {
         document.getElementById('throbber').style.display = 'none'
-      }).catch(() => {
-        this.blankPlayer()
       })
-    }).catch(() => {
-      newLocalizedToast('toast-player-inactive', 'No player active.', 'south', 3000, 'warning')
-      this.blankPlayer()
-    })
 
     /*
 
@@ -159,7 +132,6 @@ class KodiPlayerController extends KodiMethods {
     })
 
     this.kodiRegisterEventListener('Player.OnStop', () => {
-      this.updatePlayerPlayPause(0)
       this.blankPlayer()
     })
 
@@ -360,20 +332,22 @@ class KodiPlayerController extends KodiMethods {
   Function updatePlayerPlayPause(Number playerSpeed)
 
   Update the Play/Pause controls and status of this player.
+  It also handles putting the player into a playing-or-paused state; if there is no active
+  player at all, call blankPlayer() instead (or afterwards).
 
   */
 
   updatePlayerPlayPause (playerSpeed) {
     this.timer.stop()
+    document.getElementById('playing-status').style.visibility = 'initial'
+    this.isPlayingOrPaused = true
     switch (playerSpeed) {
       case 0:
         this.isPlaying = false
-        document.getElementById('playing-status').style.visibility = 'hidden'
         updateSoftkeysLocalization('previous', 'play', 'next')
         break
       case 1:
         this.isPlaying = true
-        document.getElementById('playing-status').style.visibility = 'initial'
         this.timer.start()
         updateSoftkeysLocalization('previous', 'pause', 'next')
         break
@@ -445,14 +419,14 @@ class KodiPlayerController extends KodiMethods {
   Function refreshProperties()
 
   Gets some properties from Kodi and updates them in the UI.
-  Called every 2 seconds.
+  Called initially, then every 2 seconds and possibly in other situations.
 
   */
 
   refreshProperties ()
   {
-    this.getKodiActivePlayers().then((activePlayer) => {
-      this.kodiXmlHttpRequest([
+    return this.getKodiActivePlayers().then((activePlayer) => {
+      return this.kodiXmlHttpRequest([
         [ 'Player.GetProperties', {
           properties: ['percentage', 'time', 'totaltime',
             'speed', 'repeat', 'shuffled'],
@@ -702,7 +676,7 @@ document.addEventListener('DOMContentLoaded', () => {
   window.onkeydown = (e) => {
     switch (e.key) {
       case 'Call':
-        if (player.isPlaying) {
+        if (player.isPlayingOrPaused) {
           player.openPlaybackOptionsMenu()
         }
         break
