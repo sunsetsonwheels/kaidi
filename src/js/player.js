@@ -584,6 +584,7 @@ class KodiPlayerController extends KodiMethods {
         playerid: activePlayer
       })
     })
+    .then(() => this.refreshProperties())
   }
 
   /*
