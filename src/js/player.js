@@ -241,6 +241,17 @@ class KodiPlayerController extends KodiMethods {
         })
       })
     }
+
+    /*
+    Object/null currentSeek: null if no seeking button (ArrowLeft, ArrowRight) is currently pressed.
+    If a seek is in progress, the 'interval' property is the intervalID (after an initial
+    request returns), and the 'released' property is false until the button is released.
+
+    To stop seeking (on keyup), clearInterval is called on the interval AND released is set to true
+    AND then currentSeek itself is set to null.
+    */
+
+    this.currentSeek = null
   }
 
   /*
@@ -523,24 +534,6 @@ class KodiPlayerController extends KodiMethods {
 
   /*
 
-  Function seekForward()
-
-  Seeks the player forward by a small margin. Hooked up to keyup event, if
-  the time difference is >= 40, this function will be invoked.
-
-  */
-
-  seekForward () {
-    this.getKodiActivePlayers().then((activePlayer) => {
-      this.playerWrapper('Seek', {
-        value: { step: 'smallforward' },
-        playerid: activePlayer
-      })
-    })
-  }
-
-  /*
-
   Function goBackward()
 
   Goes back one item ahead in the Kodi playlist.
@@ -558,20 +551,95 @@ class KodiPlayerController extends KodiMethods {
 
   /*
 
-  Function seekBackward()
+  Function seek(Object value)
 
-  Seeks the player backwards by a small margin. Hooked up to keyup event, if
-  the time difference is >= 40, this function will be invoked.
+  Seeks the player by the specified value. The value is in the format of the parameter
+  of the Player.Seek call:
+  https://kodi.wiki/view/JSON-RPC_API/v13#Player.Seek
+  Examples:
+  { step: 'smallbackward' }
+  { step: 'smallforward' }
+  { seconds: -30 } // backward
+  { seconds: 30 } // forward
 
   */
 
-  seekBackward () {
+  seek (value) {
     this.getKodiActivePlayers().then((activePlayer) => {
       this.playerWrapper('Seek', {
-        value: { step: 'smallbackward' },
+        value,
         playerid: activePlayer
       })
     })
+  }
+
+  /*
+
+  Function startSeeking(Boolean backward)
+
+  Called when a seeking button is pressed.
+  The parameter is true for seeking backward, false for seeking forward.
+  It repeatedly seeks until stopSeeking() is called.
+
+  */
+
+  startSeeking (backward) {
+    // We return if a seeking button is already pressed
+    if (this.currentSeek) return
+    const thisSeek = this.currentSeek = {
+      interval: 0,
+      released: false
+    }
+
+    this.kodiXmlHttpRequest([
+      ['Player.GetActivePlayers'],
+      ['Settings.GetSettingValue', { setting: 'videoplayer.seeksteps' }],
+      ['Settings.GetSettingValue', { setting: 'musicplayer.seekdelay' }],
+      ['Settings.GetSettingValue', { setting: 'videoplayer.seeksteps' }],
+      ['Settings.GetSettingValue', { setting: 'musicplayer.seekdelay' }]
+    ])
+      .catch(() => [])
+      .then(response => {
+        const playerType = (((response[0] || {}).result || [])[0] || {}).playertype
+        const steps = (((response[playerType === 'video' ? 1 : 3] || {}).result || {}).value || [])
+          .sort((a, b) => a - b)
+        const seekValues = (steps[0] < 0 && steps[steps.length-1] > 0) ?
+          (backward ?
+            steps.slice(0, steps.findIndex(v => v >= 0)).reverse() :
+            steps.slice(steps.findIndex(v => v > 0)))
+            .map(v => ({ seconds: v })) :
+          backward ?
+            [{ step: 'smallbackward' }] :
+            [{ step: 'smallforward' }]
+        const delay = ((response[(playerType === 'video') ? 2 : 4] || {}).result || {}).value || 250
+
+        var i = 0
+        const seek = () => {
+          this.seek(seekValues[i])
+          if (i < seekValues.length - 1) ++i
+        }
+
+        seek()
+        // If the button has already been released, we seek only once, then return
+        if (thisSeek.released) return
+        this.currentSeek.interval = setInterval(seek, delay)
+      })
+  }
+
+  /*
+
+  Function stopSeeking()
+
+  Called on keyup to stop the ongoing seeking, if there is one.
+
+  */
+
+  stopSeeking () {
+    if (this.currentSeek) {
+      clearInterval(this.currentSeek.interval)
+      this.currentSeek.released = true
+      this.currentSeek = null
+    }
   }
 }
 
@@ -579,7 +647,6 @@ document.addEventListener('DOMContentLoaded', () => {
   switchTheme()
   arrivedAtPage()
   var player = new KodiPlayerController()
-  var interval = null
   window.onkeydown = (e) => {
     switch (e.key) {
       case 'Call':
@@ -610,16 +677,10 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         break
       case 'ArrowRight':
-        if (!interval) {
-          player.seekForward()
-          interval = setInterval(() => player.seekForward(), 250)
-        }
+        player.startSeeking(false)
         break
       case 'ArrowLeft':
-        if (!interval) {
-          player.seekBackward()
-          interval = setInterval(() => player.seekBackward(), 250)
-        }
+        player.startSeeking(true)
         break
       case 'SoftRight':
         player.goForward()
@@ -636,10 +697,7 @@ document.addEventListener('DOMContentLoaded', () => {
         break
     }
   }
-  window.addEventListener('keyup', () => {
-    clearInterval(interval)
-    interval = null
-  })
+  window.addEventListener('keyup', () => player.stopSeeking())
 })
 
 window.onerror = (e) => {
