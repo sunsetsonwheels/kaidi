@@ -27,7 +27,29 @@
       </section>
       <section class="settings-entry navigable">
         <h2 class="settings-entry-label" data-l10n-id="port-title">Kodi port</h2>
-        <button id="port">x.x.x.x</button>
+        <button id="port"></button>
+      </section>
+      <section class="settings-entry navigable">
+        <h2 class="settings-entry-label" data-l10n-id="authentication-title">Use authentication</h2>
+        <select id="authentication">
+          <option data-l10n-id="toggle-options-on" value="true">On</option>
+          <option data-l10n-id="toggle-options-off" value="false">Off</option>
+        </select>
+      </section>
+      <section id="settings-entry-username" class="hidden">
+        <h2 class="settings-entry-label" data-l10n-id="username-title">Kodi username</h2>
+        <button id="username"></button>
+      </section>
+      <section id="settings-entry-password" class="hidden">
+        <h2 class="settings-entry-label" data-l10n-id="password-title">Kodi password</h2>
+        <button id="password" class="password"></button>
+      </section>
+      <section class="settings-entry navigable">
+        <h2 class="settings-entry-label" data-l10n-id="ssl-title">Use SSL</h2>
+        <select id="ssl">
+          <option data-l10n-id="toggle-options-on" value="true">On</option>
+          <option data-l10n-id="toggle-options-off" value="false">Off</option>
+        </select>
       </section>
       <div class="separator" data-l10n-id="separator-appearance">Appearance</div>
       <section class="settings-entry navigable">
