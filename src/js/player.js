@@ -58,10 +58,13 @@ class KodiPlayerController extends KodiMethods {
     /*
     Boolean isPlaying: Shows whether the player is playing or not, so we can act appropiately.
 
+    Boolean isPlayingOrPaused: Shows whether there is an active player at all.
+
     Boolean isPlaybackOptionsOpen: Shows whether the playback options menu is open.
     */
 
     this.isPlaying = false
+    this.isPlayingOrPaused = false
     this.isPlaybackOptionsOpen = false
 
     /*
@@ -73,40 +76,10 @@ class KodiPlayerController extends KodiMethods {
     to reduce the number of requests we have to make.
     */
 
-    this.getKodiActivePlayers().then((activePlayer) => {
-      this.playerWrapper('GetItem', {
-        properties: ['title', 'artist', 'thumbnail'],
-        playerid: activePlayer
-      }).then((response) => {
-        var playerInfoObject = {}
-        if (response.item.title) {
-          playerInfoObject.title = response.item.title
-        } else if (response.item.label) {
-          playerInfoObject.title = response.item.label
-        }
-        if (response.item.artist) {
-          playerInfoObject.artists = response.item.artist
-        }
-        if (response.item.thumbnail) {
-          playerInfoObject.thumbnail = response.item.thumbnail
-        }
-        this.updatePlayerInfo(playerInfoObject)
-      })
-      this.playerWrapper('GetProperties', {
-        properties: ['speed', 'repeat', 'shuffled'],
-        playerid: activePlayer
-      }).then((response) => {
-        this.updatePlayerRepeat(response.repeat)
-        this.updatePlayerShuffle(response.shuffled)
-        this.updatePlayerPlayPause(response.speed)
+    this.refreshProperties()
+      .then(() => {
         document.getElementById('throbber').style.display = 'none'
-      }).catch(() => {
-        this.blankPlayer()
       })
-    }).catch(() => {
-      newLocalizedToast('toast-player-inactive', 'No player active.', 'south', 3000, 'warning')
-      this.blankPlayer()
-    })
 
     /*
 
@@ -159,7 +132,6 @@ class KodiPlayerController extends KodiMethods {
     })
 
     this.kodiRegisterEventListener('Player.OnStop', () => {
-      this.updatePlayerPlayPause(0)
       this.blankPlayer()
     })
 
@@ -179,17 +151,14 @@ class KodiPlayerController extends KodiMethods {
 
     this.timer = new TaskTimer(2000)
     this.timer.on('tick', () => {
-      if (document.visibilityState === 'visible') {
-        this.getKodiActivePlayers().then((activePlayer) => {
-          this.playerWrapper('GetProperties', {
-            properties: ['percentage', 'time', 'totaltime'],
-            playerid: activePlayer
-          }).then((response) => {
-            document.getElementById('duration-text').innerText = response.time.hours + ':' + ('0' + response.time.minutes).slice(-2) + ':' + ('0' + response.time.seconds).slice(-2) + '/' + response.totaltime.hours + ':' + ('0' + response.totaltime.minutes).slice(-2) + ':' + ('0' + response.totaltime.seconds).slice(-2)
-            document.getElementById('duration-meter').value = response.percentage
-          })
-        })
-      }
+      if (document.visibilityState === 'visible')
+        this.refreshProperties()
+    })
+    document.addEventListener('visibilitychange', event => {
+      if (document.visibilityState !== 'visible')
+        this.timer.stop()
+      else if (this.isPlaying)
+        this.timer.start()
     })
 
     /*
@@ -241,6 +210,17 @@ class KodiPlayerController extends KodiMethods {
         })
       })
     }
+
+    /*
+    Object/null currentSeek: null if no seeking button (ArrowLeft, ArrowRight) is currently pressed.
+    If a seek is in progress, the 'interval' property is the intervalID (after an initial
+    request returns), and the 'released' property is false until the button is released.
+
+    To stop seeking (on keyup), clearInterval is called on the interval AND released is set to true
+    AND then currentSeek itself is set to null.
+    */
+
+    this.currentSeek = null
   }
 
   /*
@@ -303,7 +283,6 @@ class KodiPlayerController extends KodiMethods {
     document.getElementById('playing-status').style.visibility = 'hidden'
     document.getElementById('thumbnail').src = '/icons/kaidi_112.png'
     document.getElementById('throbber').style.display = 'none'
-    this.timer.stop()
     this.isPlaying = false
   }
 
@@ -358,22 +337,22 @@ class KodiPlayerController extends KodiMethods {
   Function updatePlayerPlayPause(Number playerSpeed)
 
   Update the Play/Pause controls and status of this player.
+  It also handles putting the player into a playing-or-paused state; if there is no active
+  player at all, call blankPlayer() instead (or afterwards).
 
   */
 
   updatePlayerPlayPause (playerSpeed) {
-    this.timer.stop()
+    document.getElementById('playing-status').style.visibility = 'initial'
+    this.isPlayingOrPaused = true
     switch (playerSpeed) {
       case 0:
         this.isPlaying = false
-        document.getElementById('playing-status').style.visibility = 'hidden'
-        updateSoftkeysLocalization('none', 'play', 'none')
+        updateSoftkeysLocalization('previous', 'play', 'next')
         break
       case 1:
         this.isPlaying = true
-        document.getElementById('playing-status').style.visibility = 'initial'
-        this.timer.start()
-        updateSoftkeysLocalization('playback', 'pause', 'none')
+        updateSoftkeysLocalization('previous', 'pause', 'next')
         break
       default:
         throw new KodiPlayerTypeError('playerSpeed', '0, 1', playerSpeed)
@@ -436,6 +415,66 @@ class KodiPlayerController extends KodiMethods {
       default:
         throw new KodiPlayerTypeError('shuffleStatus', 'off, on', shuffleStatus)
     }
+  }
+
+  /*
+
+  Function refreshProperties()
+
+  Gets some properties from Kodi and updates them in the UI.
+  Called initially, then every 2 seconds and possibly in other situations.
+
+  */
+
+  refreshProperties ()
+  {
+    return this.getKodiActivePlayers().then((activePlayer) => {
+      return this.kodiXmlHttpRequest([
+        [ 'Player.GetProperties', {
+          properties: ['percentage', 'time', 'totaltime',
+            'speed', 'repeat', 'shuffled'],
+          playerid: activePlayer
+        }],
+        [ 'Player.GetItem', {
+          properties: ['title', 'artist', 'thumbnail'],
+          playerid: activePlayer
+        }]
+      ]).catch((err) => {
+        this.methodErrorOut(err)
+        reject(err)
+      })
+      .then((response) => {
+        if (response[0].result) {
+          const properties = response[0].result
+          document.getElementById('duration-text').innerText = properties.time.hours + ':' + ('0' + properties.time.minutes).slice(-2) + ':' + ('0' + properties.time.seconds).slice(-2) + '/' + properties.totaltime.hours + ':' + ('0' + properties.totaltime.minutes).slice(-2) + ':' + ('0' + properties.totaltime.seconds).slice(-2)
+          document.getElementById('duration-meter').value = properties.percentage
+
+          this.updatePlayerRepeat(properties.repeat)
+          this.updatePlayerShuffle(properties.shuffled)
+          this.updatePlayerPlayPause(properties.speed)
+        }
+
+        if (response[1].result) {
+          const item = response[1].result.item
+          var playerInfoObject = {}
+          if (item.title) {
+            playerInfoObject.title = item.title
+          } else if (item.label) {
+            playerInfoObject.title = item.label
+          }
+          if (item.artist) {
+            playerInfoObject.artists = item.artist
+          }
+          if (item.thumbnail) {
+            playerInfoObject.thumbnail = item.thumbnail
+          }
+          this.updatePlayerInfo(playerInfoObject)
+        }
+      })
+    }).catch(() => {
+      newLocalizedToast('toast-player-inactive', 'No player active.', 'south', 3000, 'warning')
+      this.blankPlayer()
+    })
   }
 
   /*
@@ -523,24 +562,6 @@ class KodiPlayerController extends KodiMethods {
 
   /*
 
-  Function seekForward()
-
-  Seeks the player forward by a small margin. Hooked up to keyup event, if
-  the time difference is >= 40, this function will be invoked.
-
-  */
-
-  seekForward () {
-    this.getKodiActivePlayers().then((activePlayer) => {
-      this.playerWrapper('Seek', {
-        value: 'smallforward',
-        playerid: activePlayer
-      })
-    })
-  }
-
-  /*
-
   Function goBackward()
 
   Goes back one item ahead in the Kodi playlist.
@@ -558,20 +579,96 @@ class KodiPlayerController extends KodiMethods {
 
   /*
 
-  Function seekBackward()
+  Function seek(Object value)
 
-  Seeks the player backwards by a small margin. Hooked up to keyup event, if
-  the time difference is >= 40, this function will be invoked.
+  Seeks the player by the specified value. The value is in the format of the parameter
+  of the Player.Seek call:
+  https://kodi.wiki/view/JSON-RPC_API/v13#Player.Seek
+  Examples:
+  { step: 'smallbackward' }
+  { step: 'smallforward' }
+  { seconds: -30 } // backward
+  { seconds: 30 } // forward
 
   */
 
-  seekBackward () {
+  seek (value) {
     this.getKodiActivePlayers().then((activePlayer) => {
       this.playerWrapper('Seek', {
-        value: 'smallbackward',
+        value,
         playerid: activePlayer
       })
     })
+    .then(() => this.refreshProperties())
+  }
+
+  /*
+
+  Function startSeeking(Boolean backward)
+
+  Called when a seeking button is pressed.
+  The parameter is true for seeking backward, false for seeking forward.
+  It repeatedly seeks until stopSeeking() is called.
+
+  */
+
+  startSeeking (backward) {
+    // We return if a seeking button is already pressed
+    if (this.currentSeek) return
+    const thisSeek = this.currentSeek = {
+      interval: 0,
+      released: false
+    }
+
+    this.kodiXmlHttpRequest([
+      ['Player.GetActivePlayers'],
+      ['Settings.GetSettingValue', { setting: 'videoplayer.seeksteps' }],
+      ['Settings.GetSettingValue', { setting: 'musicplayer.seekdelay' }],
+      ['Settings.GetSettingValue', { setting: 'videoplayer.seeksteps' }],
+      ['Settings.GetSettingValue', { setting: 'musicplayer.seekdelay' }]
+    ])
+      .catch(() => [])
+      .then(response => {
+        const playerType = (((response[0] || {}).result || [])[0] || {}).playertype
+        const steps = (((response[playerType === 'video' ? 1 : 3] || {}).result || {}).value || [])
+          .sort((a, b) => a - b)
+        const seekValues = (steps[0] < 0 && steps[steps.length-1] > 0) ?
+          (backward ?
+            steps.slice(0, steps.findIndex(v => v >= 0)).reverse() :
+            steps.slice(steps.findIndex(v => v > 0)))
+            .map(v => ({ seconds: v })) :
+          backward ?
+            [{ step: 'smallbackward' }] :
+            [{ step: 'smallforward' }]
+        const delay = ((response[(playerType === 'video') ? 2 : 4] || {}).result || {}).value || 250
+
+        var i = 0
+        const seek = () => {
+          this.seek(seekValues[i])
+          if (i < seekValues.length - 1) ++i
+        }
+
+        seek()
+        // If the button has already been released, we seek only once, then return
+        if (thisSeek.released) return
+        this.currentSeek.interval = setInterval(seek, delay)
+      })
+  }
+
+  /*
+
+  Function stopSeeking()
+
+  Called on keyup to stop the ongoing seeking, if there is one.
+
+  */
+
+  stopSeeking () {
+    if (this.currentSeek) {
+      clearInterval(this.currentSeek.interval)
+      this.currentSeek.released = true
+      this.currentSeek = null
+    }
   }
 }
 
@@ -579,36 +676,10 @@ document.addEventListener('DOMContentLoaded', () => {
   switchTheme()
   arrivedAtPage()
   var player = new KodiPlayerController()
-  var beginKeydown = 0
-  window.onkeyup = (e) => {
-    if (player.isPlaying) {
-      console.log((new Date().getTime()) - beginKeydown)
-      if ((new Date().getTime()) - beginKeydown >= 150) {
-        switch (e.key) {
-          case 'ArrowLeft':
-            player.seekBackward()
-            break
-          case 'ArrowRight':
-            player.seekForward()
-            break
-        }
-      } else {
-        switch (e.key) {
-          case 'ArrowLeft':
-            player.goBackward()
-            break
-          case 'ArrowRight':
-            player.goForward()
-            break
-        }
-      }
-      beginKeydown = 0
-    }
-  }
   window.onkeydown = (e) => {
     switch (e.key) {
-      case 'SoftLeft':
-        if (player.isPlaying) {
+      case 'Call':
+        if (player.isPlayingOrPaused) {
           player.openPlaybackOptionsMenu()
         }
         break
@@ -635,8 +706,16 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         break
       case 'ArrowRight':
+        player.startSeeking(false)
+        break
       case 'ArrowLeft':
-        beginKeydown = (new Date()).getTime()
+        player.startSeeking(true)
+        break
+      case 'SoftRight':
+        player.goForward()
+        break
+      case 'SoftLeft':
+        player.goBackward()
         break
       case 'Enter':
         if (player.isPlaybackOptionsOpen) {
@@ -647,6 +726,7 @@ document.addEventListener('DOMContentLoaded', () => {
         break
     }
   }
+  window.addEventListener('keyup', () => player.stopSeeking())
 })
 
 window.onerror = (e) => {
