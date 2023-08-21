@@ -263,6 +263,7 @@ document.addEventListener('DOMContentLoaded', () => {
   switchTheme()
   arrivedAtPage()
   var setting = new KodiSettingsController()
+  var scrollTop = document.getElementById('settings-content').scrollTop
   window.onkeydown = (e) => {
     switch (e.key) {
       case 'SoftLeft':
@@ -277,14 +278,24 @@ document.addEventListener('DOMContentLoaded', () => {
           setting.confirmResetSettings()
         }
         break
-      case 'ArrowUp':
-        naviBoard.getActiveElement().scrollIntoView({
-          block: 'start'
-        })
-        break
-      case 'ArrowDown':
-        naviBoard.getActiveElement().scrollIntoView({
-          block: 'end'
+      case 'ArrowUp': case 'ArrowDown':
+        setTimeout(() => {
+          // Work around broken Naviboard scrolling
+          const activeElement = naviBoard.getActiveElement()
+          const settingsContent = document.getElementById('settings-content')
+          settingsContent.scrollTop = scrollTop // restore last scroll position
+          if (activeElement ===
+            Array.prototype.find.call(
+              settingsContent.childNodes,
+              node => node.classList && node.classList.contains('navigable')
+            ))
+            activeElement.scrollIntoView(false) // at the top
+          else
+            scrollIntoView(activeElement, {
+              scrollMode: 'if-needed',
+              block: 'nearest'
+            })
+          scrollTop = settingsContent.scrollTop
         })
         break
       case 'Enter':
